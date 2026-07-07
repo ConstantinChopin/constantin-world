@@ -1,0 +1,449 @@
+---
+layout: base.njk
+bodyClass: project
+title: "Asterlogos — Constantin Chopin"
+description: "Asterlogos — instruments of attention for the books you read. Each book entered as the cosmos its own form implies. A project by Constantin Chopin."
+ogType: website
+ogTitle: Asterlogos
+ogDesc: "Instruments of attention for the books you read — each book entered as the cosmos its own form implies."
+ogUrl: "https://constantin.world/projects/asterlogos/"
+headExtra: |
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="/assets/pointcloud.js?v=7"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', function () {
+      if (!window.THREE || !window.mountPointCloud) return;
+      document.querySelectorAll('.vol-canvas').forEach(function (c) { window.mountPointCloud(c, c.getAttribute('data-figure')); });
+    });
+  </script>
+---
+
+  <header class="project-bar">
+    <span class="project-glyph" aria-hidden="true">
+      <svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true">
+        <g transform="rotate(-16 12 12)">
+          <circle cx="12" cy="12" r="8" />
+          <ellipse cx="12" cy="12" rx="8" ry="3" />
+          <line x1="12" y1="1.5" x2="12" y2="22.5" />
+        </g>
+      </svg>
+    </span>
+    <span class="project-name">Asterlogos</span>
+    <a class="return" href="../../index.html"><span class="arrow">←</span>&nbsp; Constantin Chopin</a>
+  </header>
+
+  <!-- intro: name + short line, beside a personal paragraph (two columns) -->
+  <section class="intro" id="cover">
+    <div class="intro-l reveal" style="--d: 80ms">
+      <h1 class="intro-name">Asterlogos</h1>
+      <p class="intro-desc">A commonplace book you can walk into — a handful of books I keep close, each rebuilt as the cosmos its own form implies.</p>
+    </div>
+    <div class="intro-r reveal" style="--d: 200ms">
+      <p>I keep a commonplace book the old way — copying out what strikes me, filed under ideas rather than dates. This is that instinct given a room: somewhere a book can be entered rather than explained. The text stays on the shelf; this sits beside it, holding the shape of how it thinks, and waiting for whatever I notice.</p>
+    </div>
+  </section>
+
+  <!-- the library: each book a line-drawn constellation of how it thinks -->
+  <section class="constellations" id="library">
+
+    <a class="bookcard vol is-live" href="#folio-odyssey" data-exp="experience/odyssey/index.html" data-title="The Odyssey · Folio" aria-label="Enter The Odyssey">
+      <div class="bookcard-fig">
+        <canvas class="vol-canvas" data-figure="odyssey"></canvas>
+      </div>
+      <h2 class="bookcard-title">The Odyssey</h2>
+      <p class="bookcard-sub">sky, sea, and the dead</p>
+    </a>
+
+    <a class="bookcard vol is-live" href="#folio-mill" data-exp="experience/index.html" data-title="Hamlet’s Mill · Folio" aria-label="Enter Hamlet’s Mill">
+      <div class="bookcard-fig">
+        <canvas class="vol-canvas" data-figure="mill"></canvas>
+      </div>
+      <h2 class="bookcard-title">Hamlet’s Mill</h2>
+      <p class="bookcard-sub">the precessing wheel</p>
+    </a>
+
+    <div class="bookcard coming">
+      <div class="bookcard-fig">
+        <canvas class="vol-canvas" data-figure="vigil"></canvas>
+      </div>
+      <h2 class="bookcard-title">Liturgies of the Wild</h2>
+      <p class="bookcard-sub">the rosary · unbuilt</p>
+    </div>
+
+    <div class="bookcard coming">
+      <div class="bookcard-fig">
+        <canvas class="vol-canvas" data-figure="ascent"></canvas>
+      </div>
+      <h2 class="bookcard-title">La Commedia</h2>
+      <p class="bookcard-sub">the ascent · unbuilt</p>
+    </div>
+
+  </section>
+
+  <!-- editorial: the project shown as cosmos-style demo sections -->
+  <div class="editorial" id="read">
+
+    <section class="ed-intro rise">
+      <h2 class="section-head">A note on what this is.</h2>
+      <p class="ed-lede">I keep a commonplace book the old way — copying out what strikes me, filed under ideas rather than dates. Asterlogos is that instinct given a room. I didn’t want another reader or notebook; I wanted somewhere a book could be entered rather than explained. The text stays on the shelf — this sits beside it, holding the shape of how it thinks, and waiting for whatever I notice.</p>
+    </section>
+
+    <section class="ed-features">
+      <h2 class="section-head rise">A few things I hold to.</h2>
+      <div class="features">
+        <article class="feature rise">
+          <div class="feature-vis" style="--duo-d:#0f1a2e;--duo-m:#2f4a6b;--duo-l:#aecbe6">
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <g fill="currentColor"><circle cx="22" cy="18" r="1.3"/><circle cx="38" cy="24" r="1.3"/><circle cx="52" cy="15" r="1.5"/><circle cx="66" cy="22" r="1.3"/><circle cx="78" cy="18" r="1.3"/></g>
+              <line x1="12" y1="52" x2="88" y2="52" stroke="currentColor" stroke-opacity="0.42" stroke-width="1"/>
+              <g fill="currentColor"><circle cx="22" cy="52" r="2.2"/><circle cx="38" cy="52" r="2.2"/><circle cx="52" cy="52" r="2.7"/><circle cx="66" cy="52" r="2.2"/><circle cx="80" cy="52" r="2.2"/></g>
+              <line x1="52" y1="55" x2="52" y2="80" stroke="currentColor" stroke-opacity="0.42" stroke-width="1"/>
+              <path d="M42 82 Q52 93 62 82" stroke="currentColor" stroke-opacity="0.35" stroke-width="1" fill="none"/>
+              <g fill="currentColor" fill-opacity="0.6"><circle cx="48" cy="84" r="1.2"/><circle cx="52" cy="86" r="1.2"/><circle cx="56" cy="84" r="1.2"/></g>
+            </svg>
+          </div>
+          <h3 class="feature-name">Form is the argument</h3>
+          <p class="feature-note">I let each book keep its own shape, never one I impose. The Odyssey became a cosmos in three registers — gods above, the sea between, the dead below — because that is how the poem moves: rarely up, once down.</p>
+        </article>
+
+        <article class="feature rise">
+          <div class="feature-vis" style="--duo-d:#14181c;--duo-m:#39434f;--duo-l:#b6c6d4">
+            <div class="mock-note">
+              <span class="mock-q">What did you notice?</span>
+              <span class="mock-field"></span>
+              <span class="mock-reveal">One possible reading ↓</span>
+            </div>
+          </div>
+          <h3 class="feature-name">It asks before it tells</h3>
+          <p class="feature-note">It waits. You meet a blank field first — what did you notice? — and only once you have written does a reading appear beside your words.</p>
+        </article>
+
+        <article class="feature rise">
+          <div class="feature-vis" style="--duo-d:#1c142a;--duo-m:#46315a;--duo-l:#caaee6">
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <g fill="currentColor" fill-opacity="0.42"><circle cx="30" cy="18" r="1.1"/><circle cx="50" cy="15" r="1.1"/><circle cx="70" cy="18" r="1.1"/></g>
+              <line x1="14" y1="50" x2="86" y2="50" stroke="currentColor" stroke-opacity="0.3" stroke-width="1"/>
+              <g fill="currentColor" fill-opacity="0.5"><circle cx="26" cy="50" r="1.8"/><circle cx="44" cy="50" r="1.8"/><circle cx="62" cy="50" r="1.8"/><circle cx="78" cy="50" r="1.8"/></g>
+              <path d="M44 84 Q52 92 60 84" stroke="currentColor" stroke-opacity="0.3" stroke-width="1" fill="none"/>
+              <g fill="currentColor" fill-opacity="0.4"><circle cx="48" cy="85" r="1.1"/><circle cx="56" cy="85" r="1.1"/></g>
+              <path d="M50 15 L44 50 L52 85" stroke="#9a8038" stroke-width="1.5" stroke-dasharray="2 3" fill="none"/>
+              <g fill="none" stroke="#9a8038" stroke-width="1"><circle cx="50" cy="15" r="3"/><circle cx="44" cy="50" r="3"/><circle cx="52" cy="85" r="3"/></g>
+            </svg>
+          </div>
+          <h3 class="feature-name">Your passage is the thread</h3>
+          <p class="feature-note">Nothing is hidden and nothing is locked. What changes is where you are: a thread follows your reading wherever it goes, falling here from the gods to the dead.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="ed-worked">
+      <div class="worked-grid rise">
+        <div class="worked-text">
+          <h2 class="section-head" style="text-align:left; margin-bottom:0">Inside one of them.</h2>
+          <p class="worked-body">The Odyssey isn’t a flat map — it’s stacked. The gods come down at will, the dead are reached once, and the sea runs between. I built the cosmos to hold exactly that, and to let my own reading fall through it as a single gold line.</p>
+        </div>
+        <div class="worked-plate">
+          <div class="plate-spec" style="--duo-d:#0f1a2e;--duo-m:#2f4a6b;--duo-l:#aecbe6">
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <g fill="currentColor"><circle cx="20" cy="16" r="1.3"/><circle cx="36" cy="22" r="1.3"/><circle cx="50" cy="13" r="1.5"/><circle cx="64" cy="21" r="1.3"/><circle cx="80" cy="16" r="1.3"/><circle cx="28" cy="28" r="1"/><circle cx="58" cy="29" r="1"/></g>
+              <line x1="10" y1="52" x2="90" y2="52" stroke="currentColor" stroke-opacity="0.42" stroke-width="1"/>
+              <g fill="currentColor"><circle cx="20" cy="52" r="2.2"/><circle cx="36" cy="52" r="2.2"/><circle cx="50" cy="52" r="2.7"/><circle cx="64" cy="52" r="2.2"/><circle cx="80" cy="52" r="2.2"/></g>
+              <line x1="50" y1="55" x2="50" y2="80" stroke="currentColor" stroke-opacity="0.42" stroke-width="1"/>
+              <path d="M40 82 Q50 93 60 82" stroke="currentColor" stroke-opacity="0.35" stroke-width="1" fill="none"/>
+              <g fill="currentColor" fill-opacity="0.6"><circle cx="46" cy="84" r="1.2"/><circle cx="50" cy="86" r="1.2"/><circle cx="54" cy="84" r="1.2"/></g>
+              <path d="M36 22 L50 52 L50 82" stroke="#9a8038" stroke-width="1.5" stroke-dasharray="2 3" fill="none"/>
+            </svg>
+            <span class="spec-chip">after Flaxman · Odyssey, 1805</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ed-close rise">
+      <h2 class="section-head">More to come, slowly.</h2>
+      <p class="ed-lede">I add a book once I’ve read it closely enough to know its shape — Hamlet’s Mill turning on its axis, the Commedia climbing, the Liturgies told like a rosary. Each is a place I navigate to remember, not a list to scroll. A personal shelf, kept in the open.</p>
+    </section>
+
+    <footer class="project-colophon">
+      Two folios are built — <em>The Odyssey</em> and <em>Hamlet’s Mill</em> (de Santillana &amp; von Dechend, 1969); the rest I’ll make in time. Hand-built with Three.js and WebGL, and kept as part of <a href="../../index.html">my commonplace book</a>.
+    </footer>
+
+  </div>
+
+  <!-- the folio: opens as its own page over the overview when you enter a
+       live cloud; the back button returns to the project's title cards -->
+  <section class="folio-view" id="folio" aria-hidden="true">
+    <div class="folio-bar">
+      <nav class="folio-crumbs" aria-label="Breadcrumb">
+        <a class="crumb crumb-root folio-back" href="#read">Asterlogos</a>
+        <span class="crumb-sep" aria-hidden="true">/</span>
+        <span class="crumb crumb-here" id="folioTitle" aria-current="page">Folio</span>
+      </nav>
+      <button class="fs-btn" id="fsBtn" type="button">⤢&nbsp; Fullscreen</button>
+    </div>
+    <iframe id="frame" title="An interactive Asterlogos folio" allowfullscreen></iframe>
+  </section>
+
+  <!-- the hero constellation: fill each plate's point-cloud, scatter ambient
+       classical plates around the ring, and drift them with a quiet parallax -->
+  <script>
+    (function () {
+      var con = document.getElementById('constellation');
+      if (!con) return;
+      var SVGNS = 'http://www.w3.org/2000/svg';
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // a small seeded PRNG so the constellation is identical every load
+      var seed = 20240626;
+      function rand() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+
+      // duotone palette — muted, gallery-grade, each a {dark, mid, light} triple
+      var PAL = [
+        ['#0f1a2e', '#2f4a6b', '#aecbe6'], ['#14181c', '#39434f', '#b6c6d4'],
+        ['#161e12', '#3f5230', '#b3c690'], ['#1c142a', '#46315a', '#caaee6'],
+        ['#221017', '#5a2f3f', '#d6a8b8'], ['#2a230f', '#6b5a28', '#e0cd92'],
+        ['#2a140e', '#6e3326', '#dba292'], ['#0f1f1e', '#2f5a58', '#a6d2cf']
+      ];
+
+      function shapePts(shape) {
+        var p = [], i, a;
+        if (shape === 'odyssey') {
+          for (i = 0; i < 7; i++) p.push([14 + i * 11 + rand() * 4, 17 + rand() * 8, 0.7 + rand() * 0.6]);
+          for (i = 0; i < 9; i++) p.push([10 + i * 9 + rand() * 3, 49 + rand() * 4, 1.0 + rand() * 0.7]);
+          for (i = 0; i < 5; i++) p.push([34 + i * 8 + rand() * 3, 80 + rand() * 7, 0.6 + rand() * 0.5]);
+        } else if (shape === 'mill') {
+          for (i = 0; i < 26; i++) { a = i / 26 * 6.283; p.push([50 + Math.cos(a) * 34, 50 + Math.sin(a) * 13, 0.7 + rand() * 0.7]); }
+          p.push([50, 50, 1.7]);
+        } else if (shape === 'rosary') {
+          for (i = 0; i <= 10; i++) { var t = i / 10; p.push([16 + t * 68, 30 + (4 * t * (1 - t)) * 52, 1.0 + rand() * 0.5]); }
+        } else if (shape === 'ascent') {
+          var ys = [84, 66, 50, 36, 25, 14];
+          ys.forEach(function (y, k) { var r = 30 - k * 5, n = Math.max(3, Math.round(10 - k * 1.5)); for (i = 0; i < n; i++) { a = i / n * 6.283; p.push([50 + Math.cos(a) * r, y + Math.sin(a) * (r * 0.28), 0.7 + rand() * 0.6]); } });
+        }
+        return p;
+      }
+      function scatterPts(n) { var a = []; for (var i = 0; i < n; i++) a.push([8 + rand() * 84, 8 + rand() * 84, 0.6 + rand() * 1.1]); return a; }
+
+      function fillDots(svg, shape, n) {
+        var pts = shape ? shapePts(shape) : scatterPts(n);
+        pts.forEach(function (pt) {
+          var c = document.createElementNS(SVGNS, 'circle');
+          c.setAttribute('cx', pt[0].toFixed(1)); c.setAttribute('cy', pt[1].toFixed(1));
+          c.setAttribute('r', (pt[2] || 0.9).toFixed(2));
+          c.setAttribute('opacity', (0.5 + rand() * 0.45).toFixed(2));
+          svg.appendChild(c);
+        });
+      }
+
+      // 1) fill the four authored book plates from their shape
+      Array.prototype.forEach.call(document.querySelectorAll('.plate-book'), function (a) {
+        fillDots(a.querySelector('svg'), a.getAttribute('data-shape'), 0);
+      });
+
+      // 2) arrange everything on two concentric rings — books seated on the
+      //    inner ring at even slots, ambient plates filling the rest; clear centre.
+      var INNER = { rx: 36, ry: 31, count: 10, phase: 0, jit: 0.16 };
+      var OUTER = { rx: 53, ry: 47, count: reduce ? 9 : 15, phase: 0.21, jit: 0.14 };
+      function ringXY(cfg, slot) {
+        var a = slot / cfg.count * 6.283 - 1.5708 + cfg.phase + (rand() - 0.5) * cfg.jit;
+        return [50 + Math.cos(a) * cfg.rx, 50 + Math.sin(a) * cfg.ry];
+      }
+      function makeAmbient(cfg, slot, far) {
+        var pal = PAL[Math.floor(rand() * PAL.length)], xy = ringXY(cfg, slot);
+        var pos = document.createElement('div'); pos.className = 'plate-pos';
+        pos.style.left = xy[0].toFixed(1) + '%'; pos.style.top = xy[1].toFixed(1) + '%';
+        var fl = document.createElement('div'); fl.className = 'plate-float';
+        fl.style.setProperty('--dur', (7 + rand() * 7).toFixed(1) + 's'); fl.style.setProperty('--delay', (-rand() * 7).toFixed(1) + 's');
+        var pl = document.createElement('div'); pl.className = 'plate';
+        pl.style.setProperty('--sz', (far ? (60 + rand() * 22) : (96 + rand() * 20)).toFixed(0) + 'px');
+        pl.style.setProperty('--rot', ((rand() - 0.5) * 18).toFixed(1) + 'deg');
+        pl.style.setProperty('--duo-d', pal[0]); pl.style.setProperty('--duo-m', pal[1]); pl.style.setProperty('--duo-l', pal[2]);
+        if (far) { pl.style.setProperty('--blur', (0.4 + rand() * 1.1).toFixed(1) + 'px'); pl.style.setProperty('--op', (0.76 + rand() * 0.16).toFixed(2)); }
+        var svg = document.createElementNS(SVGNS, 'svg'); svg.setAttribute('viewBox', '0 0 100 100'); pl.appendChild(svg);
+        fillDots(svg, null, 26 + Math.floor(rand() * 20));
+        fl.appendChild(pl); pos.appendChild(fl); con.appendChild(pos);
+      }
+      // seat the four books on evenly-spaced inner slots, sizes made uniform
+      var bookEls = Array.prototype.slice.call(con.querySelectorAll('.plate-pos'));
+      var bookSlots = [0, 3, 5, 8], used = {};
+      bookEls.forEach(function (posEl, i) {
+        var slot = bookSlots[i % bookSlots.length]; used[slot] = 1;
+        var xy = ringXY(INNER, slot);
+        posEl.style.left = xy[0].toFixed(1) + '%'; posEl.style.top = xy[1].toFixed(1) + '%';
+        var pl = posEl.querySelector('.plate');
+        pl.style.setProperty('--sz', (120 + (rand() * 8 - 4)).toFixed(0) + 'px');
+        pl.style.setProperty('--rot', ((rand() - 0.5) * 14).toFixed(1) + 'deg');
+        pl.style.removeProperty('--blur'); pl.style.removeProperty('--op');
+      });
+      // fill the remaining inner slots, then the whole outer ring
+      for (var s = 0; s < INNER.count; s++) { if (!used[s]) makeAmbient(INNER, s, false); }
+      for (var s2 = 0; s2 < OUTER.count; s2++) { makeAmbient(OUTER, s2, true); }
+
+      // 3) a quiet parallax — the whole field eases against the pointer
+      if (!reduce) {
+        window.addEventListener('pointermove', function (e) {
+          var px = (e.clientX - window.innerWidth / 2) / (window.innerWidth / 2);
+          var py = (e.clientY - window.innerHeight / 2) / (window.innerHeight / 2);
+          con.style.transform = 'translate(' + (-px * 15).toFixed(1) + 'px,' + (-py * 12).toFixed(1) + 'px)';
+        }, { passive: true });
+      }
+
+      // ---- the library carousel ----
+      var track = document.getElementById('carTrack');
+      if (track) {
+        var slides = Array.prototype.slice.call(track.children);
+        var vpEl = track.parentElement;            // .car-viewport
+        var dotsWrap = document.getElementById('carDots');
+        var idx = 0;
+
+        // fill each slide: a landscape ambient field + the book's shape, centred
+        slides.forEach(function (s) {
+          var svg = s.querySelector('svg'), shape = s.getAttribute('data-shape'), k, c;
+          for (k = 0; k < 46; k++) {
+            c = document.createElementNS(SVGNS, 'circle');
+            c.setAttribute('cx', (rand() * 160).toFixed(1)); c.setAttribute('cy', (rand() * 100).toFixed(1));
+            c.setAttribute('r', (0.5 + rand() * 1.0).toFixed(2)); c.setAttribute('opacity', (0.22 + rand() * 0.4).toFixed(2));
+            svg.appendChild(c);
+          }
+          shapePts(shape).forEach(function (pt) {
+            c = document.createElementNS(SVGNS, 'circle');
+            c.setAttribute('cx', (pt[0] + 30).toFixed(1)); c.setAttribute('cy', pt[1].toFixed(1));
+            c.setAttribute('r', (pt[2] || 0.9).toFixed(2)); c.setAttribute('opacity', (0.55 + rand() * 0.4).toFixed(2));
+            svg.appendChild(c);
+          });
+        });
+
+        slides.forEach(function (_, i) {
+          var b = document.createElement('button'); b.className = 'car-dot'; b.type = 'button';
+          b.setAttribute('aria-label', 'Book ' + (i + 1));
+          b.addEventListener('click', function () { go(i); });
+          dotsWrap.appendChild(b);
+        });
+        var dots = Array.prototype.slice.call(dotsWrap.children);
+
+        function layout() {
+          var vp = vpEl.clientWidth, sw = slides[0].getBoundingClientRect().width;
+          var gap = parseFloat(getComputedStyle(track).gap) || 0, step = sw + gap;
+          var x = (vp - sw) / 2 - idx * step;
+          track.style.transform = 'translateX(' + x.toFixed(1) + 'px)';
+          slides.forEach(function (s, i) { s.classList.toggle('is-active', i === idx); });
+          dots.forEach(function (d, i) { d.classList.toggle('is-active', i === idx); });
+        }
+        function go(i) { idx = Math.max(0, Math.min(slides.length - 1, i)); layout(); }
+        document.querySelector('.car-prev').addEventListener('click', function () { go(idx - 1); });
+        document.querySelector('.car-next').addEventListener('click', function () { go(idx + 1); });
+
+        // drag / swipe
+        var dragX = 0, dragging = false, startX = 0;
+        vpEl.addEventListener('pointerdown', function (e) { dragging = true; startX = e.clientX; dragX = 0; track.style.transition = 'none'; });
+        window.addEventListener('pointermove', function (e) {
+          if (!dragging) return; dragX = e.clientX - startX;
+          var vp = vpEl.clientWidth, sw = slides[0].getBoundingClientRect().width, gap = parseFloat(getComputedStyle(track).gap) || 0, step = sw + gap;
+          track.style.transform = 'translateX(' + ((vp - sw) / 2 - idx * step + dragX).toFixed(1) + 'px)';
+        });
+        window.addEventListener('pointerup', function () {
+          if (!dragging) return; dragging = false; track.style.transition = '';
+          if (Math.abs(dragX) > 55) go(idx + (dragX < 0 ? 1 : -1)); else layout();
+          dragX = 0;
+        });
+        window.addEventListener('resize', layout);
+        layout();
+      }
+    })();
+  </script>
+
+  <script>
+    (function () {
+      // Resolve experience paths against this page's own directory, so they
+      // work whether the URL ends in /index.html, a trailing slash, or the
+      // bare clean-URL form (/projects/asterlogos) some static hosts serve.
+      var p = location.pathname;
+      var dir = /\/$/.test(p) ? p : (/\.html?$/i.test(p) ? p.replace(/[^/]*$/, '') : p + '/');
+
+      var folio = document.getElementById('folio');
+      var frame = document.getElementById('frame');
+      var folioTitle = document.getElementById('folioTitle');
+
+      // Each live volume registers its folio under its own hash, so every book
+      // is linkable and the browser Back gesture is a way out of any of them.
+      var books = {};
+      Array.prototype.forEach.call(document.querySelectorAll('.vol.is-live'), function (a) {
+        books[a.getAttribute('href')] = { exp: a.getAttribute('data-exp'), title: a.getAttribute('data-title') };
+      });
+
+      // Load the heavy folio lazily, and swap the iframe only when the book
+      // actually changes — the overview stays instant, each folio spins up the
+      // moment it is reached.
+      function open(book) {
+        if (!book) return;
+        if (frame.getAttribute('data-exp') !== book.exp) { frame.src = dir + book.exp; frame.setAttribute('data-exp', book.exp); }
+        if (book.title) folioTitle.textContent = book.title.split('·')[0].trim();
+      }
+
+      // The folio is its own page, opened and closed by the hash. Entering a
+      // live cloud sets #folio-<book>; the Overview button returns to the cards.
+      // When shown inside the site's preview pane, the host toolbar is the only
+      // chrome (our own .folio-bar is hidden via .embedded). Report the
+      // breadcrumb up to it — "Asterlogos", plus the open folio's title — and
+      // let its links navigate us back.
+      var embedded = window.self !== window.top;
+      function reportChrome() {
+        if (!embedded) return;
+        var book = books[location.hash];
+        var crumbs = [{ label: 'Asterlogos', nav: book ? 'read' : null }];
+        if (book && book.title) crumbs.push({ label: book.title.split('·')[0].trim() });
+        parent.postMessage({ source: 'cw-preview', type: 'chrome', crumbs: crumbs }, '*');
+      }
+      window.addEventListener('message', function (e) {
+        var d = e.data;
+        if (!d || d.source !== 'cw-preview' || d.type !== 'nav' || !d.to) return;
+        if (location.hash.slice(1) !== d.to) location.hash = d.to;
+      });
+
+      function sync() {
+        var book = books[location.hash];
+        var isOpen = !!book;
+        document.body.classList.toggle('folio-open', isOpen);
+        folio.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+        if (isOpen) open(book);
+        reportChrome();
+      }
+      window.addEventListener('hashchange', sync);
+
+      // Warm a folio as soon as its live cloud is approached, so it is ready by
+      // the time the folio opens.
+      Array.prototype.forEach.call(document.querySelectorAll('.vol.is-live'), function (a) {
+        var book = books[a.getAttribute('href')];
+        ['pointerenter', 'focus'].forEach(function (ev) { a.addEventListener(ev, function () { if (!frame.src) open(book); }); });
+      });
+
+      // Fullscreen the folio.
+      var btn = document.getElementById('fsBtn');
+      function inFs() { return document.fullscreenElement || document.webkitFullscreenElement; }
+      btn.addEventListener('click', function () {
+        if (inFs()) { (document.exitFullscreen || document.webkitExitFullscreen).call(document); }
+        else { (folio.requestFullscreen || folio.webkitRequestFullscreen).call(folio); }
+      });
+      function syncFs() { btn.innerHTML = inFs() ? '⤡&nbsp; Exit fullscreen' : '⤢&nbsp; Fullscreen'; }
+      document.addEventListener('fullscreenchange', syncFs);
+      document.addEventListener('webkitfullscreenchange', syncFs);
+
+      sync(); // honour an initial #folio deep-link
+
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // Reveal each movement as it scrolls into view; if observers or
+      // reduced-motion are in play, show everything at rest.
+      var rises = Array.prototype.slice.call(document.querySelectorAll('.rise'));
+      if (!('IntersectionObserver' in window) || reduce) {
+        rises.forEach(function (el) { el.classList.add('is-in'); });
+      } else {
+        var rio = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) { e.target.classList.add('is-in'); rio.unobserve(e.target); }
+          });
+        }, { rootMargin: '0px 0px -12% 0px', threshold: 0.15 });
+        rises.forEach(function (el) { rio.observe(el); });
+      }
+    })();
+  </script>

@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Asterlogos — a brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  /* ================================================================== *
+   *  ASTERLOGOS — a brief (three folios).                               *
+   *  Reuses the instrument's paper vocabulary. The signature is the     *
+   *  gold reading-thread in the gutter: the document's own navigation   *
+   *  re-enacts the product's "your passage is the thread."              *
+   * ================================================================== */
+  :root{
+    --paper:#e7e4db; --paper-deep:#ded9cd; --paper-hi:#efece4;
+    --ink:#1b1916; --ink-soft:#39352e; --ink-mid:#5c564c; --ghost:#9a958a; --rule:#c2bcae;
+    --gold:#9a8038; --gold-soft:#b9a05a;
+    --shadow:5px 6px 0 rgba(27,25,22,0.12);
+    --shadow-sm:3px 4px 0 rgba(27,25,22,0.11);
+    --lift:6px 9px 0 rgba(27,25,22,0.15);
+    --display:'Cormorant Garamond',Georgia,serif;
+    --serif:'Newsreader',Georgia,serif;
+    --mono:'JetBrains Mono',ui-monospace,monospace;
+    --ease:cubic-bezier(0.2,0,0,1);
+    --spring:cubic-bezier(0.34,1.3,0.5,1);
+    --gutter:66px; --wrap:720px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);line-height:1.55;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+  a{color:inherit;}
+  button,a.btn{font-family:inherit;cursor:pointer;color:inherit;}
+  ::selection{background:rgba(154,128,56,0.22);}
+  :focus-visible{outline:1.5px solid var(--gold);outline-offset:3px;border-radius:2px;}
+
+  #tooth{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.34;
+    background-image:radial-gradient(var(--rule) 0.5px,transparent 0.5px);background-size:3px 3px;}
+  #vig{position:fixed;inset:0;z-index:0;pointer-events:none;box-shadow:inset 0 0 160px rgba(70,64,54,0.11);}
+
+  /* ---------------- the gutter: gold reading-thread + foliation ---------------- */
+  #gutter{position:fixed;top:0;left:0;bottom:0;width:var(--gutter);z-index:12;pointer-events:none;
+    display:flex;flex-direction:column;align-items:center;}
+  #gutter .rail{position:absolute;top:96px;bottom:96px;left:50%;width:1px;background:var(--rule);transform:translateX(-50%);}
+  #gutter .thread{position:absolute;top:96px;left:50%;width:2px;background:var(--gold);transform:translateX(-50%);
+    height:0;will-change:height;transition:height .12s linear;box-shadow:0 0 6px rgba(154,128,56,0.35);}
+  #gutter .marks{position:absolute;top:96px;bottom:96px;left:0;right:0;}
+  .mark{position:absolute;left:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:7px;}
+  .mark .dot{width:9px;height:9px;border-radius:50%;background:var(--paper);border:1px solid var(--ghost);
+    transition:background .3s var(--ease),border-color .3s var(--ease),transform .3s var(--spring);}
+  .mark .rn{font:400 9px var(--mono);letter-spacing:.1em;color:var(--ghost);transition:color .3s var(--ease);}
+  .mark.on .dot{background:var(--gold);border-color:var(--gold);transform:scale(1.25);}
+  .mark.on .rn{color:var(--ink);}
+  #gutter .top,#gutter .bot{position:absolute;left:50%;transform:translateX(-50%);
+    font:500 13px var(--display);font-style:italic;color:var(--ink-soft);}
+  #gutter .top{top:64px;} #gutter .bot{bottom:60px;color:var(--ghost);font-size:11px;}
+
+  /* mobile progress bar */
+  #topbar{position:fixed;top:0;left:0;right:0;height:2px;z-index:14;background:var(--rule);display:none;}
+  #topbar .fill{height:100%;width:0;background:var(--gold);transition:width .12s linear;}
+
+  /* ---------------- layout ---------------- */
+  .page{margin-left:var(--gutter);}
+  .col{max-width:var(--wrap);margin:0 auto;padding:0 40px;}
+  .eyebrow{font:400 9px var(--mono);letter-spacing:.3em;color:var(--ghost);text-transform:uppercase;}
+
+  /* folio headers */
+  .folio{padding:78px 0 26px;position:relative;}
+  .folio + .folio{border-top:1px solid var(--rule);}
+  .foliation{display:flex;align-items:baseline;gap:12px;margin-bottom:30px;}
+  .foliation .rn{font:500 15px var(--display);font-style:italic;color:var(--gold);}
+  .foliation .nm{font:400 9px var(--mono);letter-spacing:.24em;text-transform:uppercase;color:var(--ink-mid);}
+  .foliation .ln{flex:1;height:1px;background:var(--rule);align-self:center;}
+
+  h1{font:500 clamp(34px,5.6vw,58px)/1.03 var(--display);font-style:italic;letter-spacing:.01em;
+    margin:0 0 22px;max-width:16ch;text-wrap:balance;}
+  h2{font:500 clamp(24px,3.2vw,32px)/1.1 var(--display);margin:0 0 14px;letter-spacing:.01em;text-wrap:balance;}
+  .lede{font:300 clamp(16px,1.9vw,19.5px)/1.6 var(--serif);color:var(--ink-soft);max-width:54ch;margin:0 0 26px;text-wrap:pretty;}
+  p.body{font:300 15.5px/1.65 var(--serif);color:var(--ink-soft);max-width:56ch;text-wrap:pretty;}
+
+  /* cosmos plate (folio I) */
+  .cosmos{display:grid;grid-template-columns:1fr 240px;gap:30px;align-items:center;margin-top:14px;
+    padding:26px 28px;border:1px solid var(--rule);border-radius:4px;background:var(--paper-hi);box-shadow:var(--shadow-sm);}
+  .cosmos .cap .k{font:400 8.5px var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--gold);}
+  .cosmos .cap h3{font:500 21px var(--display);margin:8px 0 8px;font-style:italic;}
+  .cosmos .cap p{font:300 13.5px/1.55 var(--serif);color:var(--ink-soft);margin:0;}
+  .cosmos svg{width:100%;height:auto;display:block;}
+
+  /* three points */
+  .points{list-style:none;margin:8px 0 0;padding:0;counter-reset:pt;}
+  .points li{position:relative;padding:18px 0 18px 46px;border-top:1px solid var(--rule);}
+  .points li:first-child{border-top:0;}
+  .points li::before{counter-increment:pt;content:"0" counter(pt);position:absolute;left:0;top:18px;
+    font:400 10px var(--mono);letter-spacing:.1em;color:var(--gold);}
+  .points h3{font:500 19px var(--display);margin:0 0 4px;font-style:italic;}
+  .points p{font:300 14.5px/1.55 var(--serif);color:var(--ink-soft);margin:0;max-width:52ch;text-wrap:pretty;}
+
+  /* a demonstration block (toggle / field / embed share this shell) */
+  .demo{margin-top:30px;border:1px solid var(--ink);border-radius:5px;background:var(--paper);
+    box-shadow:var(--shadow);overflow:hidden;}
+  .demo .demo-head{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:12px 16px;border-bottom:1px solid var(--rule);background:var(--paper-hi);}
+  .demo .demo-head .t{font:italic 400 14px var(--serif);color:var(--ink-soft);}
+  .seg{display:inline-flex;gap:3px;padding:3px;border:1px solid var(--rule);border-radius:4px;background:var(--paper);}
+  .seg button{border:0;background:transparent;border-radius:2px;padding:7px 12px;position:relative;
+    font:500 8.5px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mid);
+    transition:background .2s var(--ease),color .2s var(--ease);}
+  .seg button::after{content:"";position:absolute;inset:-8px 0;}
+  .seg button:hover{color:var(--ink);}
+  .seg button.on{background:var(--ink);color:var(--paper);}
+  .demo .stage{position:relative;min-height:264px;padding:24px;display:grid;place-items:center;}
+  .demo .caption{padding:12px 16px;border-top:1px solid var(--rule);background:var(--paper-hi);
+    font:300 12.5px/1.5 var(--serif);color:var(--ink-mid);font-style:italic;text-align:center;transition:opacity .25s var(--ease);}
+
+  /* slides view */
+  .slidewrap{display:none;flex-direction:column;align-items:center;gap:16px;width:100%;}
+  .slidewrap.show{display:flex;}
+  .slidedeck{position:relative;width:min(360px,100%);height:180px;}
+  .slidecard{position:absolute;inset:0;border:1px solid var(--rule);border-radius:3px;background:var(--paper);
+    box-shadow:var(--shadow-sm);display:grid;place-items:center;padding:20px;text-align:center;
+    opacity:0;transform:translateY(8px) scale(.98);transition:opacity .3s var(--ease),transform .35s var(--spring);}
+  .slidecard.cur{opacity:1;transform:none;}
+  .slidecard .n{font:400 8px var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--ghost);position:absolute;top:12px;left:14px;}
+  .slidecard .txt{font:500 20px var(--display);font-style:italic;color:var(--ink);}
+  .slidenav{display:flex;align-items:center;gap:14px;}
+  .slidenav .idx{font:400 9px var(--mono);letter-spacing:.14em;color:var(--ghost);font-variant-numeric:tabular-nums;}
+
+  /* instrument view */
+  .instwrap{display:none;width:100%;}
+  .instwrap.show{display:block;}
+  .instwrap svg{width:100%;height:auto;max-height:240px;display:block;}
+  .instwrap .node{cursor:pointer;}
+  .instwrap .node circle.hit{fill:transparent;}
+
+  /* button primitives */
+  .mono-btn{border:1px solid var(--rule);border-radius:3px;padding:9px 15px;background:transparent;
+    font:500 8.5px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);position:relative;
+    transition:background .18s var(--ease),color .18s var(--ease),border-color .18s var(--ease),transform .12s var(--ease);}
+  .mono-btn::after{content:"";position:absolute;inset:-8px;}
+  .mono-btn:hover{border-color:var(--ink);color:var(--ink);}
+  .mono-btn:active{transform:scale(0.96);}
+  .btn-ink{display:inline-flex;align-items:center;gap:9px;background:var(--ink);color:var(--paper);
+    border:1px solid var(--ink);border-radius:3px;padding:13px 22px;text-decoration:none;
+    font:500 9.5px var(--mono);letter-spacing:.16em;text-transform:uppercase;
+    transition:background .18s var(--ease),transform .12s var(--ease),box-shadow .2s var(--ease);}
+  .btn-ink:hover{background:#000;box-shadow:var(--shadow-sm);}
+  .btn-ink:active{transform:scale(0.97);}
+
+  /* the "asks before it tells" field */
+  .ask{margin-top:14px;}
+  .ask .q{font:400 8.5px var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+  .ask textarea{width:100%;background:var(--paper);border:0;border-bottom:1px solid var(--ink);outline:none;resize:none;
+    font:300 17px/1.5 var(--serif);color:var(--ink);padding:4px 2px 10px;overflow:hidden;min-height:34px;}
+  .ask textarea::placeholder{color:var(--ghost);font-style:italic;}
+  .ask .reading{margin-top:16px;padding:14px 16px;border-left:2px solid var(--gold);background:var(--paper-hi);
+    border-radius:0 3px 3px 0;opacity:0;transform:translateY(6px);transition:opacity .4s var(--ease),transform .5s var(--spring);}
+  .ask .reading.show{opacity:1;transform:none;}
+  .ask .reading .k{font:400 8px var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--ghost);}
+  .ask .reading p{font:300 14.5px/1.55 var(--serif);color:var(--ink-soft);margin:6px 0 0;font-style:italic;}
+
+  /* live embed */
+  .embed{position:relative;border:1px solid var(--ink);border-radius:5px;overflow:hidden;box-shadow:var(--shadow);background:var(--paper);margin-top:16px;}
+  .embed .holder{position:relative;width:100%;aspect-ratio:16/10;min-height:340px;}
+  .embed .poster{position:absolute;inset:0;display:grid;place-items:center;background:var(--paper-hi);cursor:pointer;}
+  .embed .poster .play{display:flex;align-items:center;gap:11px;padding:13px 20px;border:1px solid var(--ink);border-radius:4px;
+    background:var(--paper);box-shadow:var(--shadow-sm);font:500 9px var(--mono);letter-spacing:.16em;text-transform:uppercase;
+    transition:transform .14s var(--ease),box-shadow .2s var(--ease);}
+  .embed .poster:hover .play{transform:translateY(-2px);box-shadow:var(--lift);}
+  .embed .poster:active .play{transform:scale(0.97);}
+  .embed .poster .sub{position:absolute;bottom:16px;left:0;right:0;text-align:center;
+    font:italic 300 12.5px var(--serif);color:var(--ghost);}
+  .embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:var(--paper);}
+
+  /* offer (folio III) */
+  .offer{margin-top:12px;display:grid;grid-template-columns:1.35fr 1fr;gap:0;border:1px solid var(--ink);
+    border-radius:5px;overflow:hidden;box-shadow:var(--shadow);background:var(--paper);}
+  .offer .terms{padding:28px 30px;}
+  .offer ul{list-style:none;margin:0;padding:0;}
+  .offer li{position:relative;padding:9px 0 9px 22px;font:300 15px/1.5 var(--serif);color:var(--ink-soft);}
+  .offer li::before{content:"";position:absolute;left:0;top:14px;width:9px;height:1px;background:var(--gold);}
+  .offer .price{padding:28px 30px;border-left:1px solid var(--rule);background:var(--paper-hi);display:flex;flex-direction:column;}
+  .price .lbl{font:400 8.5px var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--ghost);}
+  .price .n{font:500 42px var(--display);font-style:italic;line-height:1;margin-top:8px;font-variant-numeric:tabular-nums;}
+  .price .n small{font-size:15px;color:var(--ink-mid);font-style:normal;}
+  .price .std{font:300 13px var(--serif);color:var(--ghost);margin-top:7px;font-variant-numeric:tabular-nums;}
+  .price .btn-ink{margin-top:auto;justify-content:center;}
+
+  .now{margin-top:26px;padding:16px 20px;border:1px solid var(--rule);border-radius:4px;background:var(--paper-hi);
+    font:300 14.5px/1.55 var(--serif);color:var(--ink-soft);}
+  .now b{font-weight:500;color:var(--ink);}
+  .close{margin-top:34px;font:italic 400 clamp(19px,2.5vw,25px)/1.4 var(--display);color:var(--ink);max-width:26ch;}
+  .close small{display:block;margin-top:14px;font:300 13.5px var(--serif);color:var(--ink-mid);font-style:normal;max-width:52ch;}
+
+  footer{margin-left:var(--gutter);border-top:1px solid var(--rule);margin-top:8px;}
+  footer .col{padding:30px 40px 60px;display:flex;align-items:baseline;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+  footer .colo{font:300 13px var(--serif);color:var(--ink-mid);font-style:italic;}
+  footer .mail{font:400 9px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);
+    text-decoration:none;border-bottom:1px solid var(--rule);padding-bottom:3px;}
+  footer .mail:hover{color:var(--ink);border-color:var(--ink);}
+
+  /* reveal (split + staggered) */
+  .rise{opacity:0;transform:translateY(12px);}
+  .rise.in{opacity:1;transform:none;transition:opacity .6s var(--ease),transform .7s var(--spring);}
+
+  @media (max-width:860px){
+    .cosmos{grid-template-columns:1fr;} .offer{grid-template-columns:1fr;}
+    .offer .price{border-left:0;border-top:1px solid var(--rule);}
+  }
+  @media (max-width:720px){
+    :root{--gutter:0px;}
+    #gutter{display:none;} #topbar{display:block;}
+    .page,footer{margin-left:0;}
+    .col{padding:0 24px;} footer .col{padding:26px 24px 50px;}
+    .folio{padding:52px 0 22px;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{transition-duration:.01ms !important;scroll-behavior:auto;}
+    .rise{opacity:1;transform:none;}
+    #gutter .thread,#topbar .fill{transition:none;}
+  }
+</style>
+</head>
+<body>
+<div id="tooth" aria-hidden="true"></div>
+<div id="vig" aria-hidden="true"></div>
+<div id="topbar" aria-hidden="true"><div class="fill" id="topfill"></div></div>
+
+<!-- the gutter: the reading-thread -->
+<aside id="gutter" aria-hidden="true">
+  <span class="top">Asterlogos</span>
+  <div class="rail"></div>
+  <div class="thread" id="thread"></div>
+  <div class="marks" id="marks">
+    <div class="mark" data-i="0" style="top:12%"><span class="dot"></span><span class="rn">I</span></div>
+    <div class="mark" data-i="1" style="top:50%"><span class="dot"></span><span class="rn">II</span></div>
+    <div class="mark" data-i="2" style="top:86%"><span class="dot"></span><span class="rn">III</span></div>
+  </div>
+  <span class="bot">a brief</span>
+</aside>
+
+<main class="page">
+
+  <!-- ============================ FOLIO I ============================ -->
+  <section class="folio" id="f1">
+    <div class="col">
+      <div class="foliation rise"><span class="rn">I</span><span class="nm">The case</span><span class="ln"></span></div>
+      <h1 class="rise">Teach the Odyssey from inside the poem.</h1>
+      <p class="lede rise">A seminar on a great book usually runs on slides — flat pictures the book has to survive. Asterlogos inverts that. The book's own structure becomes a place you move through and teach from. One is built and ready: the Odyssey.</p>
+
+      <div class="cosmos rise">
+        <div class="cosmos-fig">
+          <svg viewBox="0 0 300 150" aria-hidden="true">
+            <g fill="#1b1916"><circle cx="46" cy="24" r="1.6"/><circle cx="96" cy="30" r="1.6"/><circle cx="150" cy="20" r="1.9"/><circle cx="206" cy="28" r="1.6"/><circle cx="252" cy="24" r="1.6"/></g>
+            <line x1="28" y1="76" x2="272" y2="76" stroke="#1b1916" stroke-opacity="0.4"/>
+            <g fill="#1b1916"><circle cx="56" cy="76" r="2.6"/><circle cx="104" cy="76" r="2.6"/><circle cx="150" cy="76" r="3.1"/><circle cx="196" cy="76" r="2.6"/><circle cx="244" cy="76" r="2.6"/></g>
+            <path d="M120 124 Q150 138 180 124" stroke="#1b1916" stroke-opacity="0.34" fill="none"/>
+            <g fill="#1b1916" fill-opacity="0.6"><circle cx="138" cy="126" r="1.5"/><circle cx="150" cy="129" r="1.5"/><circle cx="162" cy="126" r="1.5"/></g>
+            <path d="M96 30 L150 76 L150 126" stroke="#9a8038" stroke-width="1.6" stroke-dasharray="2 3" fill="none"/>
+            <g fill="none" stroke="#9a8038" stroke-width="1.2"><circle cx="96" cy="30" r="3.4"/><circle cx="150" cy="126" r="3.4"/></g>
+          </svg>
+        </div>
+        <div class="cap">
+          <span class="k">Form is the argument</span>
+          <h3>Sky, sea, and the dead.</h3>
+          <p>The Odyssey stacked the way it moves — gods above, the sea between, the dead below. A reading falls through as one gold line.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ FOLIO II ============================ -->
+  <section class="folio" id="f2">
+    <div class="col">
+      <div class="foliation rise"><span class="rn">II</span><span class="nm">The instrument</span><span class="ln"></span></div>
+      <h2 class="rise">What a slide can't do</h2>
+
+      <ol class="points rise">
+        <li><h3>It keeps the whole book in view</h3><p>A slide replaces the last and hides where you are. Here the whole cosmos stays; you move inside it.</p></li>
+        <li><h3>It goes where the seminar goes</h3><p>A reader asks about the underworld — go there, come straight back, the map intact.</p></li>
+        <li><h3>The picture is the argument</h3><p>The layout isn't decoration. Moving through the form teaches the structure.</p></li>
+      </ol>
+
+      <!-- demo 1: slides vs instrument -->
+      <div class="demo rise">
+        <div class="demo-head">
+          <span class="t">Slides lose the whole. The instrument keeps it.</span>
+          <div class="seg" id="modeSeg">
+            <button data-m="slides" class="on">Slides</button>
+            <button data-m="inst">Instrument</button>
+          </div>
+        </div>
+        <div class="stage">
+          <div class="slidewrap show" id="slidewrap">
+            <div class="slidedeck" id="slidedeck">
+              <div class="slidecard cur"><span class="n">Slide 1</span><span class="txt">The Cyclops</span></div>
+              <div class="slidecard"><span class="n">Slide 2</span><span class="txt">Circe</span></div>
+              <div class="slidecard"><span class="n">Slide 3</span><span class="txt">The Dead</span></div>
+            </div>
+            <div class="slidenav">
+              <button class="mono-btn" id="slidePrev">‹ Prev</button>
+              <span class="idx" id="slideIdx">1 / 3</span>
+              <button class="mono-btn" id="slideNext">Next ›</button>
+            </div>
+          </div>
+          <div class="instwrap" id="instwrap">
+            <svg viewBox="0 0 300 150" id="instSvg" aria-hidden="true">
+              <g fill="#1b1916"><circle cx="46" cy="24" r="1.6"/><circle cx="252" cy="24" r="1.6"/></g>
+              <line x1="28" y1="80" x2="272" y2="80" stroke="#1b1916" stroke-opacity="0.4"/>
+              <path d="M120 128 Q150 140 180 128" stroke="#1b1916" stroke-opacity="0.34" fill="none"/>
+              <path id="instThread" d="" stroke="#9a8038" stroke-width="1.6" stroke-dasharray="2 3" fill="none" opacity="0"/>
+              <g class="node" data-x="70" data-y="32" data-lbl="Troy" tabindex="0" role="button" aria-label="Troy">
+                <circle class="hit" cx="70" cy="32" r="14"/><circle cx="70" cy="32" r="2.4" fill="#1b1916"/></g>
+              <g class="node" data-x="150" data-y="80" data-lbl="The Cyclops" tabindex="0" role="button" aria-label="The Cyclops">
+                <circle class="hit" cx="150" cy="80" r="14"/><circle cx="150" cy="80" r="3" fill="#1b1916"/></g>
+              <g class="node" data-x="212" data-y="80" data-lbl="Circe" tabindex="0" role="button" aria-label="Circe">
+                <circle class="hit" cx="212" cy="80" r="14"/><circle cx="212" cy="80" r="2.6" fill="#1b1916"/></g>
+              <g class="node" data-x="150" data-y="128" data-lbl="The Dead" tabindex="0" role="button" aria-label="The Dead">
+                <circle class="hit" cx="150" cy="128" r="14"/><circle cx="150" cy="128" r="2.6" fill="#1b1916" fill-opacity="0.6"/></g>
+            </svg>
+          </div>
+        </div>
+        <div class="caption" id="demoCap">Advance the deck — each slide erases the last. You lose the shape.</div>
+      </div>
+
+      <!-- it asks before it tells -->
+      <h2 class="rise" style="margin-top:52px">It asks before it tells</h2>
+      <p class="body rise">A reader meets a blank field first — <em>what did you notice?</em> — and only once they have written does a reading appear beside their words. It draws the room in before it lectures.</p>
+      <div class="demo rise">
+        <div class="stage" style="min-height:0;padding:24px 24px 26px;display:block">
+          <div class="ask">
+            <div class="q">What did you notice?</div>
+            <textarea id="askField" rows="1" placeholder="Set down a thought about the Cyclops…"></textarea>
+            <div class="reading" id="askReading">
+              <span class="k">One reading ↓</span>
+              <p>He survives the cave by refusing his name — the self is what he smuggles home. Naming is danger; cunning is disguise.</p>
+            </div>
+          </div>
+        </div>
+        <div class="caption">Write anything, then press Enter. The reading waits for you first.</div>
+      </div>
+
+      <!-- live embed -->
+      <h2 class="rise" style="margin-top:52px">Drive it yourself</h2>
+      <p class="body rise">This is the built instrument, not a screenshot — the same one a scholar teaches from.</p>
+      <div class="embed rise">
+        <div class="holder">
+          <div class="poster" id="poster" role="button" tabindex="0" aria-label="Load the live Odyssey instrument">
+            <span class="play">▸&nbsp; Bring the Odyssey to life</span>
+            <span class="sub">loads the real instrument — drag to move, click a point</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ FOLIO III ============================ -->
+  <section class="folio" id="f3">
+    <div class="col">
+      <div class="foliation rise"><span class="rn">III</span><span class="nm">The terms</span><span class="ln"></span></div>
+      <h2 class="rise">For your next cohort</h2>
+
+      <div class="offer rise">
+        <div class="terms">
+          <ul>
+            <li>The Odyssey, finished and ready to teach from.</li>
+            <li>You are the founding editor of the edition.</li>
+            <li>White-glove setup — I get it working for your seminar.</li>
+            <li>Your readers get access at no cost for the first run.</li>
+          </ul>
+        </div>
+        <div class="price">
+          <span class="lbl">Founding price</span>
+          <!-- TODO: set the number -->
+          <div class="n">$<span data-price>—</span> <small>/ term</small></div>
+          <div class="std">Standard $<span data-price-std>—</span> / term</div>
+          <a class="btn-ink" href="mailto:hello@asterlogos.example?subject=A%20look%20at%20the%20Odyssey%20instrument">Book a 20-minute look</a>
+        </div>
+      </div>
+
+      <div class="now rise"><b>Nolan's Odyssey is in theatres.</b> New readers are arriving now, looking for someone to read it properly with. The edition is ready for the fall.</div>
+
+      <p class="close rise">For centuries, to teach a cosmos you built one you could stand inside — the orrery, the memory theatre. This is that instrument, returned.
+        <small>It gave way to the printed page and the projected slide because those were cheaper, not better. Building one is finally cheap again.</small>
+      </p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="col">
+      <span class="colo">Asterlogos — editions you can walk into.</span>
+      <a class="mail" href="mailto:hello@asterlogos.example">hello@asterlogos.example</a>
+    </div>
+  </footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* staggered reveals */
+  var rises = [].slice.call(document.querySelectorAll('.rise'));
+  if (reduce || !('IntersectionObserver' in window)) { rises.forEach(function(e){e.classList.add('in');}); }
+  else {
+    var ro = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){
+        var sibs = [].slice.call(e.target.parentNode.querySelectorAll('.rise'));
+        e.target.style.transitionDelay = Math.min(sibs.indexOf(e.target),4)*70 + 'ms';
+        e.target.classList.add('in'); ro.unobserve(e.target);
+      }});
+    }, { rootMargin:'0px 0px -10% 0px', threshold:0.14 });
+    rises.forEach(function(e){ ro.observe(e); });
+  }
+
+  /* reading-thread: fill by scroll progress; light folio marks in view */
+  var thread=document.getElementById('thread'), topfill=document.getElementById('topfill');
+  var railH = function(){ var g=document.getElementById('gutter'); return g? g.querySelector('.rail').offsetHeight:0; };
+  var ticking=false;
+  function onScroll(){
+    if(ticking) return; ticking=true;
+    requestAnimationFrame(function(){
+      var h=document.documentElement, max=h.scrollHeight-h.clientHeight;
+      var p= max>0 ? Math.min(1,Math.max(0,h.scrollTop/max)) : 0;
+      if(thread) thread.style.height=(railH()*p)+'px';
+      if(topfill) topfill.style.width=(p*100)+'%';
+      ticking=false;
+    });
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('resize',onScroll); onScroll();
+
+  var marks=[].slice.call(document.querySelectorAll('.mark'));
+  ['f1','f2','f3'].forEach(function(id,i){
+    var sec=document.getElementById(id); if(!sec||!('IntersectionObserver'in window)) return;
+    new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ marks.forEach(function(m,j){ m.classList.toggle('on', j<=i); }); } });
+    },{rootMargin:'-45% 0px -45% 0px'}).observe(sec);
+  });
+  if(marks[0]) marks[0].classList.add('on');
+
+  /* demo 1 — slides vs instrument */
+  var seg=document.getElementById('modeSeg'), slidewrap=document.getElementById('slidewrap'),
+      instwrap=document.getElementById('instwrap'), cap=document.getElementById('demoCap');
+  var slidesCap='Advance the deck — each slide erases the last. You lose the shape.',
+      instCap='Click any point — the others stay. The whole poem is always in view.';
+  seg.addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(!b) return;
+    [].forEach.call(seg.children,function(x){x.classList.toggle('on',x===b);});
+    var slides=b.dataset.m==='slides';
+    slidewrap.classList.toggle('show',slides); instwrap.classList.toggle('show',!slides);
+    cap.style.opacity=0; setTimeout(function(){ cap.textContent=slides?slidesCap:instCap; cap.style.opacity=1; },160);
+  });
+  // slide deck
+  var cards=[].slice.call(document.querySelectorAll('#slidedeck .slidecard')), si=0,
+      idx=document.getElementById('slideIdx');
+  function showSlide(n){ si=(n+cards.length)%cards.length;
+    cards.forEach(function(c,i){ c.classList.toggle('cur',i===si); }); idx.textContent=(si+1)+' / '+cards.length; }
+  document.getElementById('slideNext').addEventListener('click',function(){ showSlide(si+1); });
+  document.getElementById('slidePrev').addEventListener('click',function(){ showSlide(si-1); });
+  // instrument nodes
+  var instThread=document.getElementById('instThread');
+  [].slice.call(document.querySelectorAll('#instSvg .node')).forEach(function(g){
+    function act(){
+      [].forEach.call(document.querySelectorAll('#instSvg .node circle:not(.hit)'),function(c){ c.setAttribute('fill','#1b1916'); });
+      var c=g.querySelector('circle:not(.hit)'); c.setAttribute('fill','#9a8038');
+      instThread.setAttribute('d','M46 24 L'+g.dataset.x+' '+g.dataset.y); instThread.setAttribute('opacity','1');
+    }
+    g.addEventListener('mouseenter',act); g.addEventListener('click',act);
+    g.addEventListener('focus',act); g.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){e.preventDefault();act();} });
+  });
+
+  /* demo 2 — asks before it tells */
+  var field=document.getElementById('askField'), reading=document.getElementById('askReading');
+  function grow(){ field.style.height='auto'; field.style.height=field.scrollHeight+'px'; }
+  field.addEventListener('input',grow);
+  field.addEventListener('keydown',function(e){
+    if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); if(field.value.trim()) reading.classList.add('show'); }
+  });
+
+  /* live embed — click to load */
+  var poster=document.getElementById('poster');
+  function load(){
+    var f=document.createElement('iframe');
+    f.title='The Odyssey — a live Asterlogos instrument'; f.setAttribute('loading','lazy');
+    f.src='../odyssey-sculptural/index.html';
+    poster.parentNode.appendChild(f); poster.remove();
+  }
+  poster.addEventListener('click',load);
+  poster.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){e.preventDefault();load();} });
+})();
+</script>
+</body></html>

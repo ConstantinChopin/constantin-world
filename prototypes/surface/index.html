@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Asterlogos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script>
+// the design system + card sculptures sit beside the prototypes; resolve
+// them from the /prototypes/ segment so clean-URL servers still find them
+(function(){
+  var p=location.pathname, i=p.indexOf('/prototypes/');
+  var base=(i>=0)?p.slice(0,i+12):'../';
+  document.write('<link rel="stylesheet" href="'+base+'_shared/asterlogos.css">');
+  document.write('<script src="'+base+'_shared/card-sculptures.js"><\/script>');
+})();
+</script>
+<style>
+  /* ================================================================== *
+   *  ASTERLOGOS — one frame, at every altitude.                         *
+   *  The shelf is home. Four corners with fixed jobs:                   *
+   *    TL  who/where (identity · breadcrumb)                            *
+   *    TR  how you're seeing (the perception layer)                     *
+   *    BL  where you've been (the trace, folded to one mark)            *
+   *    BR  what you make (the writing stack · note a thought)           *
+   *  Write and Commonplace are not places: writing is an act, the       *
+   *  commonplace is a perception of the library (the Field).            *
+   *  Atoms and molecules live in ../_shared/asterlogos.css — this       *
+   *  file only lays them out.                                           *
+   * ================================================================== */
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;}
+  body{background:var(--paper);color:var(--ink);font-family:var(--serif);overflow:hidden;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+  button,textarea,select,input{font-family:inherit;}
+  button{cursor:pointer;color:inherit;background:none;border:0;padding:0;}
+  ::selection{background:rgba(27,25,22,0.12);}
+
+  #tooth{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.34;
+    background-image:radial-gradient(var(--rule) 0.5px,transparent 0.5px);background-size:3px 3px;}
+  #vig{position:fixed;inset:0;z-index:2;pointer-events:none;box-shadow:inset 0 0 130px rgba(70,64,54,0.14);}
+  #flash{position:fixed;inset:0;z-index:95;pointer-events:none;background:var(--ink);opacity:0;}
+
+  /* ---------- TL · who/where ---------- */
+  #masthead{position:fixed;top:var(--edge-top);left:var(--edge-x);z-index:40;pointer-events:none;transition:opacity .3s var(--ease);}
+  body.inbook #masthead{opacity:0;}
+  #bookBar{position:fixed;top:var(--edge-top);left:var(--edge-x);z-index:40;display:none;align-items:center;gap:14px;transition:opacity .3s var(--ease);}
+  body.inbook #bookBar{display:flex;}
+  #bookTitle{font:var(--text-title);font-style:italic;letter-spacing:.02em;pointer-events:none;}
+
+  /* ---------- TR · how you're seeing ---------- */
+  #libPerc{position:fixed;top:var(--edge-top);right:var(--edge-x);z-index:40;display:flex;align-items:center;gap:10px;transition:opacity .3s var(--ease);}
+  #libPerc .lbl{font:var(--text-label);letter-spacing:.24em;color:var(--ink-mid);text-transform:uppercase;}
+  body.inbook #libPerc{opacity:0;pointer-events:none;}
+  #perc{position:fixed;top:var(--edge-top);right:var(--edge-x);z-index:40;display:none;align-items:center;gap:9px;}
+  body.inbook #perc{display:flex;}
+  #perc .lbl{font:var(--text-label);letter-spacing:.24em;color:var(--ink-mid);text-transform:uppercase;}
+  #percNote{position:fixed;top:78px;right:var(--edge-x);z-index:40;font:var(--text-caption);font-style:italic;
+    color:var(--ink-soft);opacity:0;transition:opacity .3s var(--ease);max-width:260px;text-align:right;}
+
+  /* ---------- the stage: shelf (base), the instrument (iframe), the field ---------- */
+  #frame{position:fixed;inset:0;z-index:4;width:100%;height:100%;border:0;background:var(--paper);
+    opacity:0;visibility:hidden;transition:opacity .4s var(--ease);}
+  body.inbook #frame{opacity:1;visibility:visible;}
+  body.inbook #shelfLayer{opacity:0;pointer-events:none;}
+  #shelfLayer{position:fixed;inset:0;z-index:3;overflow-y:auto;transition:opacity .35s var(--ease);}
+  #shelfWrap{padding:104px var(--edge-x) 130px;transition:padding .45s var(--ease);}
+  body.leavesopen #shelfWrap{padding-right:min(500px,42vw);}
+
+  /* the shelf: a 2×2 plate of borderless cards, flush with the chrome.
+     Each card is ONE field: its title written in ink-points over a faint
+     grain, condensing into the book's figure on hover (the condensation
+     lives in card-sculptures.js). Four corner marks frame the plate; the
+     sub and tag stay as one quiet line of set type at the foot. */
+  #shelfGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:0;}
+  /* framing points: 3px ink circles centred ON each corner, drawn on an
+     overlay that overhangs the card by the dot's radius so the circles aren't
+     clipped, and sitting above the figure so they always read. With the middle
+     column flush, each pair's two seam dots coincide — shared framing points. */
+  #shelfGrid .bk.corners{background-image:none;}
+  #shelfGrid .bk.corners::after{
+    content:"";position:absolute;inset:-1.5px;pointer-events:none;z-index:3;
+    background-image:
+      radial-gradient(circle closest-side,var(--ink) 96%,transparent),
+      radial-gradient(circle closest-side,var(--ink) 96%,transparent),
+      radial-gradient(circle closest-side,var(--ink) 96%,transparent),
+      radial-gradient(circle closest-side,var(--ink) 96%,transparent);
+    background-size:3px 3px;background-repeat:no-repeat;
+    background-position:0% 0%,100% 0%,0% 100%,100% 100%;}
+  .bk{position:relative;display:block;cursor:pointer;
+    min-height:min(340px,calc((100vh - 300px)/2));
+    transition:transform .28s var(--spring);}
+  .bk.dead{opacity:.5;cursor:default;}
+  .bk.dead:hover{transform:none;}
+  .bk .fig{position:absolute;inset:0;color:var(--ink-soft);}
+  .bk .fig canvas{width:100%;height:100%;display:block;}
+  .bk .bkMeta{position:absolute;left:28px;bottom:22px;pointer-events:none;}
+  .bk h3{position:absolute;width:1px;height:1px;margin:0;padding:0;overflow:hidden;
+    clip:rect(0 0 0 0);clip-path:inset(50%);}   /* the cloud carries the title; this carries it for readers of the DOM */
+  .bk .sub{font:var(--text-body);font-style:italic;color:var(--ink-soft);}
+  .bk .tag{font:var(--text-meta);letter-spacing:.2em;color:var(--ink-mid);text-transform:uppercase;margin-top:6px;}
+  @media (max-width:900px){ #shelfGrid{grid-template-columns:1fr;} .bk{min-height:260px;} }
+
+  /* the field — the library seen through its ideas: a full instrument, embedded */
+  #fieldFrame{position:fixed;inset:0;z-index:15;width:100%;height:100%;border:0;background:var(--paper);
+    opacity:0;visibility:hidden;transition:opacity .4s var(--ease);}
+  body.field #fieldFrame{opacity:1;visibility:visible;}
+  body.field #trace{opacity:0;pointer-events:none;}   /* in the field, BL belongs to its key */
+  body.field #shelfLayer{opacity:0;pointer-events:none;}
+
+  /* ---------- BR · what you make: the stack + note a thought ---------- */
+  #makeWrap{position:fixed;right:var(--edge-x);bottom:var(--edge-bottom);z-index:42;display:flex;flex-direction:row;align-items:flex-end;gap:12px;transition:opacity .3s var(--ease);}
+  /* the writing act: one inverted square, one fine glyph — control-sized */
+  #newNote{width:var(--control-h);height:var(--control-h);display:grid;place-items:center;cursor:pointer;
+    background:var(--ink);color:var(--paper);border:1px solid var(--ink);border-radius:var(--control-r);box-shadow:var(--shadow-sm);
+    transition:background .18s var(--ease),box-shadow .2s var(--ease),transform .2s var(--ease);}
+  #newNote:hover{background:#000;box-shadow:var(--lift);transform:translateY(-1px);}
+  #newNote:active{transform:scale(0.95);}
+
+  /* the notes column's head is chrome: it rides the masthead line, top-right,
+     where the perception was (the column owns the right while it is open) */
+  #notesHead{position:fixed;top:var(--edge-top);right:var(--edge-x);z-index:43;
+    width:min(480px,40vw);display:none;}
+  body.leavesopen #notesHead{display:flex;}
+  #leavesPanel{position:fixed;top:78px;right:var(--edge-x);bottom:96px;width:min(480px,40vw);z-index:42;
+    overflow-y:auto;scrollbar-width:none;padding:0 6px 20px 0;display:none;flex-direction:column;gap:18px;}
+  #leavesPanel::-webkit-scrollbar{display:none;}
+  body.leavesopen #leavesPanel{display:flex;}
+  body.leavesopen #leavesBtn{display:none;}   /* the column IS the stack */
+  body.leavesopen #perc,body.leavesopen #libPerc{opacity:0;pointer-events:none;}  /* the column owns the right */
+
+  /* FULL PAGE — a focused view. The figure (topology / shelf / field) is
+     gone, the app masthead steps aside, and the panel's own head becomes the
+     full-width chrome bar (title far left, acts far right) with the notes or
+     the writing centred on bare paper. Nothing competes for focus. */
+  body.notesfull #notesHead{left:var(--edge-x);right:var(--edge-x);width:auto;}
+  body.notesfull #leavesPanel{left:50%;right:auto;transform:translateX(-50%);width:min(680px,92vw);top:96px;bottom:48px;}
+  body.notesfull #frame,body.notesfull #fieldFrame,body.notesfull #shelfLayer{opacity:0 !important;pointer-events:none;}
+  body.notesfull #masthead,body.notesfull #bookBar{opacity:0 !important;pointer-events:none;}
+  body.notesfull #shelfWrap{padding-right:var(--edge-x);}
+
+  /* slide-mode nav (the note-panel text atoms live in asterlogos.css) */
+  .lvNav{display:flex;align-items:center;gap:10px;margin-top:28px;}
+  .lvNav button{width:28px;height:28px;display:grid;place-items:center;border:1px solid var(--rule);border-radius:2px;
+    color:var(--ink-soft);font:400 14px var(--mono);background:transparent;
+    transition:border-color .16s var(--ease),color .16s var(--ease);}
+  .lvNav button:hover{border-color:var(--ink);color:var(--ink);}
+  .lvNav button:disabled{opacity:.25;cursor:default;}
+  .lvNav .dots{display:flex;gap:6px;align-items:center;}
+  .lvNav .dnt{width:3px;height:3px;border-radius:50%;background:var(--rule);}
+  .lvNav .dnt.on{background:var(--ink);}
+
+  /* the stack button (closed state) */
+  #leavesBtn{position:relative;height:46px;min-width:190px;}
+  #leavesBtn .slip{position:absolute;right:0;bottom:0;width:100%;height:var(--control-h);
+    background:var(--paper);border:1px solid var(--ink);border-radius:var(--control-r);box-shadow:var(--shadow-sm);
+    transition:transform .32s var(--spring);}
+  #leavesBtn .slip.s1{transform:rotate(-3deg) translate(-8px,-7px);}
+  #leavesBtn .slip.s2{transform:rotate(2deg) translate(-3px,-3px);}
+  #leavesBtn:hover .slip.s1{transform:rotate(-5.5deg) translate(-14px,-10px);}
+  #leavesBtn:hover .slip.s2{transform:rotate(3.5deg) translate(-6px,-4px);}
+  #leavesBtn:active .face{transform:scale(0.97);}
+  #leavesBtn .face{position:absolute;inset:0;top:10px;display:flex;align-items:center;justify-content:space-between;
+    padding:0 15px;background:var(--paper);border:1px solid var(--ink);border-radius:var(--control-r);box-shadow:var(--shadow-sm);
+    transition:transform .15s var(--ease);}
+  #leavesBtn .face .lbl{font:var(--font-label);letter-spacing:.2em;color:var(--ink-soft);text-transform:uppercase;}
+  #leavesBtn .face .n{font:500 16px var(--display);font-style:italic;}
+  #makeWrap.empty #leavesBtn{opacity:.45;}
+  #makeWrap.empty #leavesBtn .slip{display:none;}
+
+  /* leaf cards clamp to 3 lines in the docked column; full screen opens them
+     (the leaf/lv atoms themselves live in asterlogos.css) */
+  #leavesPanel .ltxt{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+  body.notesfull #leavesPanel .ltxt{-webkit-line-clamp:unset;display:block;overflow:visible;}
+
+  /* ---------- BL · the trace, folded to one mark ---------- */
+  #trace{position:fixed;left:var(--edge-x);bottom:var(--edge-bottom);z-index:41;display:none;flex-direction:column;align-items:flex-start;transition:opacity .3s var(--ease);}
+  body.inbook #trace{opacity:0;pointer-events:none;}   /* in-book, BL belongs to the instrument's key */
+  #tracePanel{position:absolute;left:0;bottom:calc(100% + 12px);width:300px;padding:16px 20px 14px;
+    display:none;}
+  #trace.open #tracePanel{display:block;}
+  #tracePanel .panel-head{min-height:30px;margin-bottom:8px;}
+  .trList{border-left:1px dashed var(--rule);padding-left:14px;display:flex;flex-direction:column;}
+  .trEntry{display:block;text-align:left;padding:8px 0;position:relative;cursor:pointer;}
+  .trEntry::before{content:"";position:absolute;left:-17px;top:14px;width:5px;height:5px;border-radius:50%;
+    background:var(--rule);transition:background .16s var(--ease);}
+  .trEntry:hover::before,.trEntry:first-child::before{background:var(--ink);}
+  .trEntry .nm{display:block;font:var(--text-caption);font-style:italic;color:var(--ink);}
+  .trEntry .meta{display:block;font:var(--text-meta);letter-spacing:.14em;color:var(--ink-mid);text-transform:uppercase;margin-top:3px;}
+  .trEntry:hover .nm{text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px;}
+
+  /* ---------- WRITE — a page of its own, not a modal.
+     The figure keeps the verso (topology, or the node's own sculpture);
+     the writing takes the recto. Its acts ride the chrome. ---------- */
+  /* WRITE — a right-panel mode like the notes list: it shares the one
+     #notesHead (label · full-screen · Set it down · Cancel), and its body is
+     the writing column beneath, which goes full screen the same way. */
+  #writeCol{position:fixed;top:78px;right:var(--edge-x);bottom:96px;z-index:50;width:min(480px,40vw);
+    display:none;flex-direction:column;justify-content:flex-start;overflow-y:auto;scrollbar-width:none;}
+  #writeCol::-webkit-scrollbar{display:none;}
+  body.writeopen #writeCol{display:flex;}
+  body.writeopen #notesHead{display:flex;opacity:1 !important;pointer-events:auto !important;z-index:52;}
+  body.writeopen #libPerc,body.writeopen #perc,body.writeopen #makeWrap,
+  body.writeopen #trace,body.writeopen #leavesPanel{opacity:0 !important;pointer-events:none !important;}
+  body.writeopen:not(.inbook):not(.field) #shelfLayer{opacity:.1;pointer-events:none;}
+  body.writeopen.field #fieldFrame{opacity:.12;pointer-events:none;}
+  body.notesfull #writeCol{left:50%;right:auto;transform:translateX(-50%);width:min(680px,92vw);top:96px;bottom:48px;}
+  #lineRow{display:flex;align-items:flex-start;gap:8px;}
+  #qMark{flex:0 0 auto;width:32px;height:38px;display:grid;place-items:center;
+    font:500 21px var(--display);color:var(--rule);border-radius:2px;position:relative;
+    transition:color .18s var(--ease),transform .12s var(--ease);}
+  #qMark::after{content:"";position:absolute;inset:-5px;}
+  #qMark:hover{color:var(--ink-soft);}
+  #qMark:active{transform:scale(0.9);}
+  #line.quote #qMark{color:var(--ink);}
+  #lineText{flex:1;background:transparent;border:0;outline:none;resize:none;overflow-y:auto;
+    font:var(--text-reading);color:var(--ink);padding:3px 0 6px;min-height:38px;max-height:62vh;}
+  #lineText::placeholder{color:var(--ghost);font-style:italic;}
+  #line.quote #lineText{font-style:italic;padding-left:16px;border-left:2px solid var(--ink);}
+  #lineRule{border-bottom:1px solid var(--ink);opacity:.5;transition:opacity .25s var(--ease);margin-top:8px;}
+  #line:focus-within #lineRule{opacity:.85;}
+  #srcRow{display:none;align-items:baseline;gap:9px;margin:9px 0 2px 40px;}
+  #line.quote #srcRow{display:flex;}
+  #srcRow .dash{color:var(--ghost);font:300 15px var(--serif);}
+  #srcText{flex:0 1 300px;background:transparent;border:0;border-bottom:1px dashed var(--rule);outline:none;
+    font:var(--text-caption);font-style:italic;color:var(--ink-soft);padding:2px 2px 3px;
+    transition:border-color .18s var(--ease);}
+  #srcText:focus{border-color:var(--ink);}
+  #srcText::placeholder{color:var(--ghost);}
+  #srcMatch{font:var(--text-meta);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);}
+  #lineMeta{display:flex;align-items:center;gap:12px;margin-top:14px;min-height:var(--control-h);position:relative;}
+  #ctxChip{display:inline-flex;align-items:center;gap:7px;height:var(--control-h);background:var(--paper);border:1px solid var(--rule);
+    border-radius:2px;padding:0 11px;font:var(--font-label);letter-spacing:.14em;text-transform:uppercase;
+    color:var(--ink-soft);transition:border-color .16s var(--ease),color .16s var(--ease),transform .12s var(--ease);position:relative;}
+  #ctxChip::after{content:"";position:absolute;inset:-5px;}
+  #ctxChip:hover{border-color:var(--ink);color:var(--ink);}
+  #ctxChip:active{transform:scale(0.96);}
+  #ctxMenu{position:absolute;left:0;top:42px;z-index:30;display:none;flex-direction:column;min-width:180px;
+    background:var(--paper);border:1px solid var(--ink);border-radius:var(--control-r);box-shadow:var(--shadow-sm);padding:5px;}
+  #ctxMenu.open{display:flex;}
+  #ctxMenu button{text-align:left;background:transparent;border:0;border-radius:2px;padding:7px 10px;
+    font:var(--text-caption);color:var(--ink-soft);transition:background .15s var(--ease),color .15s var(--ease);}
+  #ctxMenu button:hover{background:var(--paper-deep);color:var(--ink);}
+  #offerQuote{display:none;}
+  #offerQuote.show{display:inline-flex;}
+  #lineHint{font:var(--text-caption);font-style:italic;color:var(--ink-mid);margin-left:auto;}
+
+  /* the slip in flight (commit → stack, sow → knot) */
+  .fly{position:fixed;z-index:88;pointer-events:none;background:var(--paper);border:1px solid var(--ink);
+    border-radius:var(--control-r);box-shadow:var(--shadow-sm);padding:9px 12px;max-width:230px;
+    font:300 12px/1.4 var(--serif);color:var(--ink-soft);
+    transition:transform .58s var(--spring),opacity .58s var(--ease);}
+
+  /* sow bar */
+  #sowBar{position:fixed;top:78px;left:50%;transform:translateX(-50%) translateY(-8px);z-index:46;
+    display:none;align-items:center;gap:14px;padding:6px 8px 6px 18px;opacity:0;
+    transition:opacity .24s var(--ease),transform .3s var(--spring);}
+  #sowBar.show{display:flex;opacity:1;transform:translateX(-50%);}
+  #sowBar .txt{font:var(--text-caption);color:var(--ink-soft);white-space:nowrap;max-width:44vw;overflow:hidden;text-overflow:ellipsis;}
+  #sowBar .txt b{font-weight:500;color:var(--ink);}
+
+  /* plate open → the whole desk recedes (the write head stays above) */
+  body.plated #masthead,body.plated #bookBar,body.plated #perc,body.plated #libPerc,
+  body.plated #makeWrap,body.plated #notesHead,body.plated #leavesPanel,body.plated #trace{opacity:0 !important;pointer-events:none !important;}
+  body.plated.writeopen #notesHead{opacity:1 !important;pointer-events:auto !important;}
+
+  /* staggered entrance */
+  .enter{opacity:0;transform:translateY(8px);}
+  .revealed .enter{opacity:1;transform:none;transition:opacity .5s var(--ease),transform .6s var(--spring);}
+  .revealed #masthead.enter{transition-delay:.06s;}
+  .revealed #libPerc.enter{transition-delay:.14s;}
+  .revealed #makeWrap.enter{transition-delay:.22s;}
+  .revealed #trace.enter{transition-delay:.3s;}
+  #trace.enter{display:flex;}
+  #trace.enter.none{display:none;}
+
+  @media (max-width:720px){
+    :root{--edge-x:20px;--edge-bottom:20px;}
+    #writeCol{width:calc(100vw - 40px);}
+  }
+  @media (prefers-reduced-motion:reduce){ *{transition-duration:.01ms !important;} .enter{opacity:1;transform:none;} }
+</style>
+</head>
+<body>
+<div id="tooth" aria-hidden="true"></div>
+<div id="vig" aria-hidden="true"></div>
+<div id="flash" aria-hidden="true"></div>
+
+<!-- the instrument (a book, entered) -->
+<iframe id="frame" title="The Odyssey — a logbook"></iframe>
+
+<!-- TL -->
+<header id="masthead" class="enter">
+  <div class="masthead-word">Asterlogos</div>
+</header>
+<div id="bookBar">
+  <button id="backShelf" class="btn btn--sheet" aria-label="Back to the shelf">
+    <span class="arr">‹</span><span class="lbl">The shelf</span>
+  </button>
+  <span id="bookTitle">The Odyssey</span>
+</div>
+
+<!-- TR -->
+<div id="libPerc" class="enter">
+  <span class="lbl">Perception</span>
+  <div class="seg sheet-sm" id="libPercSeg">
+    <button data-p="shelf" class="on">The Shelf</button>
+    <button data-p="field">The Field</button>
+  </div>
+</div>
+<div id="perc">
+  <span class="lbl">Perception</span>
+  <button id="percBtn" class="btn btn--sheet">⟨ The Wandering ⟩</button>
+</div>
+<div id="percNote">one perception built — the claim stands, the next is future work</div>
+
+<!-- the shelf: home -->
+<main id="shelfLayer">
+  <div id="shelfWrap"><div id="shelfGrid"></div></div>
+</main>
+
+<!-- the field: the library seen through its ideas — an instrument, like a book -->
+<iframe id="fieldFrame" title="The Field — the library seen through its ideas"></iframe>
+
+<!-- BR: the writing stack + the act; the column's head rides the chrome -->
+<div id="notesHead" class="panel-head"></div>
+<div id="leavesPanel"></div>
+<div id="makeWrap" class="enter empty">
+  <button id="leavesBtn" aria-label="Your notes">
+    <div class="slip s1"></div><div class="slip s2"></div>
+    <div class="face"><span class="lbl">Notes</span><span class="n num" id="leavesCount">0</span></div>
+  </button>
+  <button id="newNote" aria-label="Write a note" title="Write">
+    <svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" aria-hidden="true"><path d="M8 2.5v11M2.5 8h11"/></svg>
+  </button>
+</div>
+
+<!-- BL: the trace, folded to one mark -->
+<div id="trace" class="enter none">
+  <div id="tracePanel" class="sheet"></div>
+  <button id="traceBtn" class="btn btn--sheet btn--square" aria-label="Where you were" title="Where you were">
+    <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" aria-hidden="true">
+      <path d="M3.5 12.5c3.5 0 2-4.5 5-4.5s1.5-4.5 4-4.5" stroke-dasharray="1.6 2.4"/>
+      <circle cx="3.5" cy="12.5" r="1.6" fill="currentColor" stroke="none"/>
+      <circle cx="12.5" cy="3.5" r="1.3"/>
+    </svg>
+  </button>
+</div>
+
+<!-- WRITE: the page — figure verso, writing recto, acts in the chrome -->
+<div id="writeCol" role="dialog" aria-label="Write">
+  <div id="line">
+    <div id="lineRow">
+      <button id="qMark" type="button" title="Mark as a quote" aria-label="Mark as a quote">❝</button>
+      <textarea id="lineText" rows="1" placeholder="Set something down…"></textarea>
+    </div>
+    <div id="srcRow">
+      <span class="dash">—</span>
+      <input id="srcText" placeholder="where from?" autocomplete="off">
+      <span id="srcMatch"></span>
+    </div>
+    <div id="lineRule"></div>
+    <div id="lineMeta">
+      <button id="ctxChip" type="button"></button>
+      <div id="ctxMenu"></div>
+      <button id="offerQuote" type="button" class="mono-btn soft">❝ mark as a quote</button>
+      <span id="lineHint"></span>
+    </div>
+  </div>
+</div>
+
+<!-- sow bar -->
+<div id="sowBar" class="sheet-sm">
+  <span class="txt"></span>
+  <button class="mono-btn" id="sowPlace">Place</button>
+  <button class="mono-btn soft" id="sowCancel">Cancel</button>
+</div>
+
+<script>
+(function(){
+"use strict";
+const frame=document.getElementById('frame');
+const fieldFrame=document.getElementById('fieldFrame');
+let INSTR_DIR='';
+(function(){ // resolve instrument paths against this page's own directory
+  const p=location.pathname;
+  INSTR_DIR=/\/$/.test(p)?p:(/\.html?$/i.test(p)?p.replace(/[^/]*$/,''):p+'/');
+  fieldFrame.src=new URL(INSTR_DIR+'../field/index.html',location.origin).pathname;
+})();
+function instrURL(rel){ return new URL(INSTR_DIR+rel,location.origin).pathname; }
+function tellField(m){ try{ fieldFrame.contentWindow.postMessage(m,'*'); }catch(e){} }
+function tellFrame(m){ try{ frame.contentWindow.postMessage(m,'*'); }catch(e){} }
+
+/* =================== data =================== */
+const BOOKS=[
+  {id:'odyssey',title:'The Odyssey',sub:'sky, sea, and the dead',tag:'Live · enter',live:true,form:'trireme',instrument:'../odyssey-sculptural/index.html',perception:'The Wandering'},
+  {id:'iliad',title:'The Iliad',sub:'the standing order',tag:'Live · enter',live:true,form:'spear',instrument:'../iliad-sculptural/index.html',perception:'The Standing Order'},
+  {id:'mill',title:'Hamlet’s Mill',sub:'the precessing wheel',tag:'Folio · soon',live:false,form:'wheel'},
+  {id:'liturgies',title:'Liturgies of the Wild',sub:'the rosary',tag:'Unbuilt',live:false,form:'rosary'},
+  {id:'wrangel',title:'Always with Honour',sub:'the receding front',tag:'Unbuilt',live:false,form:'front'},
+];
+function bookTitle(id){ const b=BOOKS.find(b=>b.id===id); return b?b.title:'?'; }
+const KNOTS=[
+  {id:'troy',n:'Troy',tags:'war departure kleos glory honor sack ruin',c:['kleos']},
+  {id:'ismarus',n:'Ismarus',tags:'raid plunder hospitality xenia greed cicones',c:['xenia','hybris']},
+  {id:'malea',n:'Cape Malea',tags:'storm pivot cape west wind',c:['nostos']},
+  {id:'lotus',n:'The Lotus-Eaters',tags:'forget forgetting oblivion lethe temptation memory home ease lotus flower',c:['oblivion','nostos']},
+  {id:'cyclops',n:'The Cyclops',tags:'name naming nobody cunning metis hospitality xenia monster hybris eye polyphemus cave giant',c:['metis','xenia','hybris','margin']},
+  {id:'aeolia',n:'Aeolia',tags:'wind gift home near bag winds',c:['nostos','xenia']},
+  {id:'laistry',n:'The Laestrygonians',tags:'monster cannibal margin slaughter fleet giants',c:['margin','xenia']},
+  {id:'circe',n:'Circe',tags:'transformation oblivion magic metis pigs swine ease witch year',c:['oblivion','metis']},
+  {id:'nekuia',n:'The House of the Dead',tags:'death dead prophecy descent teiresias achilles underworld',c:['nostos','recognition']},
+  {id:'sirens',n:'The Sirens',tags:'song knowledge voice mast bound',c:['kleos','oblivion']},
+  {id:'scylla',n:'Scylla & Charybdis',tags:'monster loss choice margin charybdis strait whirlpool',c:['margin']},
+  {id:'thrina',n:'Thrinacia',tags:'cattle helios hunger sun herd',c:['hybris','xenia']},
+  {id:'ogygia',n:'Ogygia',tags:'immortality oblivion calypso forever seven ease',c:['oblivion','nostos']},
+  {id:'scheria',n:'Scheria',tags:'hospitality xenia story recognition phaeacia tale telling court muse sing',c:['xenia','recognition']},
+  {id:'ithaca',n:'Ithaca',tags:'home nostos recognition return penelope bow bed',c:['nostos','recognition']},
+];
+KNOTS.forEach(k=>k.tags=k.tags.split(' '));
+const KN={}; KNOTS.forEach(k=>KN[k.id]=k);
+// notes can belong to any book's nodes; the shell only knows the Odyssey's
+// knots, so fall back to a tidy label for a foreign (e.g. Iliad) node id
+function knName(id){ return (KN[id]&&KN[id].n) || (id?id.charAt(0).toUpperCase()+id.slice(1):id); }
+
+/* =================== notes: first-class objects =================== */
+const LSK='ast_notes_v2';
+let NOTES=(function(){ try{ return JSON.parse(localStorage.getItem(LSK)||'null'); }catch(e){ return null; } })();
+let uid=Date.now(); const nid=()=>'n'+(uid++).toString(36);
+function loadNotes(){ try{ const r=localStorage.getItem(LSK); return r?JSON.parse(r):null; }catch(e){ return null; } }
+function persist(){
+  try{ NOTES.forEach(n=>{ if(!n.node){ const s=suggest(n.text); n.sug=s?s.id:null; } else if(n.sug) delete n.sug; }); }catch(e){}
+  try{ localStorage.setItem(LSK,JSON.stringify(NOTES)); }catch(e){}
+}
+function stateOf(n){ return n.node?'placed':(n.book?'half':'loose'); }
+const G={loose:'○',half:'◐',placed:'●'};
+if(!NOTES){
+  NOTES=[
+    {id:nid(),type:'thought',text:'He only survives the cave by refusing to say his name — the self is what he’s smuggling home.',book:null,node:null,ts:Date.now()-3600e3},
+    {id:nid(),type:'quote',text:'“Sing in me, Muse, and through me tell the story of that man skilled in all ways of contending.”',book:'odyssey',node:null,ts:Date.now()-7200e3},
+    {id:nid(),type:'thought',text:'Coming home is not arriving — he still has to be recognised before Ithaca is his again.',book:'odyssey',node:'ithaca',ts:Date.now()-86400e3},
+  ];
+  persist();
+}
+function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function lsSet(k,v){ try{ v===null?localStorage.removeItem(k):localStorage.setItem(k,v); }catch(e){} }
+function adoptPlateNotes(){
+  let changed=false;
+  KNOTS.forEach(k=>{
+    const raw=lsGet('odyssey_note_'+k.id)||'';
+    raw.split('\n\n').map(s=>s.trim()).filter(Boolean).forEach(ch=>{
+      if(!NOTES.some(n=>n.node===k.id && n.text===ch)){
+        NOTES.unshift({id:nid(),type:'thought',text:ch,book:'odyssey',node:k.id,ts:Date.now()}); changed=true;
+      }
+    });
+  });
+  if(changed) persist();
+}
+function rebuildMirror(){
+  KNOTS.forEach(k=>{
+    const txt=NOTES.filter(n=>n.node===k.id).sort((a,b)=>a.ts-b.ts).map(n=>n.text).join('\n\n');
+    lsSet('odyssey_note_'+k.id, txt||null);
+  });
+  const order=KNOTS.filter(k=>NOTES.some(n=>n.node===k.id))
+    .sort((a,b)=>Math.min.apply(null,NOTES.filter(n=>n.node===a.id).map(n=>n.ts))
+                -Math.min.apply(null,NOTES.filter(n=>n.node===b.id).map(n=>n.ts)))
+    .map(k=>k.id);
+  lsSet('odyssey_log', JSON.stringify(order));
+}
+adoptPlateNotes(); rebuildMirror();
+
+/* =================== suggestion (IDF) =================== */
+const STOP=new Set('the and but for was his her its him she they them that this what with from into only not has had have will would just than then when where which while been one two all any out off own way you your our also more most such very upon about does did doing hers'.split(' '));
+const stem=w=>w.replace(/(ing|ed|es|s)$/,'');
+const DF={}; KNOTS.forEach(k=>{ new Set(k.tags).forEach(t=>{ DF[t]=(DF[t]||0)+1; }); });
+const idf=t=>Math.log(1+KNOTS.length/(DF[t]||KNOTS.length));
+function suggest(text){
+  const toks=(text.toLowerCase().match(/[a-z]+/g)||[]).filter(w=>w.length>2&&!STOP.has(w));
+  const set=new Set(); toks.forEach(t=>{ set.add(t); set.add(stem(t)); });
+  let best=null,bs=0;
+  KNOTS.forEach(k=>{ let sc=0;
+    new Set(k.tags).forEach(t=>{ if(set.has(t)||set.has(stem(t))) sc+=idf(t); });
+    k.n.toLowerCase().split(/[^a-z]+/).forEach(w=>{ if(w.length>3&&!STOP.has(w)&&(set.has(w)||set.has(stem(w)))) sc+=3; });
+    if(sc>bs){ bs=sc; best=k; } });
+  return bs>0.5?best:null;
+}
+
+/* =================== refresh flash =================== */
+const flashEl=document.getElementById('flash');
+function flash(){ flashEl.style.transition='none'; flashEl.style.opacity='0.9';
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{ flashEl.style.transition='opacity .16s steps(3)'; flashEl.style.opacity='0'; })); }
+
+/* =================== altitude: shelf ⇄ book · perception: shelf ⇄ field =================== */
+let inBook=false, fieldOpen=false, currentBook='odyssey', frameBook=null;
+function enterBook(bookId){
+  const book=BOOKS.find(b=>b.id===bookId) || BOOKS.find(b=>b.id===currentBook) || BOOKS.find(b=>b.live);
+  currentBook = book ? book.id : 'odyssey';
+  // route the single instrument iframe to this book's experience
+  if(book && book.instrument && frameBook!==currentBook){ frame.src=instrURL(book.instrument); frameBook=currentBook; }
+  const bt=document.getElementById('bookTitle'); if(bt && book) bt.textContent=book.title;
+  const pb=document.getElementById('percBtn'); if(pb && book && book.perception) pb.textContent='⟨ '+book.perception+' ⟩';
+  if(fieldOpen) setFieldOpen(false,true);
+  inBook=true; document.body.classList.add('inbook');
+  renderLeaves();
+  // the instrument mirrors the leaves column: figure left when it's open
+  tellFrame({type:'ast:shift',on:makeWrap.classList.contains('open') && !notesFull});
+}
+function leaveBook(){
+  inBook=false; document.body.classList.remove('inbook');
+  renderShelf(); renderLeaves(); renderTrace();
+  if(sow) cancelSow();
+}
+document.getElementById('backShelf').addEventListener('click',()=>{ flash(); leaveBook(); });
+document.getElementById('percBtn').addEventListener('click',()=>{
+  const n=document.getElementById('percNote'); n.style.opacity='1';
+  setTimeout(()=>{ n.style.opacity='0'; },2600);
+});
+function setFieldOpen(v,quiet){
+  fieldOpen=v; document.body.classList.toggle('field',v);
+  document.querySelectorAll('#libPercSeg button').forEach(b=>b.classList.toggle('on',(b.dataset.p==='field')===v));
+  if(v) setTimeout(()=>tellField({type:'ast:fieldIntro'}),60);   // the coalescence
+  if(!quiet) flash();
+}
+document.querySelectorAll('#libPercSeg button').forEach(b=>b.addEventListener('click',()=>{
+  setFieldOpen(b.dataset.p==='field');
+}));
+
+/* =================== the shelf =================== */
+let shelfMounts=[];
+function renderShelf(){
+  const S=document.getElementById('shelfGrid');
+  shelfMounts.forEach(m=>m.destroy()); shelfMounts=[];
+  S.innerHTML='';
+  BOOKS.forEach(b=>{
+    const mine=NOTES.filter(n=>n.book===b.id).length;
+    const d=document.createElement('div'); d.className='bk corners'+(b.live?'':' dead');
+    const fig=document.createElement('div'); fig.className='fig';
+    const cv=document.createElement('canvas'); fig.appendChild(cv);
+    const h=document.createElement('h3'); h.textContent=b.title;
+    const meta=document.createElement('div'); meta.className='bkMeta';
+    meta.innerHTML='<div class="sub">'+b.sub+'</div>'+
+      '<div class="tag">'+(mine?('<span class="num">'+mine+'</span> of your writings · '):'')+b.tag+'</div>';
+    d.appendChild(fig); d.appendChild(h); d.appendChild(meta);
+    if(b.live) d.addEventListener('click',()=>{ flash(); enterBook(b.id); });
+    S.appendChild(d);
+    if(window.CardSculptures){
+      const m=CardSculptures.mount(cv,b.form,{ink:b.live?[27,25,22]:[92,86,76],title:b.title});
+      d.addEventListener('mouseenter',()=>m.morph(true));
+      d.addEventListener('mouseleave',()=>m.morph(false));
+      shelfMounts.push(m);
+    }
+  });
+}
+
+/* =================== WRITE — a page, summoned from anywhere =================== */
+const lineEl=document.getElementById('line'), lineText=document.getElementById('lineText'),
+      qMark=document.getElementById('qMark'), srcText=document.getElementById('srcText'),
+      srcMatch=document.getElementById('srcMatch'), ctxChip=document.getElementById('ctxChip'),
+      ctxMenu=document.getElementById('ctxMenu'), lineHint=document.getElementById('lineHint'),
+      offerQuote=document.getElementById('offerQuote');
+let writeSaveBtn=null, writeTitle='A new note';   // the write head lives in #notesHead now
+let quoteOn=false;
+let ctxSel={book:null,node:null,explicit:false};
+let editingId=null, editingOrig=null;
+let writeOpen=false, writePlated=false;
+const DRAFT_KEY='ast_draft_v1';
+
+function openWrite(opts){
+  opts=opts||{};
+  writeOpen=true; document.body.classList.add('writeopen');
+  // the figure keeps the verso: a plate shows its sculpture bare; the
+  // atlas shifts left; the shelf and field recede to paper
+  writePlated=document.body.classList.contains('plated');
+  if(writePlated) tellFrame({type:'ast:writing',on:true});
+  else if(inBook) tellFrame({type:'ast:shift',on:true});
+  // scope to where you stand: on a plate, to the knot; inside a book, to it;
+  // at the shelf it starts loose. Explicit choices and live drafts are kept.
+  if(opts.node){ ctxSel={book:currentBook,node:opts.node,explicit:true}; renderChip(); }
+  else if(!editingId && !ctxSel.explicit && !lineText.value.trim()){
+    ctxSel={book:inBook?currentBook:null,node:null,explicit:false}; renderChip();
+  }
+  writeTitle = editingId?'Editing a leaf':'A new note';
+  renderWriteHead();
+  refreshLine();
+  setTimeout(()=>lineText.focus(),120);
+}
+function closeWrite(){
+  writeOpen=false; document.body.classList.remove('writeopen');
+  ctxMenu.classList.remove('open');
+  if(writePlated) tellFrame({type:'ast:writing',on:false});
+  else if(inBook) tellFrame({type:'ast:shift',on:makeWrap.classList.contains('open') && !notesFull});
+  writePlated=false;
+  // hand the head back: the notes list if it's open, else it retires with full-screen
+  if(makeWrap.classList.contains('open')) renderLeaves(); else setNotesFull(false,true);
+}
+document.getElementById('newNote').addEventListener('click',()=>openWrite());
+
+function matchBook(q){
+  q=(q||'').toLowerCase().trim(); if(q.length<3) return null;
+  return BOOKS.find(b=>{ const t=b.title.toLowerCase();
+    return t.indexOf(q)>=0 || q.indexOf(t)>=0 || q.indexOf(t.replace(/^the /,''))>=0; })||null;
+}
+function lineH(){ return parseFloat(getComputedStyle(lineText).lineHeight)||34; }
+function grow(){ lineText.style.height='auto'; lineText.style.height=lineText.scrollHeight+'px'; }
+function lineCount(){ return Math.max(1,Math.round((lineText.scrollHeight-9)/lineH())); }
+function isSingle(){ return lineText.value.indexOf('\n')<0 && lineCount()<=1; }
+
+function setQuote(v,focusSrc){
+  quoteOn=v; lineEl.classList.toggle('quote',v);
+  offerQuote.classList.remove('show');
+  if(v&&focusSrc) setTimeout(()=>srcText.focus(),60);
+  if(!v){ srcText.value=''; srcMatch.textContent=''; if(!ctxSel.explicit){ ctxSel.book=null; renderChip(); } }
+  refreshLine();
+}
+qMark.addEventListener('click',()=>setQuote(!quoteOn,true));
+offerQuote.addEventListener('click',()=>setQuote(true,true));
+
+function renderChip(){
+  ctxChip.textContent = ctxSel.node ? ('● '+(KN[ctxSel.node]||{}).n)
+    : ctxSel.book ? ('◐ '+bookTitle(ctxSel.book)) : '○ Loose';
+}
+ctxChip.addEventListener('click',e=>{ e.stopPropagation();
+  if(ctxSel.node) return;
+  ctxMenu.classList.toggle('open'); });
+document.addEventListener('click',()=>ctxMenu.classList.remove('open'));
+(function(){
+  const mk=(label,book)=>{ const b=document.createElement('button'); b.type='button'; b.textContent=label;
+    b.addEventListener('click',()=>{ ctxSel={book,node:null,explicit:true}; renderChip(); ctxMenu.classList.remove('open'); saveDraft(); });
+    ctxMenu.appendChild(b); };
+  mk('○ Loose',null);
+  BOOKS.forEach(b=>mk('◐ '+b.title,b.id));
+})();
+
+srcText.addEventListener('input',()=>{
+  const m=matchBook(srcText.value);
+  srcMatch.textContent=m?('→ attaches to '+m.title+' ◐'):'';
+  if(!ctxSel.explicit){ ctxSel.book=m?m.id:null; renderChip(); }
+  saveDraft();
+});
+
+function refreshLine(){
+  grow();
+  lineHint.textContent = editingId ? 'editing a leaf — ⌘/Ctrl+Enter updates'
+    : (isSingle()&&!quoteOn ? 'Enter sets it down · Esc cancels' : '⌘/Ctrl+Enter sets it down · Esc cancels');
+  if(writeSaveBtn) writeSaveBtn.textContent = editingId ? 'Update it' : 'Set it down';
+  saveDraft();
+}
+function saveDraft(){
+  if(editingId) return;
+  try{ const t=lineText.value;
+    if(!t.trim()&&!srcText.value.trim()){ localStorage.removeItem(DRAFT_KEY); return; }
+    localStorage.setItem(DRAFT_KEY,JSON.stringify({t,q:quoteOn,s:srcText.value,b:ctxSel.book,x:ctxSel.explicit}));
+  }catch(e){}
+}
+function restoreDraft(){
+  try{ const d=JSON.parse(localStorage.getItem(DRAFT_KEY)||'null'); if(!d) return;
+    lineText.value=d.t||''; if(d.q) setQuote(true,false);
+    srcText.value=d.s||''; ctxSel={book:d.b||null,node:null,explicit:!!d.x}; renderChip();
+    if(d.s){ const m=matchBook(d.s); srcMatch.textContent=m?('→ attaches to '+m.title+' ◐'):''; }
+  }catch(e){}
+}
+
+function resetLine(){
+  lineText.value=''; setQuote(false,false);
+  editingId=null; editingOrig=null;
+  ctxSel={book:null,node:null,explicit:false}; renderChip();
+  refreshLine();
+}
+/* commit → the slip flies into the stack (the loved move survives the IA) */
+function flyToStack(text){
+  const face=document.querySelector('#leavesBtn .face');
+  if(!face||!face.offsetParent) return;
+  const from=lineEl.getBoundingClientRect();
+  const r=face.getBoundingClientRect();
+  flyText(text, from, r.left+r.width/2, r.top+r.height/2, ()=>{ pulseLeaves(); });
+}
+function noteType(t){ return quoteOn?'quote':((/\n\s*\n/.test(t)||t.length>420)?'essay':'thought'); }
+function commitLine(){
+  const t=lineText.value.trim(); if(!t) return;
+  const src = quoteOn?srcText.value.trim():'';
+  if(editingId){
+    const n=NOTES.find(x=>x.id===editingId);
+    if(n){
+      n.text=t;
+      n.type = quoteOn?'quote':(n.type==='essay'?'essay':noteType(t));
+      if(src) n.src=src; else delete n.src;
+      n.book=ctxSel.book||n.book||null;
+      persist(); rebuildMirror();
+      tellFrame({type:'ast:notes'});
+    }
+    const stash=(function(){ try{ return localStorage.getItem(DRAFT_KEY); }catch(e){ return null; } })();
+    resetLine();
+    if(stash){ try{ localStorage.setItem(DRAFT_KEY,stash); }catch(e){} restoreDraft(); }
+    refreshLine(); renderLeaves(); tellField({type:'ast:notes'});
+    closeWrite();
+    return;
+  }
+  const note={id:nid(),type:noteType(t),text:t,book:ctxSel.book||null,node:ctxSel.node||null,ts:Date.now()};
+  if(src) note.src=src;
+  NOTES.unshift(note); persist(); if(note.node) rebuildMirror();
+  const flownText=t;
+  resetLine();
+  try{ localStorage.removeItem(DRAFT_KEY); }catch(e){}
+  refreshLine(); renderLeaves(); renderShelf(); tellField({type:'ast:notes'});
+  tellFrame({type:'ast:notes'});
+  closeWrite();
+  // the stack is hidden while a plate is open — nowhere for the slip to fly
+  if(!document.body.classList.contains('plated')) flyToStack(flownText);
+}
+
+function openLeafForEdit(n){
+  flash();
+  editingId=n.id; editingOrig=n;
+  lineText.value=n.text;
+  setQuote(n.type==='quote',false);
+  srcText.value=n.src||'';
+  if(n.src){ const m=matchBook(n.src); srcMatch.textContent=m?('→ attaches to '+m.title+' ◐'):''; }
+  else srcMatch.textContent='';
+  ctxSel={book:n.book||null,node:n.node||null,explicit:true}; renderChip();
+  openWrite();
+  setTimeout(()=>{ lineText.focus(); lineText.selectionStart=lineText.selectionEnd=lineText.value.length; },140);
+}
+function cancelLeafEdit(){
+  if(!editingId) return;
+  const stash=(function(){ try{ return localStorage.getItem(DRAFT_KEY); }catch(e){ return null; } })();
+  resetLine();
+  if(stash){ try{ localStorage.setItem(DRAFT_KEY,stash); }catch(e){} restoreDraft(); }
+  writeTitle='A new note'; if(writeOpen) renderWriteHead();
+  refreshLine();
+}
+
+lineText.addEventListener('input',()=>{
+  if(!quoteOn && /^>\s?/.test(lineText.value)){ lineText.value=lineText.value.replace(/^>\s?/,''); setQuote(true,false); }
+  refreshLine();
+});
+lineText.addEventListener('paste',()=>{
+  setTimeout(()=>{ if(!quoteOn && lineText.value.trim().split(/\s+/).length>15) offerQuote.classList.add('show');
+    refreshLine(); },0);
+});
+lineText.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    if(editingId){ e.preventDefault(); cancelLeafEdit(); closeWrite(); }
+    else { e.preventDefault(); closeWrite(); }
+    return;
+  }
+  if(e.key!=='Enter') return;
+  if(e.metaKey||e.ctrlKey){ e.preventDefault(); commitLine(); return; }
+  if(e.shiftKey) return;
+  if(quoteOn){ e.preventDefault(); srcText.focus(); return; }
+  if(isSingle()){ e.preventDefault(); commitLine(); }
+});
+srcText.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){ e.preventDefault(); commitLine(); }
+  if(e.key==='Escape'){ e.preventDefault(); closeWrite(); }
+});
+
+/* =================== BR · the stack (the book's — or the library's — writing) =================== */
+const makeWrap=document.getElementById('makeWrap'), leavesPanel=document.getElementById('leavesPanel'),
+      notesHead=document.getElementById('notesHead');
+let leavesMode=lsGet('ast_leaves_mode')||'stack';   // 'stack' | 'slide'
+let slideIdx=0, panelEdit=null;                      // panelEdit: {id:noteId|null}
+let notesFull=false;
+function setLeavesOpen(v){
+  makeWrap.classList.toggle('open',v);
+  document.body.classList.toggle('leavesopen',v);
+  if(!v){ panelEdit=null; setNotesFull(false,true); }
+  if(inBook) tellFrame({type:'ast:shift',on:v && !notesFull});
+}
+function setNotesFull(v,quiet){
+  if(notesFull===v) return;
+  notesFull=v; document.body.classList.toggle('notesfull',v);
+  if(inBook && makeWrap.classList.contains('open') && !writeOpen) tellFrame({type:'ast:shift',on:!v && makeWrap.classList.contains('open')});
+  if(quiet) return;
+  if(writeOpen) renderWriteHead(); else renderLeaves();   // re-skin whichever head is live
+}
+document.getElementById('leavesBtn').addEventListener('click',()=>{
+  if(makeWrap.classList.contains('empty')) return;
+  setLeavesOpen(!makeWrap.classList.contains('open'));
+});
+function pulseLeaves(){
+  const f=document.querySelector('#leavesBtn .face');
+  f.animate([{transform:'scale(1)'},{transform:'scale(1.06)'},{transform:'scale(1)'}],{duration:340,easing:'cubic-bezier(0.34,1.3,0.5,1)'});
+}
+const tMark={thought:'·',quote:'❝',essay:'¶'};
+function fmtD(ts){ try{ return new Date(ts).toLocaleDateString(undefined,{month:'short',day:'numeric'}); }catch(e){ return ''; } }
+function looseForScope(){ return NOTES.filter(n=>!n.node && (!n.book || !inBook || n.book===currentBook)); }
+function placedForScope(){ return NOTES.filter(n=>n.node && (!inBook || n.book===currentBook)); }
+function iconSvg(path){ return '<svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round">'+path+'</svg>'; }
+/* the full-screen toggle — the same atom in every right-panel head */
+function fsBtn(){
+  const b=document.createElement('button'); b.type='button';
+  b.className='icon-act'+(notesFull?' on':'');
+  b.title=notesFull?'Exit full screen':'Full screen'; b.setAttribute('aria-label',b.title);
+  b.innerHTML=iconSvg(notesFull
+    ?'<path d="M5.5 2v3.5H2M8.5 12V8.5H12M2 8.5h3.5V12M12 5.5H8.5V2"/>'
+    :'<path d="M8.5 2H12v3.5M5.5 12H2V8.5M12 8.5V12H8.5M2 5.5V2h3.5"/>');
+  b.addEventListener('click',()=>setNotesFull(!notesFull));
+  return b;
+}
+/* the write head — the SAME #notesHead, in writing dress: a title, then
+   full-screen · Set it down · Cancel. Identical grammar to the edit head. */
+function renderWriteHead(){
+  notesHead.classList.add('editing');
+  notesHead.innerHTML='';
+  const hl=document.createElement('span'); hl.className='ph-label'; hl.textContent=writeTitle;
+  notesHead.appendChild(hl);
+  const acts=document.createElement('div'); acts.className='ph-acts';
+  acts.appendChild(fsBtn());
+  writeSaveBtn=document.createElement('button'); writeSaveBtn.type='button'; writeSaveBtn.className='btn-ink';
+  writeSaveBtn.textContent=editingId?'Update it':'Set it down';
+  writeSaveBtn.addEventListener('click',commitLine);
+  acts.appendChild(writeSaveBtn);
+  acts.appendChild(lvAct('Cancel',()=>{ if(editingId) cancelLeafEdit(); closeWrite(); }));
+  notesHead.appendChild(acts);
+}
+function leafCard(n,loose){
+  const d=document.createElement('div'); d.className='leaf is-note is-'+n.type;
+  const meta=document.createElement('div'); meta.className='lmeta';
+  const st=document.createElement('span'); st.textContent=G[stateOf(n)]; st.style.color='var(--ink-soft)';
+  const mt=document.createElement('span');
+  mt.textContent=n.type+(n.node?(' · '+knName(n.node)):(n.book?(' · '+bookTitle(n.book)):''))+' · '+fmtD(n.ts);
+  meta.appendChild(st); meta.appendChild(mt);
+  const p=document.createElement('p'); p.className='ltxt'; p.textContent=n.text;
+  const row=document.createElement('div'); row.className='lrow';
+  if(loose){
+    const sug=suggest(n.text);
+    const lbl=document.createElement('span'); lbl.className='sug';
+    lbl.innerHTML=sug?('suggested · <b>'+sug.n+'</b> · the wandering'):'no clear match';
+    row.appendChild(lbl);
+    const go=document.createElement('button'); go.className='mono-btn'; go.textContent='Place';
+    go.addEventListener('click',e=>{ e.stopPropagation(); beginSow(n.id); });
+    row.appendChild(go);
+  } else {
+    const open=document.createElement('button'); open.className='act'; open.textContent='plate ›';
+    open.addEventListener('click',e=>{ e.stopPropagation(); setLeavesOpen(false);
+      const sw=!inBook||currentBook!==n.book; if(sw){ flash(); enterBook(n.book); }
+      setTimeout(()=>tellFrame({type:'ast:focus',id:n.node}), sw?160:0); });
+    row.appendChild(open);
+    const un=document.createElement('button'); un.className='act'; un.textContent='unpin';
+    un.addEventListener('click',e=>{ e.stopPropagation(); n.node=null; persist(); rebuildMirror(); renderLeaves(); tellField({type:'ast:notes'}); });
+    row.appendChild(un);
+  }
+  const del=document.createElement('button'); del.className='act right'; del.textContent='discard';
+  del.addEventListener('click',e=>{ e.stopPropagation();
+    NOTES=NOTES.filter(m=>m.id!==n.id); persist(); rebuildMirror(); renderLeaves(); renderShelf(); tellField({type:'ast:notes'}); });
+  row.appendChild(del);
+  d.appendChild(meta); d.appendChild(p); d.appendChild(row);
+  d.addEventListener('click',()=>{ panelEdit={id:n.id}; renderLeaves(); });
+  return d;
+}
+/* the canonical panel head, rendered into the chrome (top-right) */
+function renderNotesHead(total){
+  notesHead.classList.remove('editing');
+  notesHead.innerHTML='';
+  const hl=document.createElement('span'); hl.className='ph-label';
+  hl.innerHTML='Notes · <span class="num">'+total+'</span>'; notesHead.appendChild(hl);
+  const acts=document.createElement('div'); acts.className='ph-acts';
+  [['stack','Stacked','<path d="M2 3.5h10M2 7h10M2 10.5h10"/>'],
+   ['slide','One at a time','<rect x="2.5" y="3" width="9" height="8" rx="1"/>']].forEach(([m,label,path])=>{
+    const b=document.createElement('button'); b.type='button';
+    b.className='icon-act'+(leavesMode===m?' on':'');
+    b.title=label; b.setAttribute('aria-label',label);
+    b.innerHTML=iconSvg(path);
+    b.addEventListener('click',()=>{ leavesMode=m; lsSet('ast_leaves_mode',m); renderLeaves(); });
+    acts.appendChild(b);
+  });
+  // full screen: the figure recedes, the notes take the page
+  acts.appendChild(fsBtn());
+  notesHead.appendChild(acts);
+  const close=document.createElement('button'); close.className='icon-act ph-close';
+  close.setAttribute('aria-label','Close notes'); close.title='Close';
+  close.innerHTML='<svg viewBox="0 0 14 14" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M3 3l8 8M11 3l-8 8"/></svg>';
+  close.addEventListener('click',()=>setLeavesOpen(false));
+  notesHead.appendChild(close);
+}
+function lvAct(label,fn){
+  const b=document.createElement('button'); b.type='button'; b.className='act'; b.textContent=label;
+  b.addEventListener('click',e=>{ e.stopPropagation(); fn(); }); return b;
+}
+function notifyFrame(){ tellFrame({type:'ast:notes'}); }
+/* the whole column becomes the page you write on; its acts ride the head */
+function renderPanelEdit(){
+  leavesPanel.innerHTML='';
+  const n=panelEdit.id?NOTES.find(x=>x.id===panelEdit.id):null;
+  if(panelEdit.id && !n){ panelEdit=null; renderLeaves(); return; }
+  const ta=document.createElement('textarea'); ta.className='lvEdit';
+  ta.value=n?n.text:''; ta.placeholder='Set something down…';
+  const grow=()=>{ ta.style.height='auto'; ta.style.height=Math.max(120,ta.scrollHeight)+'px'; };
+  const save=()=>{
+    const t=ta.value.trim(); if(!t){ cancel(); return; }
+    if(n){ n.text=t; }
+    else NOTES.unshift({id:nid(),type:'thought',text:t,book:inBook?currentBook:null,node:null,ts:Date.now()});
+    persist(); rebuildMirror(); panelEdit=null;
+    notifyFrame(); tellField({type:'ast:notes'});
+    renderLeaves(); renderShelf();
+  };
+  const cancel=()=>{ panelEdit=null; renderLeaves(); };
+  // the head becomes the leaf's head: what it is on the left, its acts on the right
+  notesHead.classList.add('editing');
+  notesHead.innerHTML='';
+  const hl=document.createElement('span'); hl.className='ph-label';
+  hl.textContent = n
+    ? n.type+(n.node?(' · '+knName(n.node)):(n.book?(' · '+bookTitle(n.book)):' · loose'))+' · '+fmtD(n.ts)
+    : 'A new note';
+  notesHead.appendChild(hl);
+  const acts=document.createElement('div'); acts.className='ph-acts';
+  acts.appendChild(fsBtn());
+  const sv=document.createElement('button'); sv.type='button'; sv.className='btn-ink';
+  sv.textContent=n?'Update it':'Set it down'; sv.addEventListener('click',save);
+  acts.appendChild(sv);
+  acts.appendChild(lvAct('Cancel',cancel));
+  notesHead.appendChild(acts);
+  const wrap=document.createElement('div'); wrap.className='lvWrap';
+  ta.addEventListener('input',grow);
+  ta.addEventListener('keydown',e=>{
+    e.stopPropagation();
+    if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){ e.preventDefault(); save(); }
+    else if(e.key==='Escape'){ e.preventDefault(); cancel(); }
+  });
+  wrap.appendChild(ta);
+  const hint=document.createElement('div'); hint.className='sug'; hint.style.marginTop='12px';
+  hint.textContent='⌘/Ctrl+Enter sets it down · Esc cancels';
+  wrap.appendChild(hint);
+  leavesPanel.appendChild(wrap);
+  setTimeout(()=>{ grow(); ta.focus(); ta.selectionStart=ta.selectionEnd=ta.value.length; },60);
+}
+function renderPanelSlide(loose,placed){
+  const list=loose.map(n=>({n,loose:true})).concat(placed.map(n=>({n,loose:false})));
+  slideIdx=Math.max(0,Math.min(list.length-1,slideIdx));
+  const cur=list[slideIdx], n=cur.n;
+  const wrap=document.createElement('div'); wrap.className='lvWrap';
+  const meta=document.createElement('div'); meta.className='lvMeta';
+  meta.textContent=n.type+(n.node?(' · '+knName(n.node)):(n.book?(' · '+bookTitle(n.book)):' · loose'))+' · '+fmtD(n.ts);
+  wrap.appendChild(meta);
+  const p=document.createElement('div'); p.className='lvTxt'+(n.type==='quote'?' is-quote':'');
+  p.textContent=n.text; p.title='Edit this leaf';
+  p.addEventListener('click',()=>{ panelEdit={id:n.id}; renderLeaves(); });
+  wrap.appendChild(p);
+  if(n.src){ const s=document.createElement('div'); s.className='lvSrc'; s.textContent='— '+n.src; wrap.appendChild(s); }
+  const row=document.createElement('div'); row.className='lvActs';
+  row.appendChild(lvAct('Edit',()=>{ panelEdit={id:n.id}; renderLeaves(); }));
+  if(cur.loose){
+    const sug=suggest(n.text);
+    if(sug){ const lbl=document.createElement('span'); lbl.className='sug';
+      lbl.innerHTML='suggested · <b>'+sug.n+'</b>'; row.appendChild(lbl); }
+    row.appendChild(lvAct('Place',()=>beginSow(n.id)));
+  } else {
+    row.appendChild(lvAct('plate ›',()=>{ setLeavesOpen(false);
+      const sw=!inBook||currentBook!==n.book; if(sw){ flash(); enterBook(n.book); }
+      setTimeout(()=>tellFrame({type:'ast:focus',id:n.node}), sw?160:0); }));
+    row.appendChild(lvAct('Unpin',()=>{ n.node=null; persist(); rebuildMirror(); renderLeaves(); notifyFrame(); tellField({type:'ast:notes'}); }));
+  }
+  row.appendChild(lvAct('Discard',()=>{ NOTES=NOTES.filter(m=>m.id!==n.id); persist(); rebuildMirror();
+    renderLeaves(); renderShelf(); notifyFrame(); tellField({type:'ast:notes'}); }));
+  wrap.appendChild(row);
+  const nav=document.createElement('div'); nav.className='lvNav';
+  const pv=document.createElement('button'); pv.type='button'; pv.textContent='‹'; pv.disabled=slideIdx<=0;
+  pv.addEventListener('click',()=>{ slideIdx--; renderLeaves(); });
+  const dots=document.createElement('div'); dots.className='dots';
+  list.forEach((x,i)=>{ const d=document.createElement('span'); d.className='dnt'+(i===slideIdx?' on':''); dots.appendChild(d); });
+  const nx=document.createElement('button'); nx.type='button'; nx.textContent='›'; nx.disabled=slideIdx>=list.length-1;
+  nx.addEventListener('click',()=>{ slideIdx++; renderLeaves(); });
+  nav.appendChild(pv); nav.appendChild(dots); nav.appendChild(nx);
+  wrap.appendChild(nav);
+  leavesPanel.appendChild(wrap);
+}
+function renderLeaves(){
+  const loose=looseForScope(), placed=placedForScope();
+  const total=loose.length+placed.length;
+  document.getElementById('leavesCount').textContent=total;
+  makeWrap.classList.toggle('empty',!total && !panelEdit);
+  if(panelEdit){
+    if(leavesPanel.querySelector('.lvEdit')) return;   // never clobber a live draft
+    renderPanelEdit(); return;
+  }
+  if(!total){ setLeavesOpen(false);
+    leavesPanel.innerHTML='<div class="leaves-empty">No notes yet — write one.</div>'; return; }
+  renderNotesHead(total);
+  leavesPanel.innerHTML='';
+  if(leavesMode==='slide' && !notesFull){ renderPanelSlide(loose,placed); return; }
+  if(loose.length){
+    const h=document.createElement('div'); h.className='leafGroup';
+    h.innerHTML='<span>Loose</span><span class="num">'+loose.length+'</span>';
+    leavesPanel.appendChild(h);
+    loose.forEach(n=>leavesPanel.appendChild(leafCard(n,true)));
+  }
+  if(placed.length){
+    const h=document.createElement('div'); h.className='leafGroup';
+    h.innerHTML='<span>'+(inBook?'Placed':'Placed in books')+'</span><span class="num">'+placed.length+'</span>';
+    leavesPanel.appendChild(h);
+    placed.forEach(n=>leavesPanel.appendChild(leafCard(n,false)));
+  }
+}
+
+/* =================== BL · the trace, folded to one mark =================== */
+const TRACE_KEY='ast_trace_v1';
+const traceEl=document.getElementById('trace'), tracePanel=document.getElementById('tracePanel'),
+      traceBtn=document.getElementById('traceBtn');
+function getTrace(){ try{ return JSON.parse(localStorage.getItem(TRACE_KEY)||'[]'); }catch(e){ return []; } }
+function recordTrace(nodeId){
+  let t=getTrace().filter(x=>x.node!==nodeId);
+  t.unshift({node:nodeId,ts:Date.now()});
+  t=t.slice(0,12);
+  try{ localStorage.setItem(TRACE_KEY,JSON.stringify(t)); }catch(e){}
+  renderTrace();
+}
+function renderTrace(){
+  const t=getTrace().filter(x=>KN[x.node]);
+  traceEl.classList.toggle('none',!t.length);
+  if(!t.length){ traceEl.classList.remove('open'); return; }
+  tracePanel.innerHTML='';
+  const head=document.createElement('div'); head.className='panel-head';
+  const hl=document.createElement('span'); hl.className='ph-label'; hl.textContent='Where you were';
+  head.appendChild(hl);
+  const close=document.createElement('button'); close.className='icon-act ph-close';
+  close.setAttribute('aria-label','Close'); close.title='Close';
+  close.innerHTML='<svg viewBox="0 0 14 14" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M3 3l8 8M11 3l-8 8"/></svg>';
+  close.addEventListener('click',()=>traceEl.classList.remove('open'));
+  head.appendChild(close);
+  tracePanel.appendChild(head);
+  const list=document.createElement('div'); list.className='trList';
+  t.forEach(x=>{
+    const c=document.createElement('button'); c.className='trEntry'; c.type='button';
+    c.innerHTML='<span class="nm">'+KN[x.node].n+'</span>'+
+      '<span class="meta">The Odyssey'+(x.ts?(' · '+fmtD(x.ts)):'')+'</span>';
+    c.addEventListener('click',()=>{
+      traceEl.classList.remove('open');
+      if(fieldOpen) setFieldOpen(false,true);
+      flash(); enterBook('odyssey');
+      setTimeout(()=>tellFrame({type:'ast:focus',id:x.node}),160);
+    });
+    list.appendChild(c);
+  });
+  tracePanel.appendChild(list);
+}
+traceBtn.addEventListener('click',()=>{ traceEl.classList.toggle('open'); });
+
+/* =================== sowing (suggested + fling) =================== */
+let sow=null, pending=null, pendTimer=null;
+const sowBar=document.getElementById('sowBar'), sowTxt=sowBar.querySelector('.txt');
+function beginSow(noteId){
+  const n=NOTES.find(x=>x.id===noteId); if(!n) return;
+  setLeavesOpen(false);
+  if(!inBook){ flash(); enterBook(); }               // sowing happens on the map
+  tellFrame({type:'ast:home'});
+  const s=suggest(n.text);
+  sow={noteId,targetId:s?s.id:null};
+  updateSowUI();
+}
+function updateSowUI(){
+  if(!sow){ sowBar.classList.remove('show'); return; }
+  sowBar.classList.add('show');
+  sowTxt.innerHTML = sow.targetId
+    ? 'Suggested <b>'+KN[sow.targetId].n+'</b> <span style="font-style:italic;color:var(--ghost)">— place it, or open a point in the map</span>'
+    : '<span style="font-style:italic;color:var(--ghost)">No clear match — open a point in the map to choose</span>';
+  const pb=document.getElementById('sowPlace');
+  pb.style.opacity=sow.targetId?'1':'.4'; pb.style.pointerEvents=sow.targetId?'auto':'none';
+}
+function placeSow(){
+  if(!sow||!sow.targetId) return;
+  const n=NOTES.find(x=>x.id===sow.noteId); if(!n){ cancelSow(); return; }
+  const id=sow.targetId; sow=null; updateSowUI();
+  pending={note:n,knot:id};
+  tellFrame({type:'ast:posQuery',id});
+  pendTimer=setTimeout(()=>{ if(pending) landSow(window.innerWidth/2, window.innerHeight/2); },340);
+}
+function cancelSow(){ sow=null; updateSowUI(); renderLeaves(); }
+document.getElementById('sowPlace').addEventListener('click',placeSow);
+document.getElementById('sowCancel').addEventListener('click',cancelSow);
+function landSow(tx,ty){
+  const p=pending; pending=null; if(!p) return;
+  flyText(p.note.text, sowBar.getBoundingClientRect(), tx, ty, ()=>{
+    p.note.node=p.knot; p.note.book=currentBook; p.note.ts=p.note.ts||Date.now();
+    persist(); rebuildMirror(); flash(); renderLeaves(); tellField({type:'ast:notes'});
+    tellFrame({type:'ast:sown',id:p.knot});
+  });
+}
+function flyText(text,fromRect,tx,ty,done){
+  const fly=document.createElement('div'); fly.className='fly';
+  fly.textContent=text.length>90?text.slice(0,88)+'…':text;
+  fly.style.left=fromRect.left+'px'; fly.style.top=fromRect.top+'px';
+  document.body.appendChild(fly);
+  const fr=fly.getBoundingClientRect();
+  const dx=tx-(fr.left+fr.width/2), dy=ty-(fr.top+fr.height/2);
+  requestAnimationFrame(()=>{ fly.style.transform='translate('+dx+'px,'+dy+'px) scale(0.12) rotate(3deg)'; fly.style.opacity='0'; });
+  setTimeout(()=>{ fly.remove(); done&&done(); },560);
+}
+
+/* =================== instrument bridge =================== */
+window.addEventListener('message',ev=>{
+  const d=ev.data||{}; if(!d.type) return;
+  if(d.type==='ast:pos' && pending && d.id===pending.knot){ clearTimeout(pendTimer); landSow(d.ok?d.sx:window.innerWidth/2, d.ok?d.sy:window.innerHeight/2); }
+  else if(d.type==='ast:plate'){
+    document.body.classList.toggle('plated', !!d.open);
+    if(d.open && d.id) recordTrace(d.id);
+    if(!d.open){ if(writeOpen) closeWrite(); NOTES=loadNotes()||NOTES; rebuildMirror(); renderLeaves(); renderTrace(); tellField({type:'ast:notes'}); }
+  }
+  else if(d.type==='ast:notes'){
+    NOTES=loadNotes()||NOTES; renderLeaves(); tellField({type:'ast:notes'});
+  }
+  else if(d.type==='ast:write'){
+    // the plate's plus: write on this knot, its sculpture as the verso
+    openWrite({node:d.node||null});
+  }
+  else if(d.type==='fld:enterBook'){
+    setFieldOpen(false,true); flash(); enterBook();
+  }
+  else if(d.type==='fld:focus'){
+    setFieldOpen(false,true); flash(); enterBook();
+    setTimeout(()=>tellFrame({type:'ast:focus',id:d.node}),180);
+  }
+});
+
+/* =================== keys + boot =================== */
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    if(writeOpen){ if(editingId) cancelLeafEdit(); closeWrite(); }
+    else if(panelEdit){ panelEdit=null; renderLeaves(); }
+    else if(sow) cancelSow();
+    else if(traceEl.classList.contains('open')) traceEl.classList.remove('open');
+    else if(notesFull) setNotesFull(false);
+    else if(makeWrap.classList.contains('open')) setLeavesOpen(false);
+    else if(fieldOpen) setFieldOpen(false);
+  }
+  if((e.key==='ArrowLeft'||e.key==='ArrowRight') && makeWrap.classList.contains('open')
+      && leavesMode==='slide' && !panelEdit && !writeOpen){
+    if(e.target && (e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT')) return;
+    e.preventDefault();
+    slideIdx+=(e.key==='ArrowRight'?1:-1);
+    renderLeaves();
+  }
+});
+persist();
+renderChip(); restoreDraft(); refreshLine();
+renderShelf(); renderLeaves(); renderTrace();
+requestAnimationFrame(()=>requestAnimationFrame(()=>document.body.classList.add('revealed')));
+})();
+</script>
+</body></html>

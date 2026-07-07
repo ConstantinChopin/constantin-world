@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Asterlogos — Manifesto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300;1,6..72,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script>
+  // link the design system + the canonical topology from /_shared/, resolving
+  // against the /prototypes/ segment so clean-URL servers still find them
+  // (the same resolver the surface shell and styleguide use).
+  (function(){
+    var p=location.pathname, i=p.indexOf('/prototypes/');
+    var base=(i>=0)?p.slice(0,i+12):'../';
+    document.write('<link rel="stylesheet" href="'+base+'_shared/asterlogos.css">');
+    document.write('<script src="'+base+'_shared/odyssey-topology.js"><\/script>');
+  })();
+</script>
+<style>
+  /* ================================================================== *
+   *  ASTERLOGOS — the manifesto. This file only LAYS OUT; every token,  *
+   *  colour, control and type role comes from ../_shared/asterlogos.css.*
+   *  The Odyssey shape/route come from ../_shared/odyssey-topology.js.   *
+   * ================================================================== */
+  *{box-sizing:border-box;}
+  html,body{margin:0;}
+  body{background:var(--paper);color:var(--ink);font-family:var(--serif);
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+  a{color:inherit;}
+  /* faint paper tooth — the system's page ground */
+  body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.34;
+    background-image:radial-gradient(var(--rule) 0.5px,transparent 0.5px);background-size:3px 3px;}
+
+  #cloud{position:fixed;inset:0;z-index:1;display:block;width:100%;height:100%;pointer-events:none;transition:opacity .8s var(--ease);}
+  body.finale #cloud{opacity:.5;}                       /* the cosmos settles behind the CTA */
+  #vig{position:fixed;inset:0;z-index:2;pointer-events:none;box-shadow:inset 0 0 180px rgba(70,64,54,0.12);}
+
+  #drag{position:fixed;inset:0;z-index:3;pointer-events:none;}
+  body.dragon:not(.unlocked) #drag{pointer-events:auto;cursor:grab;}
+  body.dragon:not(.unlocked) #drag:active{cursor:grabbing;}
+
+  /* the name is withheld until the Odyssey completes forming (state >= 7.5) */
+  #mark{position:fixed;top:var(--edge-top);left:32px;z-index:6;opacity:0;transition:opacity 1s var(--ease);}
+  body.named #mark{opacity:1;}
+  #mark .d{font:var(--text-meta);letter-spacing:.32em;text-transform:uppercase;color:var(--ghost);margin-top:3px;}
+  #prog{position:fixed;top:0;right:26px;bottom:0;z-index:6;width:1px;background:var(--rule);opacity:.55;}
+  #prog .fill{position:absolute;top:0;left:-0.5px;width:2px;height:0;background:var(--gild);box-shadow:0 0 6px rgba(154,128,56,.35);}
+
+  main{position:relative;z-index:4;}
+  .mv{min-height:100vh;display:grid;place-items:center;padding:14vh 6vw;}
+  .inner{max-width:720px;text-align:center;opacity:0;transition:opacity .12s linear;
+    background:radial-gradient(ellipse 82% 66% at 50% 50%, rgba(231,228,219,0.88) 0%, rgba(231,228,219,0.72) 44%, transparent 76%);
+    padding:44px 32px;border-radius:50%;}
+  /* type: sizes are layout; family/weight/tracking are the system's roles */
+  .lead{font-family:var(--display);font-weight:500;font-style:italic;font-size:clamp(30px,5.2vw,56px);line-height:1.07;letter-spacing:.01em;margin:0 0 20px;text-wrap:balance;}
+  .sub{font-family:var(--serif);font-weight:300;font-size:clamp(16px,2vw,20px);line-height:1.62;color:var(--ink-soft);max-width:50ch;margin:0 auto 14px;text-wrap:pretty;}
+  .sub:last-child{margin-bottom:0;}
+  .sub em{color:var(--ink);font-style:italic;}
+  .turn{color:var(--ink);}
+  .form{font-family:var(--display);font-weight:500;font-style:italic;font-size:clamp(28px,4.6vw,48px);line-height:1.04;margin:14px 0 0;}
+  .form .yr{display:block;font:var(--text-label);letter-spacing:.24em;text-transform:uppercase;color:var(--ghost);margin-top:14px;}
+
+  .goon{font:var(--text-label);letter-spacing:.3em;text-transform:lowercase;color:var(--ink-mid);opacity:0;transition:opacity .6s var(--ease);}
+  body.gate:not(.unlocked) #f6 .goon{opacity:1;animation:breathe 2.6s var(--ease) infinite;}
+  @keyframes breathe{0%,100%{opacity:.4}50%{opacity:1}}
+
+  body:not(.unlocked) #f7{display:none;}
+  .prep{font:var(--text-meta);letter-spacing:.24em;text-transform:uppercase;color:var(--ghost);margin:20px 0 28px;}
+  .cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+  .cta .btn{text-decoration:none;}
+  .coda{margin-top:40px;display:inline-block;text-align:left;border-top:1px solid var(--rule);padding-top:20px;}
+  .coda div{font:var(--text-meta);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-mid);padding:4px 0;display:flex;justify-content:space-between;gap:26px;}
+  .coda div:last-child{color:var(--gild);}
+
+  @media (max-width:720px){ #mark{left:22px;} #prog{right:16px;} .inner{border-radius:26px;padding:34px 22px;} }
+  @media (prefers-reduced-motion:reduce){ .inner,.goon{transition:none;} }
+</style>
+</head>
+<body>
+<canvas id="cloud" aria-hidden="true"></canvas>
+<div id="vig" aria-hidden="true"></div>
+<div id="drag" aria-hidden="true"></div>
+
+<div id="mark"><span class="masthead-word">Asterlogos</span><div class="d">a manifesto</div></div>
+<div id="prog" aria-hidden="true"><div class="fill" id="progfill"></div></div>
+
+<main>
+  <!-- I · THE INSTRUMENTS WE BUILT (no section label; the name is withheld) -->
+  <section class="mv" data-state="0"><div class="inner">
+    <h2 class="lead">Every age builds the instruments it thinks with.</h2>
+  </div></section>
+
+  <section class="mv" data-state="1"><div class="inner">
+    <p class="sub">Spheres for the heavens.</p>
+    <p class="form">the armillary sphere<span class="yr">antiquity</span></p>
+  </div></section>
+
+  <section class="mv" data-state="2"><div class="inner">
+    <p class="sub">Theatres for memory.</p>
+    <p class="form">the memory theatre<span class="yr">1550</span></p>
+  </div></section>
+
+  <section class="mv" data-state="3"><div class="inner">
+    <p class="sub">Machines for the turning of the worlds.</p>
+    <p class="form">the orrery<span class="yr">1713</span></p>
+  </div></section>
+
+  <section class="mv" data-state="4"><div class="inner">
+    <p class="sub">We learned from them. We taught from them.</p>
+    <p class="sub turn">For the stories, we only ever made pages.</p>
+  </div></section>
+
+  <!-- II · BUT EVERY STORY HAS A SHAPE -->
+  <section class="mv" data-state="5"><div class="inner">
+    <h2 class="lead">But every story has a shape.</h2>
+    <p class="form">The Odyssey<span class="yr">a cosmos in three registers</span></p>
+  </div></section>
+
+  <section class="mv" data-state="6"><div class="inner">
+    <p class="form">La Commedia<span class="yr">a ladder of ascent</span></p>
+  </div></section>
+
+  <section class="mv" data-state="7"><div class="inner">
+    <p class="form">Liturgies of the Wild<span class="yr">a rosary</span></p>
+  </div></section>
+
+  <section class="mv" data-state="7"><div class="inner">
+    <p class="sub turn"><em>The shape is not the meaning.</em> It is where the meaning has a place to happen.</p>
+  </div></section>
+
+  <!-- III · THE INSTRUMENT RETURNS — the name arrives here, with the cosmos -->
+  <section class="mv" data-state="8"><div class="inner">
+    <h2 class="lead">Asterlogos gives the book its instrument.</h2>
+    <p class="sub">To think with. To teach from.</p>
+    <p class="sub">The first edition: the Odyssey. The gods above. The sea. The dead below. The voyage drawn across it. <em>Drawn from the poem itself.</em></p>
+  </div></section>
+
+  <!-- IV · IT STANDS BESIDE THE BOOK — the cosmos holds nearly still here -->
+  <section class="mv" id="f4" data-state="8"><div class="inner">
+    <p class="sub">Nothing replaces reading the book.</p>
+    <p class="sub">This stands beside it — the whole shape held open while you read, while you teach, while you find your way.</p>
+    <p class="sub">The edition holds the form. The meaning is yours to teach.</p>
+    <p class="sub turn">Your reading is the route you take.</p>
+  </div></section>
+
+  <!-- V · YOUR HANDS (the gate) -->
+  <section class="mv" id="f6" data-state="8"><div class="inner">
+    <div class="goon">go on.</div>
+  </div></section>
+
+  <!-- THRESHOLD -->
+  <!-- OPEN DECISION (owner: Constantin — do NOT resolve in code): the shell lists the
+       Iliad as live with its own instrument, but this manifesto says the Odyssey is the
+       first edition and the coda/preparation lines omit the Iliad entirely. Copy is left
+       exactly as frozen; flagged here so the inconsistency is not shipped unconsciously. -->
+  <section class="mv" id="f7" data-state="8"><div class="inner">
+    <h2 class="lead">The Odyssey edition is live.</h2>
+    <p class="prep">in preparation — La Commedia · Hamlet's Mill</p>
+    <div class="cta">
+      <a class="btn btn--ink" href="../odyssey-sculptural/index.html">Enter the Odyssey&nbsp;<span class="arr">→</span></a>
+      <!-- BLOCKING: replace placeholder with real contact before deploy -->
+      <a class="btn btn--soft" href="mailto:hello@asterlogos.example?subject=Requesting%20the%20edition">Request the edition</a>
+    </div>
+    <div class="coda">
+      <div><span>the armillary sphere</span><span>antiquity</span></div>
+      <div><span>the memory theatre</span><span>1550</span></div>
+      <div><span>the orrery</span><span>1713</span></div>
+      <div><span>the Odyssey</span><span>2026</span></div>
+    </div>
+  </div></section>
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var cv=document.getElementById('cloud'), ctx=cv.getContext('2d');
+  var N=1300;
+  var rng=(function(s){return function(){s=(s*1664525+1013904223)>>>0;return s/4294967296;};})(20260706);
+  function rr(a,b){return a+rng()*(b-a);}
+  function jj(a){return (rng()*2-1)*a;}
+  function rotX(p,a){var c=Math.cos(a),s=Math.sin(a);return [p[0],p[1]*c-p[2]*s,p[1]*s+p[2]*c];}
+  function rotY(p,a){var c=Math.cos(a),s=Math.sin(a);return [p[0]*c+p[2]*s,p[1],-p[0]*s+p[2]*c];}
+
+  // colours come from the system tokens — no page-local colour anywhere
+  function hexRGB(h){h=(h||'').trim().replace('#','');return [parseInt(h.substr(0,2),16)||27,parseInt(h.substr(2,2),16)||25,parseInt(h.substr(4,2),16)||22];}
+  var css=getComputedStyle(document.documentElement);
+  var INK=hexRGB(css.getPropertyValue('--ink')), GILD=hexRGB(css.getPropertyValue('--gild'));
+
+  // ---- THE ODYSSEY — the WHOLE cosmos from the canonical module: the three
+  //      registers (gods above, the sea, the dead below), all 34 nodes at their
+  //      true register heights, the coastline, and the voyage. No local geometry. ----
+  function figOdyssey(){
+    var T=window.OdysseyTopology; var pts=[], route=[];
+    if(!T || !T.NODES){ return {pts:[[0,0,0]], route:[]}; }   // topology script must load first
+    var i;
+    // every node placed at (x, baseY, z): episodes on the sea, the Olympians in
+    // the sky register, Poseidon in the deep, the dead below the gate
+    T.NODES.forEach(function(nd){
+      var kd=nd.kind, n, spread;
+      if(kd==='god'||kd==='power'){ n=13; spread=0.13; }
+      else if(kd==='dead'){ n=13; spread=0.12; }
+      else if(kd==='person'){ n=10; spread=0.10; }
+      else { n=(kd==='home'||kd==='port')?24:(kd==='underworld'?24:16); spread=(kd==='underworld')?0.06:0.05; }
+      for(var q=0;q<n;q++){ pts.push([nd.x+jj(spread), nd.baseY+jj(spread), nd.z+jj(spread)]); }
+    });
+    // a faint sea plane to ground the middle register
+    for(i=0;i<50;i++){ var r=Math.sqrt(rng())*3.2, th=rng()*6.2831; pts.push([Math.cos(th)*r, jj(0.02), Math.sin(th)*r]); }
+    // the descent shaft — the single vertical move, sea to the dead
+    var nek=T.byId['nekuia'];
+    if(nek){ for(i=0;i<26;i++){ var f=i/26; pts.push([nek.x+jj(0.03), T.UNDER_Y*f, nek.z+jj(0.03)]); } }
+    // the coastline (the locator cartouche), on the sea plane
+    T.COASTS.forEach(function(poly){ for(var s=0;s<poly.length-1;s++){
+      var a=T.project(poly[s][0],poly[s][1]), b=T.project(poly[s+1][0],poly[s+1][1]);
+      for(var u=0;u<4;u++){ var g=u/4; pts.push([a[0]+(b[0]-a[0])*g, 0, a[1]+(b[1]-a[1])*g]); } } });
+    // the voyage — through the knots at their register heights (the route dips to the gate)
+    function ptOf(id){ var k=T.byId[id]; return [k.x, k.baseY, k.z]; }
+    var rp=T.ROUTE.map(ptOf);
+    function samp(p0,p1,p2,p3,t){var t2=t*t,t3=t2*t,o=[0,0,0];for(var dd=0;dd<3;dd++)o[dd]=0.5*((2*p1[dd])+(-p0[dd]+p2[dd])*t+(2*p0[dd]-5*p1[dd]+4*p2[dd]-p3[dd])*t2+(-p0[dd]+3*p1[dd]-3*p2[dd]+p3[dd])*t3);return o;}
+    for(i=0;i<rp.length-1;i++){var q0=rp[Math.max(0,i-1)],q1=rp[i],q2=rp[i+1],q3=rp[Math.min(rp.length-1,i+2)];
+      for(var sgi=0;sgi<12;sgi++){var t=sgi/12,pp=samp(q0,q1,q2,q3,t); route.push([pp[0]+jj(0.01),pp[1]+jj(0.01),pp[2]+jj(0.01)]);}}
+    // fit the whole tall cosmos (sky→under) uniformly into ~unit space; stratification preserved
+    var mx=0.0001; pts.forEach(function(p){mx=Math.max(mx,Math.abs(p[0]),Math.abs(p[1]),Math.abs(p[2]));});
+    route.forEach(function(p){mx=Math.max(mx,Math.abs(p[1]));});
+    var sc=1.0/mx;
+    function ap(p){return [p[0]*sc,p[1]*sc,p[2]*sc];}
+    return {pts:pts.map(ap), route:route.map(ap)};
+  }
+
+  // ---- schematic originals (Commedia ascent, Liturgies rosary) ----
+  function figCommedia(){
+    var pts=[],TURNS=4,BASE=-0.7,RISE=1.5,i; function coneR(t){return 0.55*(1-t)+0.03;}
+    for(i=0;i<220;i++){var t=i/220,ang=t*6.2831*TURNS+jj(0.12),r=coneR(t)+jj(0.02);pts.push([Math.cos(ang)*r,BASE+t*RISE,Math.sin(ang)*r]);}
+    for(i=0;i<110;i++){var t2=rng(),ang2=rng()*6.2831,r2=coneR(t2)*(0.8+rng()*0.25);pts.push([Math.cos(ang2)*r2,BASE+t2*RISE,Math.sin(ang2)*r2]);}
+    for(i=0;i<30;i++){var r3=Math.pow(rng(),0.6)*0.08,a3=rng()*6.2831,ph3=rng()*Math.PI;pts.push([Math.sin(ph3)*Math.cos(a3)*r3,BASE+RISE+0.06+Math.cos(ph3)*r3,Math.sin(ph3)*Math.sin(a3)*r3]);}
+    for(i=0;i<70;i++){var t4=i/70,ang4=-t4*6.2831*2.2+jj(0.1),r4=0.36*(1-t4)+0.02;pts.push([Math.cos(ang4)*r4,BASE-t4*0.4,Math.sin(ang4)*r4]);}
+    return {pts:pts};
+  }
+  function figRosary(){
+    var pts=[], BEADS=13, R=0.84, i, b;
+    for(i=0;i<140;i++){var a=(i/140)*6.2831; pts.push([Math.cos(a)*R+jj(0.012), Math.sin(a)*R+jj(0.012), jj(0.035)]);}
+    for(b=0;b<BEADS;b++){var ba=(b/BEADS)*6.2831, bx=Math.cos(ba)*R, by=Math.sin(ba)*R;
+      for(i=0;i<18;i++){pts.push([bx+jj(0.05), by+jj(0.05), jj(0.05)]);}}
+    return {pts:pts};
+  }
+  function norm(fig,target){
+    var pts=fig.pts, cx=0,cy=0,cz=0,i;
+    for(i=0;i<pts.length;i++){cx+=pts[i][0];cy+=pts[i][1];cz+=pts[i][2];}
+    cx/=pts.length;cy/=pts.length;cz/=pts.length;
+    var mx=0.0001; for(i=0;i<pts.length;i++){mx=Math.max(mx,Math.abs(pts[i][0]-cx),Math.abs(pts[i][1]-cy),Math.abs(pts[i][2]-cz));}
+    var sc=(target||0.95)/mx;
+    fig.pts=pts.map(function(p){return [(p[0]-cx)*sc,(p[1]-cy)*sc,(p[2]-cz)*sc];});
+    return fig;
+  }
+  var figO=figOdyssey(), figC=norm(figCommedia(),0.98), figL=norm(figRosary(),0.95);
+  var ROUTE_O=figO.route;
+
+  // states: 0 dust · 1 armillary · 2 theatre · 3 orrery · 4 pages · 5 Odyssey · 6 Commedia · 7 rosary · 8 Odyssey(return)
+  var NS=9, ST=[]; for(var s=0;s<NS;s++) ST.push(new Float32Array(N*3));
+  function set(st,i,x,y,z){ST[st][i*3]=x;ST[st][i*3+1]=y;ST[st][i*3+2]=z;}
+  function pick(fp){return fp[Math.floor(rng()*fp.length)];}
+
+  for(var i=0;i<N;i++){
+    var th=rng()*6.2831, ph=Math.acos(rng()*2-1), rad=rr(0.62,1.12);
+    set(0,i,Math.sin(ph)*Math.cos(th)*rad,Math.cos(ph)*rad*0.9,Math.sin(ph)*Math.sin(th)*rad);
+    var k=i%6,a4=rng()*6.2831,p=[Math.cos(a4)*0.92,Math.sin(a4)*0.92,0];
+    p=rotX(p,k*0.52);p=rotY(p,k*0.9); set(1,i,p[0]+jj(.02),p[1]+jj(.02),p[2]+jj(.02));
+    var tt=i%5,ty=0.55-tt*0.28,trad=0.30+tt*0.15,ta=rng()*6.2831;
+    set(2,i,Math.cos(ta)*trad,ty+jj(.03),Math.sin(ta)*trad*0.62);
+    var o=i%5,orad=0.25+o*0.16,oa=rng()*6.2831;
+    set(3,i,Math.cos(oa)*orad,jj(.04),Math.sin(oa)*orad*0.92);
+    set(4,i,rr(-1.3,1.3),jj(0.045),rr(-0.28,0.28));
+    var a=pick(figO.pts); set(5,i,a[0],a[1],a[2]);
+    var b=pick(figC.pts); set(6,i,b[0],b[1],b[2]);
+    var c=pick(figL.pts); set(7,i,c[0],c[1],c[2]);
+    var e=pick(figO.pts); set(8,i,e[0],e[1],e[2]);
+  }
+
+  var phase=new Float32Array(N); for(i=0;i<N;i++) phase[i]=rng()*6.2831;
+  function smooth(t){return t*t*(3-2*t);}
+
+  var DPR=1;
+  function resize(){DPR=Math.min(2,window.devicePixelRatio||1);cv.width=Math.round(cv.clientWidth*DPR);cv.height=Math.round(cv.clientHeight*DPR);}
+  window.addEventListener('resize',resize);resize();
+  if(window.ResizeObserver) new ResizeObserver(resize).observe(cv);
+
+  var secs=[].slice.call(document.querySelectorAll('.mv'));
+  var f4=document.getElementById('f4'), f6=document.getElementById('f6'), f7=document.getElementById('f7'), progfill=document.getElementById('progfill');
+  var inners=[].slice.call(document.querySelectorAll('.inner'));
+
+  function curState(){
+    var vis=secs.filter(function(s){return s.offsetParent!==null;});
+    var vc=window.scrollY+window.innerHeight/2;
+    var cen=vis.map(function(s){var r=s.getBoundingClientRect();return window.scrollY+r.top+r.height/2;});
+    var stv=vis.map(function(s){return +s.dataset.state;});
+    if(vc<=cen[0])return stv[0];
+    if(vc>=cen[cen.length-1])return stv[stv.length-1];
+    for(var j=0;j<cen.length-1;j++){ if(vc>=cen[j]&&vc<=cen[j+1]){
+      var f=smooth((vc-cen[j])/(cen[j+1]-cen[j])); return stv[j]+(stv[j+1]-stv[j])*f; } }
+    return stv[stv.length-1];
+  }
+
+  var gateArmed=false;
+  function updateChrome(cs){
+    var vc=window.innerHeight/2;
+    for(var j=0;j<inners.length;j++){var r=inners[j].getBoundingClientRect(),c=r.top+r.height/2;
+      var dd=Math.abs(c-vc)/(window.innerHeight*0.6); inners[j].style.opacity=Math.max(0,1-dd*dd).toFixed(3);}
+    var m=document.documentElement.scrollHeight-window.innerHeight;
+    progfill.style.height=(m>0?Math.min(1,window.scrollY/m)*100:0)+'%';
+    document.body.classList.toggle('named', cs>=7.5);
+    if(!document.body.classList.contains('unlocked')){
+      var r6=f6.getBoundingClientRect();
+      if(!gateArmed && r6.top<window.innerHeight*0.5 && r6.bottom>window.innerHeight*0.5){
+        gateArmed=true; document.body.classList.add('gate','dragon');   // no auto-unlock timer
+      }
+    } else {
+      var r7=f7.getBoundingClientRect();
+      document.body.classList.toggle('finale', r7.top<window.innerHeight*0.6 && r7.bottom>window.innerHeight*0.2);
+    }
+  }
+
+  var dragYaw=0, dragTilt=0, dragTotal=0, dragging=false, lx=0, ly=0;
+  var dl=document.getElementById('drag');
+  dl.addEventListener('pointerdown',function(e){dragging=true;lx=e.clientX;ly=e.clientY;try{dl.setPointerCapture(e.pointerId);}catch(_){}} );
+  dl.addEventListener('pointermove',function(e){ if(!dragging)return;
+    var dx=e.clientX-lx, dy=e.clientY-ly; lx=e.clientX; ly=e.clientY;
+    dragYaw+=dx*0.006; dragTilt=Math.max(-0.5,Math.min(0.7,dragTilt+dy*0.004)); dragTotal+=Math.abs(dx)+Math.abs(dy);
+    if(dragTotal>150) unlock();
+  });
+  dl.addEventListener('pointerup',function(){dragging=false;});
+  function unlock(){ if(document.body.classList.contains('unlocked'))return;
+    document.body.classList.add('unlocked'); document.body.classList.remove('dragon'); }
+  window.addEventListener('keydown',function(e){ if(['ArrowDown','PageDown',' ','Spacebar'].indexOf(e.key)>=0) unlock(); });
+  if(reduce) document.body.classList.add('unlocked');   // reduced-motion is never gated
+
+  // states 5 & 8 (the Odyssey) resolve toward the instrument's look-across-the-sea
+  // view — enough tilt to read the three registers (gods up, dead down), not so
+  // much that the vertical flattens. Match to odyssey-sculptural's opening by eye.
+  var ODY_TILT=0.42, BASE_TILT=0.30;
+  var STILT=[BASE_TILT,BASE_TILT,BASE_TILT,BASE_TILT,BASE_TILT, ODY_TILT, BASE_TILT, BASE_TILT, ODY_TILT];
+
+  var yawAcc=0, prevT=null;
+  function frame(t){
+    if(prevT===null)prevT=t; var dt=Math.min(0.05,(t-prevT)/1000); prevT=t; var time=t/1000;
+    var cs=curState(), si=Math.min(NS-2,Math.floor(cs)), ft=cs-si;
+    var still=false; if(f4){ var rf=f4.getBoundingClientRect(); still=rf.top<window.innerHeight*0.5 && rf.bottom>window.innerHeight*0.5; }
+    var spinRate=(reduce?0:0.045)*(still?0.4:1);
+    yawAcc+=dt*spinRate;
+    var yaw=yawAcc+dragYaw, tilt=(STILT[si]+(STILT[si+1]-STILT[si])*ft)+dragTilt;
+
+    ctx.clearRect(0,0,cv.width,cv.height);
+    var CX=cv.width/2, CY=cv.height/2, scale=Math.min(cv.width,cv.height)*0.40, d=3.0, drift=reduce?0:1;
+    function proj(x,y,z){ var q=rotY([x,y,z],yaw); q=rotX(q,tilt); var pf=d/(d-q[2]); return [CX+q[0]*scale*pf, CY-q[1]*scale*pf, pf]; }
+
+    for(i=0;i<N;i++){var oo=i*3;
+      var x=ST[si][oo]+(ST[si+1][oo]-ST[si][oo])*ft;
+      var y=ST[si][oo+1]+(ST[si+1][oo+1]-ST[si][oo+1])*ft;
+      var z=ST[si][oo+2]+(ST[si+1][oo+2]-ST[si][oo+2])*ft;
+      x+=Math.sin(time*0.6+phase[i])*0.011*drift; y+=Math.cos(time*0.5+phase[i]*1.3)*0.011*drift;
+      var pr=proj(x,y,z), depth=(pr[2]-0.7);
+      ctx.beginPath(); ctx.fillStyle='rgba('+INK[0]+','+INK[1]+','+INK[2]+','+(0.20+depth*0.5).toFixed(3)+')';
+      ctx.arc(pr[0],pr[1],Math.max(0.4,(0.6+depth*1.6)*DPR),0,6.283); ctx.fill();
+    }
+
+    // the gild voyage — a dotted point-run (like the instrument's strokeD), states 5 & 8
+    var wRoute=Math.max(Math.max(0,1-Math.abs(cs-5)), Math.max(0,1-Math.abs(cs-8)));
+    if(wRoute>0.02 && ROUTE_O.length){
+      ctx.fillStyle='rgba('+GILD[0]+','+GILD[1]+','+GILD[2]+','+(wRoute*0.9).toFixed(3)+')';
+      for(var k2=0;k2<ROUTE_O.length;k2++){ var Q=proj(ROUTE_O[k2][0],ROUTE_O[k2][1],ROUTE_O[k2][2]);
+        ctx.beginPath(); ctx.arc(Q[0],Q[1],1.15*DPR,0,6.283); ctx.fill(); }
+    }
+
+    updateChrome(cs);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body></html>

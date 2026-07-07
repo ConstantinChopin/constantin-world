@@ -1,0 +1,55 @@
+{
+  "shelves": [
+    {
+      "label": "Artefacts",
+      "glyph": "artefacts",
+      "entries": [
+        {
+          "id": "asterlogos",
+          "title": "Asterlogos",
+          "desc": "A commonplace library where each book becomes a digital experience structured by its conceptual architecture.",
+          "href": "/projects/asterlogos/",
+          "preview": "/prototypes/surface/"
+        },
+        {
+          "id": "vellum",
+          "title": "Vellum",
+          "desc": "A reading surface for close attention — where a passage is met before it is explained, and the margin answers back.",
+          "href": "/projects/case-study/"
+        },
+        {
+          "title": "Soli",
+          "desc": "An archive of design theses, research, and emerging ideas.",
+          "href": "#soli"
+        }
+      ]
+    },
+    {
+      "label": "Writing",
+      "glyph": "writing",
+      "entries": [
+        {
+          "id": "formscapes",
+          "title": "Formscapes",
+          "desc": "Artificial mythologies in future interfaces.",
+          "href": "/writing/formscapes/"
+        },
+        {
+          "id": "iliad",
+          "title": "On Reading the Iliad",
+          "desc": "Honouring the beauty in timeless stories.",
+          "href": "/writing/narrative-motifs-in-the-iliad/"
+        }
+      ]
+    },
+    {
+      "label": "Resources",
+      "glyph": "resources",
+      "entries": [
+        { "title": "Components", "href": "#components" },
+        { "title": "Claude Skills", "href": "#claude-skills" },
+        { "title": "Cursor Rules", "href": "#cursor-rules" }
+      ]
+    }
+  ]
+}

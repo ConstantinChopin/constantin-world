@@ -1,0 +1,1464 @@
+/* =========================================================================
+   Constantin Chopin — constantin.world
+   One stylesheet. Tokens, base, then two surfaces: .home and .essay.
+   Type system kept deliberately small: one family (Newsreader) in four
+   roles — display, body, label, meta.
+   ========================================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&display=swap');
+
+:root {
+  --paper:  #090d09;
+  --ink:    rgba(255, 255, 255, 0.64);
+  --muted:  #65625d;
+  --faint:  rgba(255, 255, 255, 0.28);
+  --rule:   rgba(255, 255, 255, 0.10);
+  --mark:   rgb(143, 119, 54);
+
+  --serif:  "Newsreader", Georgia, "Times New Roman", serif;
+
+  /* one quiet title size (display), one body size, and one small tier for
+     labels, meta, and captions — set by the landing; nothing in between. */
+  --text:    1.0625rem;
+  --display: 1.5rem;
+  --small:   0.8rem;
+
+  /* case-study scroll system — two tiers above the literary base (a hero and a
+     big statement), and one section-title tier between display and title. all
+     fluid; the family stays Newsreader. restrained on purpose: the hero tops
+     out well below a magazine cover. */
+  --lede:       clamp(1.3rem, 2.2vw + 0.55rem, 1.95rem);
+  --case-title: clamp(1.7rem, 3.2vw + 0.5rem,  2.9rem);
+  --display-xl: clamp(2.3rem, 5vw   + 0.6rem,  3.8rem);
+
+  --reading: 39rem;
+  /* the artefacts page is framed like an essay: one column width and one set
+     of side gutters shared by every band, so their edges line up */
+  --frame: 64rem;
+  --frame-pad: clamp(1.6rem, 7vw, 3rem);
+  --index-w: 31rem;
+  --index-gutter: 1.5rem;
+  /* the gap between a type glyph and its title, and how far the title drops to
+     sit optically level with the glyph — shared by the index shelf labels and
+     the viewport toolbar so both read as the same component */
+  --glyph-gap: 0.3rem;
+  --glyph-title-drop: 1.5px;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* ---- Base --------------------------------------------------------------- */
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+
+/* scroll, but without the scrollbar chrome */
+html { scrollbar-width: none; }
+::-webkit-scrollbar { width: 0; height: 0; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100svh;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-optical-sizing: auto;
+  font-size: var(--text);
+  line-height: 1.6;
+  font-feature-settings: "kern", "liga", "calt";
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection { background: rgba(143, 119, 54, 0.22); }
+
+a { color: inherit; text-decoration: none; }
+
+:focus-visible {
+  outline: 1.5px solid var(--mark);
+  outline-offset: 3px;
+  border-radius: 1px;
+}
+
+/* the one small utility role — section labels, eyebrows */
+.label {
+  font-size: var(--small);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin: 0;
+}
+
+/* ---- Reveal ------------------------------------------------------------- */
+/* a page settles in on load: each marked block rises a little, fades up,
+   and sharpens from a soft blur. the cascade is set per element with an
+   inline --d delay (after Will Phan's blur-in entrances). */
+@keyframes reveal-rise {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+.reveal {
+  animation: reveal-rise 0.95s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--d, 0ms);
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal { animation: none; }
+}
+
+/* =========================================================================
+   HOME — a quiet index
+   ========================================================================= */
+
+body.home { padding: 0; }
+
+/* master–detail: a persistent index on the left; entries open in the pane
+   on the right. below 64rem the pane is dropped and entries navigate to
+   their own pages instead. */
+.split { min-height: 100svh; }
+
+.page {
+  width: 100%;
+  max-width: 34rem;
+  margin: 0 auto;
+  padding: clamp(2.5rem, 9vh, 5rem) clamp(1.6rem, 7vw, 3rem) clamp(3rem, 8vh, 5rem);
+}
+
+.pane-detail { display: none; }
+
+@media (min-width: 64rem) {
+  /* Idle: the index sits centred between two flexible gutters, the detail
+     track collapsed. On open the gutters close, the index slides left, and
+     the detail track grows — the column repositions and the panel reveals. */
+  .split {
+    display: grid;
+    grid-template-columns: 1fr var(--index-w) 0fr 1fr;
+    height: 100svh;
+    transition: grid-template-columns 0.6s var(--ease);
+  }
+  .pane-index {
+    grid-column: 2;
+    height: 100svh;
+    overflow-y: auto;
+    scrollbar-width: none;
+    border-right: 1px solid transparent;
+    transition: border-color 0.6s var(--ease);
+  }
+  .page { margin: 0; padding: clamp(2.4rem, 7vh, 4rem) clamp(1.8rem, 3vw, 2.6rem); }
+
+  .pane-detail {
+    display: block;
+    grid-column: 3;
+    position: relative;
+    height: 100svh;
+    min-width: 0;
+    overflow: hidden;
+    /* the detail is an inset viewport, not an edge-to-edge pane: pad it off the
+       screen edges (less on the left, where it meets the index) so the framed
+       window floats in the right region */
+    padding: clamp(0.8rem, 2.2vh, 1.5rem) clamp(0.9rem, 2vw, 1.6rem) clamp(0.8rem, 2.2vh, 1.5rem) clamp(0.3rem, 1vw, 0.8rem);
+    opacity: 0;
+    filter: blur(8px);
+    pointer-events: none;
+    transition: opacity 0.6s var(--ease), filter 0.6s var(--ease);
+  }
+  /* the viewport — an app-like chrome frame: a titled toolbar over a separate
+     inset window that holds the page, the way an editor's live preview looks */
+  .viewport {
+    position: relative;
+    height: 100%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    background: #0d100c;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 24px 60px -28px rgba(0, 0, 0, 0.8);
+  }
+  /* toolbar: traffic-light buttons at the left, the entry title centred, the
+     close action at the right — a three-track grid so the title stays centred
+     regardless of the side widths */
+  .viewport-bar {
+    flex: 0 0 auto;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0;
+    height: 46px;
+    padding: 0 0.7rem 0 0.95rem;
+  }
+  /* the type glyph of the open entry (armillary sphere / codex / dividers),
+     cloned from its shelf label and sized to sit in the toolbar — same glyph,
+     same gap to its title as the index shelf labels */
+  .viewport-icon {
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    margin-right: var(--glyph-gap);
+  }
+  .viewport-icon .glyph {
+    width: 19px;
+    height: 19px;
+    margin: 0;
+    vertical-align: middle;
+    color: var(--mark);
+    stroke-width: 1.6;
+  }
+  .viewport-title {
+    position: relative;
+    top: var(--glyph-title-drop);
+    justify-self: start;
+    max-width: 100%;
+    min-width: 0;
+    padding-right: 0.5rem;
+    font-size: var(--small);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  /* the title doubles as a breadcrumb when an embedded preview reports a
+     trail (e.g. Asterlogos / The Odyssey); links navigate back into the page */
+  .viewport-title .crumb { font: inherit; vertical-align: baseline; }
+  .viewport-title .crumb-link {
+    border: 0;
+    background: transparent;
+    padding: 0;
+    color: var(--faint);
+    cursor: pointer;
+    transition: color 0.25s var(--ease);
+  }
+  .viewport-title .crumb-link:hover,
+  .viewport-title .crumb-link:focus-visible { color: var(--ink); }
+  .viewport-title .crumb-current { color: var(--ink); }
+  .viewport-title .crumb-sep { color: var(--faint); opacity: 0.55; margin: 0 0.4rem; }
+  .viewport-actions { justify-self: end; display: inline-flex; align-items: center; gap: 0.1rem; }
+  .viewport-btn {
+    flex: 0 0 auto;
+    width: 30px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    transition: color 0.2s var(--ease), background-color 0.2s var(--ease);
+  }
+  .viewport-btn:hover,
+  .viewport-btn:focus-visible { color: #f3f0e8; background: rgba(255, 255, 255, 0.05); }
+  .viewport-btn svg { width: 15px; height: 15px; display: block; stroke-width: 1.8; }
+  /* the fullscreen control swaps between an expand and a contract glyph */
+  .viewport-btn .ico-exit { display: none; }
+  body.viewport-fs .viewport-fullscreen .ico-enter { display: none; }
+  body.viewport-fs .viewport-fullscreen .ico-exit { display: block; }
+  /* in fullscreen the chrome fills the screen — drop its floating rounding */
+  .viewport:fullscreen { border-radius: 0; border: 0; }
+  .viewport:-webkit-full-screen { border-radius: 0; border: 0; }
+  /* the inner window — the page floats in its own rounded card inset from the
+     chrome, so the toolbar reads as a frame around a separate window */
+  .viewport-stage {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    padding: 0;
+  }
+  .viewport-window {
+    position: relative;
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
+    background: var(--paper);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 9px;
+    overflow: hidden;
+    box-shadow: 0 12px 32px -22px rgba(0, 0, 0, 0.8);
+  }
+  .viewport-window iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
+
+  body.detail-open .split { grid-template-columns: 0fr var(--index-w) 1fr 0fr; }
+  body.detail-open .pane-index { animation: index-shift 0.6s var(--ease); }
+  body.detail-open .pane-detail { opacity: 1; filter: blur(0); pointer-events: auto; }
+
+  @keyframes index-shift {
+    0%   { filter: blur(0); }
+    45%  { filter: blur(3px); }
+    100% { filter: blur(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .split, .pane-index, .pane-detail { transition: none; }
+    body.detail-open .pane-index { animation: none; }
+    .pane-detail { filter: none; }
+  }
+}
+
+.name {
+  font-size: var(--display);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.bio-line {
+  font-size: var(--text);
+  line-height: 1.5;
+  color: var(--muted);
+  margin: 0.55rem 0 0;
+  text-wrap: pretty;
+}
+.name + .bio-line { margin-top: 0.35rem; }
+.bio-line a {
+  color: var(--ink);
+  box-shadow: inset 0 -1px 0 var(--rule);
+  transition: box-shadow 0.25s var(--ease);
+}
+.bio-line a:hover { box-shadow: inset 0 -1px 0 var(--ink); }
+
+/* small rubricated glyphs before each shelf label — a scholar's instruments,
+   drawn in the accent: an armillary sphere, an open codex, a pair of dividers */
+.glyph {
+  width: 19px;
+  height: 19px;
+  color: var(--muted);
+  stroke-width: 1.6;
+  vertical-align: middle;
+  margin-right: var(--glyph-gap);
+}
+
+.shelf {
+  margin-top: clamp(1.6rem, 4vh, 2.4rem);
+}
+
+/* a single left gutter runs down the index: the section glyph and the
+   active-row marker share its centre line, and label text + row titles
+   align to its right edge. */
+.shelf .label {
+  display: flex;
+  align-items: center;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  margin-bottom: 0.3rem;
+}
+/* the glyph is optically centred; the title text drops 1px so its midline
+   sits dead level with the glyph rather than a hair high */
+.shelf .label .label-text { position: relative; top: var(--glyph-title-drop); }
+
+.index { list-style: none; margin: 0; padding: 0; }
+
+.row {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 0.28rem 0;
+  color: var(--ink);
+}
+
+.row-title {
+  display: inline-block;
+  box-shadow: inset 0 -1px 0 transparent;
+  transition: box-shadow 0.25s var(--ease);
+}
+.row-meta {
+  flex: none;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+  transition: color 0.25s var(--ease);
+}
+.row:hover .row-title,
+.row:focus-visible .row-title { box-shadow: inset 0 -1px 0 var(--ink); }
+.row:hover .row-meta,
+.row:focus-visible .row-meta { color: var(--muted); }
+
+/* the entry currently open in the detail pane — underscored in the accent */
+.row.is-active .row-title { box-shadow: inset 0 -1px 0 var(--mark); }
+
+/* when a page is shown inside the detail viewport, drop its redundant chrome —
+   the back link and its own sticky project bar; the viewport supplies both */
+.embedded .return { display: none; }
+.embedded .project-bar { display: none; }
+
+/* a project entry carries a one-line gloss beneath its title */
+.row-project { flex-direction: column; align-items: flex-start; gap: 0.1rem; padding: 0.38rem 0; }
+.row-project .row-title { align-self: flex-start; }
+.row-desc {
+  font-size: var(--text);
+  line-height: 1.45;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
+.page .colophon { margin-top: clamp(3rem, 8vh, 5rem); }
+
+/* =========================================================================
+   ESSAY — a reading page
+   ========================================================================= */
+
+body.essay {
+  padding: clamp(2.6rem, 8vh, 5rem) clamp(1.6rem, 7vw, 3rem) clamp(4rem, 12vh, 8rem);
+}
+
+.reading {
+  width: 100%;
+  max-width: var(--reading);
+  margin: 0 auto;
+}
+
+.return {
+  display: inline-block;
+  font-size: var(--small);
+  color: var(--muted);
+  margin-bottom: clamp(2.6rem, 8vh, 4.5rem);
+  transition: color 0.25s var(--ease);
+}
+.return:hover { color: var(--ink); }
+.return .arrow { display: inline-block; transition: transform 0.25s var(--ease); }
+.return:hover .arrow { transform: translateX(-3px); }
+
+.essay-head { margin-bottom: clamp(2rem, 6vh, 3rem); }
+.essay-head .label { margin-bottom: 0.9rem; }
+
+.essay-title {
+  font-size: var(--display);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.standfirst {
+  font-style: italic;
+  font-size: var(--text);
+  line-height: 1.45;
+  color: var(--muted);
+  margin: 0.9rem 0 0;
+  max-width: 34ch;
+  text-wrap: pretty;
+}
+
+.essay-meta {
+  font-size: var(--small);
+  color: var(--faint);
+  margin: 1.2rem 0 0;
+  font-variant-numeric: tabular-nums;
+}
+
+/* prose */
+.prose {
+  font-size: var(--text);
+  line-height: 1.62;
+  color: var(--ink);
+}
+.prose > * { margin: 0; }
+.prose > p { text-wrap: pretty; }
+.prose > * + * { margin-top: 1.15em; }
+.prose > * + h2 { margin-top: 1.9em; }
+.prose > h2 + * { margin-top: 0.9em; }
+.prose > * + blockquote,
+.prose > blockquote + *,
+.prose > * + .verse,
+.prose > .verse + *,
+.prose > * + ol,
+.prose > ol + * { margin-top: 1.6em; }
+
+.prose a {
+  box-shadow: inset 0 -0.06em 0 rgba(255, 255, 255, 0.30);
+  transition: box-shadow 0.25s var(--ease);
+}
+.prose a:hover { box-shadow: inset 0 -0.06em 0 var(--ink); }
+
+.prose em { font-style: italic; }
+.prose strong { font-weight: 500; }
+
+.prose h2 {
+  font-size: 1em;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: 0;
+  text-indent: 0;
+}
+.prose h3 {
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1em;
+  color: var(--muted);
+  text-indent: 0;
+}
+
+.prose blockquote {
+  padding-left: 1.4em;
+  border-left: 1px solid var(--rule);
+  color: var(--muted);
+  font-style: italic;
+}
+.prose blockquote p { text-indent: 0; }
+.prose blockquote p + p { margin-top: 0.8em; }
+
+/* citation under a quotation — small, quiet, not italic */
+.prose .attr {
+  font-style: normal;
+  font-size: var(--small);
+  color: var(--faint);
+  text-indent: 0;
+}
+.prose blockquote .attr { margin-top: 0.8em; }
+
+/* verse — preserves line breaks */
+.prose .verse {
+  white-space: pre-wrap;
+  font-style: italic;
+  color: var(--muted);
+  padding-left: 1.4em;
+  line-height: 1.5;
+}
+
+/* section break — a small rubric diamond, the one ornament */
+.prose hr {
+  border: 0;
+  margin: 2.6em 0;
+  height: 6px;
+}
+.prose hr::before {
+  content: "";
+  display: block;
+  width: 6px;
+  height: 6px;
+  margin: 0 auto;
+  background: var(--mark);
+  transform: rotate(45deg);
+}
+
+/* enumerations — the cosmic hierarchy of the Iliad, and its recap.
+   numbered because the order is the argument: deathless gods down to
+   the dust of the battlefield. */
+.prose .enum,
+.prose .hierarchy {
+  list-style: none;
+  counter-reset: rank;
+  padding: 0;
+}
+.prose .enum > li,
+.prose .hierarchy > li {
+  counter-increment: rank;
+  position: relative;
+  padding-left: 2.4em;
+}
+.prose .enum > li::before,
+.prose .hierarchy > li::before {
+  content: counter(rank);
+  position: absolute;
+  left: 0;
+  top: 0.02em;
+  font-size: 0.95em;
+  color: var(--mark);
+  font-variant-numeric: tabular-nums;
+}
+.prose .enum > li + li { margin-top: 1.3em; }
+.prose .hierarchy > li + li { margin-top: 1.8em; }
+.prose .enum p,
+.prose .hierarchy p { text-indent: 0; }
+.prose .hierarchy blockquote { margin-top: 0.9em; }
+.prose .hierarchy strong { font-weight: 500; }
+
+.prose figure { text-indent: 0; }
+.prose figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  outline: 1px solid rgba(255, 255, 255, 0.12);
+  outline-offset: -1px;
+}
+.prose figcaption {
+  font-size: var(--small);
+  color: var(--muted);
+  margin-top: 0.7em;
+}
+
+/* footnotes */
+.prose sup { line-height: 0; font-size: 0.7em; }
+.prose sup a { box-shadow: none; color: var(--mark); padding: 0 0.15em; }
+
+.notes {
+  max-width: var(--reading);
+  margin: clamp(3rem, 9vh, 5rem) auto 0;
+  padding-top: 1.5em;
+  border-top: 1px solid var(--rule);
+  font-size: var(--small);
+  line-height: 1.6;
+  color: var(--muted);
+  counter-reset: fn;
+}
+.notes ol { margin: 0; padding: 0; list-style: none; }
+.notes li {
+  position: relative;
+  padding-left: 1.8em;
+  margin-bottom: 0.7em;
+  counter-increment: fn;
+}
+.notes li::before {
+  content: counter(fn);
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: 0.85em;
+  color: var(--mark);
+  font-variant-numeric: tabular-nums;
+}
+.notes a { box-shadow: inset 0 -1px 0 var(--rule); }
+.notes a:hover { box-shadow: inset 0 -1px 0 var(--muted); }
+
+/* colophon — only on essays now (home folds it into the lede) */
+.colophon {
+  font-size: var(--small);
+  line-height: 1.7;
+  color: var(--muted);
+}
+.colophon a {
+  color: var(--ink);
+  box-shadow: inset 0 -1px 0 var(--rule);
+  transition: box-shadow 0.25s var(--ease);
+}
+.colophon a:hover { box-shadow: inset 0 -1px 0 var(--ink); }
+.sep { color: var(--faint); margin: 0 0.6em; }
+
+.essay .colophon {
+  max-width: var(--reading);
+  margin: clamp(3.5rem, 10vh, 6rem) auto 0;
+  padding-top: 1.4em;
+  border-top: 1px solid var(--rule);
+}
+
+/* =========================================================================
+   PROJECT — a full-bleed prototype beneath a thin bar. The chrome only:
+   the bar, the stage that holds the live prototype, and its controls. The
+   case narrative below the stage is left undesigned for now.
+   ========================================================================= */
+
+body.project { padding: 0; }
+
+/* When a project opens inside the home detail panel, it shares the essay's
+   reading frame exactly: the column is var(--reading) wide and the side
+   gutter sits OUTSIDE it (on the body), the way the essay lays out — not as
+   padding inside each band, which would both narrow the text and push it in.
+   With the gutter moved out, every band's column lines up edge-for-edge with
+   the essay's prose. The wide multi-column bands fold to a single column so
+   the narrower frame reads as a deliberate column, not a squeezed grid. */
+.embedded body.project {
+  --frame: var(--reading);
+  --frame-pad: 0px;
+  padding-inline: clamp(1.6rem, 7vw, 3rem);
+}
+.embedded body.project .intro { grid-template-columns: 1fr; gap: 1.5rem; }
+.embedded body.project .features { grid-template-columns: 1fr; max-width: 22rem; margin-inline: auto; }
+.embedded body.project .worked-grid { grid-template-columns: 1fr; }
+
+/* ===== Asterlogos showcase — a cosmos-style constellation hero =====
+   a calm typographic centre inside a slow-drifting ring of duotone plates:
+   four are the books (text-free point-clouds of their cosmos), the rest a
+   faint scatter of classical references. */
+.hero {
+  position: relative;
+  min-height: calc(100svh - 3.1rem);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: clamp(2rem, 8vh, 5rem) clamp(1.4rem, 6vw, 3rem);
+}
+.constellation {
+  position: absolute; inset: 0; z-index: 0;
+  pointer-events: none; will-change: transform;
+  transition: transform 0.5s var(--ease);
+}
+.plate-pos { position: absolute; transform: translate(-50%, -50%); }
+.plate-float { animation: plate-float var(--dur, 9s) ease-in-out var(--delay, 0s) infinite alternate; }
+@keyframes plate-float { from { transform: translateY(7px); } to { transform: translateY(-9px); } }
+.plate {
+  position: relative; display: block;
+  width: var(--sz, 92px); height: var(--sz, 92px);
+  border-radius: clamp(9px, 1.2vw, 15px);
+  overflow: hidden;
+  transform: rotate(var(--rot, 0deg));
+  background: radial-gradient(135% 120% at 28% 22%, var(--duo-m, #444) 0%, var(--duo-d, #161616) 76%);
+  box-shadow: 0 14px 32px -20px rgba(0, 0, 0, 0.7), inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  filter: blur(var(--blur, 0px));
+  opacity: var(--op, 1);
+  pointer-events: none;
+  transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease), filter 0.35s var(--ease), opacity 0.35s var(--ease);
+}
+.plate > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.plate > svg circle { fill: var(--duo-l, #ccc); }
+a.plate-book { pointer-events: auto; text-decoration: none; }
+a.plate-book:focus-visible { outline: none; }
+.plate-cap {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 9px 10px 8px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.62));
+  opacity: 0; transition: opacity 0.25s var(--ease);
+}
+.plate-cap .pt { display: block; font: 500 11.5px var(--serif); color: #fff; letter-spacing: 0.01em; }
+.plate-cap .ps { display: block; font: 500 7.5px var(--serif); letter-spacing: 0.13em; text-transform: uppercase; color: rgba(255, 255, 255, 0.62); margin-top: 2px; }
+a.plate-book:hover .plate-cap, a.plate-book:focus-visible .plate-cap { opacity: 1; }
+a.plate-book:hover .plate, a.plate-book:focus-visible .plate {
+  transform: rotate(var(--rot, 0deg)) scale(1.06);
+  filter: none; opacity: 1;
+  box-shadow: 0 22px 46px -18px rgba(0, 0, 0, 0.85), inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+}
+
+.hero-center { position: relative; z-index: 2; text-align: center; max-width: 42rem; }
+.hero-eyebrow { margin: 0 0 1.1rem; font: 500 var(--small) var(--serif); letter-spacing: 0.34em; text-transform: uppercase; color: var(--mark); }
+.hero-title { margin: 0; font: 500 clamp(2.3rem, 5.6vw, 4.3rem) / 1.04 var(--serif); letter-spacing: -0.02em; color: rgba(247, 244, 236, 0.95); text-wrap: balance; }
+.hero-sub { margin: 1.2rem auto 0; max-width: 30rem; font: 400 var(--text) / 1.5 var(--serif); color: var(--muted); text-wrap: pretty; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 0.7rem; justify-content: center; margin-top: 1.9rem; }
+.hero-actions a { font: 500 var(--small) var(--serif); letter-spacing: 0.06em; border-radius: 999px; padding: 0.72rem 1.4rem; transition: background-color 0.25s var(--ease), border-color 0.25s var(--ease), color 0.25s var(--ease), transform 0.25s var(--ease); }
+.btn-primary { background: rgba(243, 240, 232, 0.95); color: #0a0d08; }
+.btn-primary:hover { background: #fff; transform: translateY(-1px); }
+.btn-ghost { color: var(--ink); border: 1px solid var(--rule); }
+.btn-ghost:hover { border-color: var(--mark); color: #f3f0e8; }
+@media (prefers-reduced-motion: reduce) {
+  .plate-float { animation: none; }
+  .constellation { transition: none; }
+}
+
+/* shared editorial section heading */
+.section-head { text-align: center; margin: 0 0 clamp(2rem, 5vh, 3.4rem); font: 500 clamp(1.8rem, 4vw, 3rem)/1.08 var(--serif); letter-spacing: -0.02em; color: rgba(247, 244, 236, 0.92); text-wrap: balance; }
+
+/* the library carousel — move horizontally through the books */
+.carousel-section { padding: clamp(3rem, 10vh, 7rem) 0; overflow: hidden; }
+.carousel { position: relative; }
+.car-viewport { overflow: hidden; }
+.car-track { display: flex; gap: clamp(1rem, 2.4vw, 2rem); align-items: center; transition: transform 0.6s var(--ease); will-change: transform; touch-action: pan-y; cursor: grab; }
+.car-track:active { cursor: grabbing; }
+.car-slide {
+  flex: 0 0 clamp(280px, 62vw, 760px);
+  aspect-ratio: 16 / 10;
+  position: relative;
+  border-radius: clamp(12px, 1.6vw, 20px);
+  overflow: hidden;
+  background: linear-gradient(150deg, var(--duo-d, #161616), var(--duo-m, #444));
+  box-shadow: 0 26px 60px -28px rgba(0, 0, 0, 0.8), inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+  opacity: 0.38; transform: scale(0.92);
+  transition: opacity 0.5s var(--ease), transform 0.5s var(--ease);
+}
+.car-slide.is-active { opacity: 1; transform: scale(1); }
+.car-slide > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.car-slide > svg circle { fill: var(--duo-l, #ccc); }
+.car-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; padding: clamp(1.2rem, 3vw, 2.6rem); background: linear-gradient(transparent 38%, rgba(0, 0, 0, 0.5)); }
+.car-name { margin: 0; font: 500 clamp(1.6rem, 3.4vw, 2.8rem)/1.02 var(--serif); letter-spacing: -0.01em; color: #fff; }
+.car-shape { margin: 0.5rem 0 0; font: 500 var(--small) var(--serif); letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255, 255, 255, 0.66); }
+.car-enter { align-self: flex-start; margin-top: 1.1rem; font: 500 var(--small) var(--serif); letter-spacing: 0.08em; color: #fff; border: 1px solid rgba(255, 255, 255, 0.42); border-radius: 999px; padding: 0.5rem 1.05rem; transition: background-color 0.25s var(--ease), color 0.25s var(--ease); }
+.car-enter:hover { background: #fff; color: #0a0d08; }
+.car-soon { margin-top: 1.1rem; font: 500 var(--small) var(--serif); letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255, 255, 255, 0.5); }
+.car-arrow { position: absolute; top: 50%; transform: translateY(-50%); z-index: 3; width: 46px; height: 46px; display: grid; place-items: center; border-radius: 999px; border: 1px solid var(--rule); background: rgba(9, 13, 9, 0.55); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); color: var(--ink); font: 400 18px var(--serif); cursor: pointer; transition: border-color 0.25s var(--ease), color 0.25s var(--ease); }
+.car-arrow:hover { border-color: var(--mark); color: #f3f0e8; }
+.car-prev { left: clamp(0.5rem, 2vw, 2.2rem); }
+.car-next { right: clamp(0.5rem, 2vw, 2.2rem); }
+.car-dots { display: flex; gap: 0.5rem; justify-content: center; margin-top: clamp(1.4rem, 3vh, 2.2rem); }
+.car-dot { width: 6px; height: 6px; padding: 0; border: 0; border-radius: 999px; background: var(--faint); cursor: pointer; transition: background-color 0.25s var(--ease), transform 0.25s var(--ease); }
+.car-dot.is-active { background: var(--mark); transform: scale(1.35); }
+@media (prefers-reduced-motion: reduce) { .car-track, .car-slide { transition: none; } }
+
+/* editorial demo sections — headline + visual, the cosmos rhythm. they share
+   the page frame: the editorial wrapper sets the width and side gutters, each
+   band only manages its vertical rhythm so every edge lines up */
+.editorial { max-width: var(--frame); margin: 0 auto; padding: 0 var(--frame-pad); }
+.ed-intro { padding: clamp(3.5rem, 11vh, 7rem) 0 clamp(2rem, 5vh, 3.5rem); text-align: center; }
+.ed-lede { margin: 1.4rem auto 0; max-width: 38rem; font: 400 var(--text)/1.6 var(--serif); color: var(--muted); text-wrap: pretty; }
+.ed-features { padding: clamp(2rem, 6vh, 4rem) 0; }
+.features { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1.2rem, 2.6vw, 2.2rem); }
+.feature-vis { position: relative; aspect-ratio: 3 / 4; border-radius: clamp(12px, 1.4vw, 16px); overflow: hidden; background: linear-gradient(150deg, var(--duo-d), var(--duo-m)); box-shadow: 0 18px 44px -22px rgba(0, 0, 0, 0.78), inset 0 0 0 1px rgba(255, 255, 255, 0.07); display: grid; place-items: center; }
+.feature-vis svg { width: 72%; height: auto; color: var(--duo-l); }
+.feature-name { margin: 1.05rem 0 0; font: 500 clamp(1.1rem, 1.9vw, 1.4rem)/1.1 var(--serif); letter-spacing: -0.01em; color: rgba(247, 244, 236, 0.92); }
+.feature-note { margin: 0.5rem 0 0; font: 400 var(--small)/1.55 var(--serif); color: var(--muted); }
+.mock-note { width: 80%; }
+.mock-q { display: block; font: 400 12.5px var(--serif); color: rgba(255, 255, 255, 0.8); margin-bottom: 9px; }
+.mock-field { display: block; height: 48px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(255, 255, 255, 0.04); }
+.mock-reveal { display: block; margin-top: 13px; font: 500 8px var(--serif); letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255, 255, 255, 0.4); }
+.ed-worked { padding: clamp(3rem, 8vh, 6rem) 0; }
+.worked-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1.6rem, 4vw, 3.4rem); align-items: center; }
+.worked-body { margin: 1.2rem 0 0; max-width: 30rem; font: 400 var(--text)/1.6 var(--serif); color: var(--muted); text-wrap: pretty; }
+.plate-spec { position: relative; aspect-ratio: 4 / 3; border-radius: clamp(12px, 1.6vw, 18px); overflow: hidden; background: linear-gradient(150deg, var(--duo-d), var(--duo-m)); box-shadow: 0 24px 56px -26px rgba(0, 0, 0, 0.8), inset 0 0 0 1px rgba(255, 255, 255, 0.07); display: grid; place-items: center; }
+.plate-spec svg { width: 60%; height: auto; color: var(--duo-l); }
+.spec-chip { position: absolute; left: 12px; bottom: 12px; font: 500 8.5px var(--serif); letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255, 255, 255, 0.74); background: rgba(0, 0, 0, 0.42); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); padding: 4px 9px; border-radius: 999px; }
+.ed-close { padding: clamp(2rem, 6vh, 4rem) 0 clamp(1rem, 3vh, 2rem); text-align: center; }
+@media (max-width: 52rem) {
+  .features { grid-template-columns: 1fr; max-width: 22rem; margin: 0 auto; }
+  .worked-grid { grid-template-columns: 1fr; }
+  .ed-worked .section-head { text-align: center; }
+}
+
+/* ===== line-work rethink: two-column intro, constellation cards ===== */
+.intro { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 6vw, 5rem); max-width: var(--frame); margin: 0 auto; padding: clamp(2.6rem, 8vh, 5rem) var(--frame-pad) clamp(2rem, 6vh, 4rem); }
+.intro-name { margin: 0 0 0.7rem; font: 500 var(--display) var(--serif); letter-spacing: -0.01em; color: var(--mark); }
+.intro-desc { margin: 0; max-width: 30rem; font: 400 var(--text)/1.55 var(--serif); color: var(--muted); text-wrap: pretty; }
+.intro-r { display: flex; align-items: flex-start; }
+.intro-r p { margin: 0; max-width: 34rem; font: 400 var(--text)/1.62 var(--serif); color: var(--ink); text-wrap: pretty; }
+@media (max-width: 52rem) { .intro { grid-template-columns: 1fr; gap: 1.5rem; } }
+
+.constellations { display: grid; grid-template-columns: repeat(2, minmax(0, 17rem)); justify-content: start; gap: clamp(1.4rem, 3vw, 2.6rem); max-width: var(--frame); margin: 0 auto; padding: clamp(1.5rem, 4vh, 3rem) var(--frame-pad) clamp(3.5rem, 9vh, 6rem); }
+.bookcard { display: block; text-decoration: none; }
+.bookcard.vol { width: auto; }
+/* just the constellation — the point cloud floats on the page, no container */
+.bookcard-fig { position: relative; aspect-ratio: 1 / 1; }
+.vol-canvas { display: block; width: 100%; height: 100%; }
+
+/* the instrument — a bespoke reading device: bezel, recessed e-ink screen,
+   the book's constellation on it (its map, never its text) */
+.device { position: relative; padding: clamp(9px, 1vw, 14px); border-radius: clamp(15px, 1.6vw, 20px); background: linear-gradient(158deg, #15140f 0%, #0c0c08 62%, #0a0a07 100%); box-shadow: 0 24px 52px -30px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.06), inset 0 0 0 1px rgba(255,255,255,0.05); transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease); }
+a.bookcard:hover .device, a.bookcard:focus-visible .device { transform: translateY(-3px); box-shadow: 0 30px 58px -28px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.09), inset 0 0 0 1px rgba(143,119,54,0.22); }
+.device-screen { position: relative; aspect-ratio: 3 / 4; border-radius: 8px; overflow: hidden; background: radial-gradient(130% 120% at 50% 15%, #121711 0%, #0a0c08 78%); box-shadow: inset 0 0 0 1px rgba(0,0,0,0.55), inset 0 3px 16px rgba(0,0,0,0.5); }
+.device-screen::after { content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none; background: radial-gradient(120% 115% at 50% 26%, transparent 50%, rgba(0,0,0,0.42)); }
+.screen-fig { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.screen-foot { position: relative; z-index: 1; display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 0 11px 11px; }
+.screen-shape { font: 400 8px var(--serif); font-style: italic; color: rgba(247,244,236,0.46); }
+.screen-act { font: 500 7px var(--serif); letter-spacing: 0.13em; text-transform: uppercase; color: var(--mark); flex: 0 0 auto; }
+.bookcard.coming .device { opacity: 0.66; }
+.bookcard.coming .screen-act { color: rgba(255,255,255,0.26); }
+
+.screen-fig .edge { stroke: rgba(255,255,255,0.26); stroke-width: 0.9; fill: none; transition: stroke 0.3s var(--ease); }
+.screen-fig .ring { stroke: rgba(255,255,255,0.18); stroke-width: 0.9; fill: none; }
+.screen-fig .node { fill: #d8c489; transition: fill 0.3s var(--ease); }
+.screen-fig .lbl { fill: rgba(247,244,236,0.74); font-family: var(--serif); font-size: 7.6px; font-weight: 400; letter-spacing: 0.02em; }
+a.bookcard:hover .screen-fig .edge { stroke: rgba(255,255,255,0.38); }
+a.bookcard:hover .screen-fig .node { fill: #e8d49c; }
+
+.bookcard-title { margin: 0.95rem 0 0; font: 500 clamp(1.05rem, 1.5vw, 1.35rem) var(--serif); letter-spacing: -0.01em; color: rgba(247,244,236,0.94); }
+.bookcard-sub { margin: 0.28rem 0 0; font: 400 var(--small) var(--serif); font-style: italic; color: var(--faint); }
+@media (max-width: 40rem) { .constellations { grid-template-columns: minmax(0, 17rem); } }
+
+/* the bar mirrors the preview viewport toolbar, so the project header reads the
+   same whether it opens in the pane (wide) or as its own page (narrow): the
+   same glyph | title | action tracks, height, and metrics. stays put as you
+   read on. */
+.project-bar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  height: 46px;
+  padding: 0 0.7rem 0 0.95rem;
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+}
+/* left track: the shelf glyph, sized and coloured exactly as .viewport-icon */
+.project-glyph { justify-self: start; display: inline-flex; align-items: center; margin-right: var(--glyph-gap); }
+.project-glyph .glyph { width: 19px; height: 19px; margin: 0; vertical-align: middle; color: var(--mark); stroke-width: 1.6; }
+/* centre track: the project name, matching .viewport-title */
+.project-name {
+  justify-self: start;
+  position: relative;
+  top: var(--glyph-title-drop);
+  min-width: 0;
+  padding-right: 0.5rem;
+  font: 500 var(--small) var(--serif);
+  letter-spacing: 0.01em;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* right track: the return home — the standalone equivalent of the pane's close */
+.project-bar .return { margin: 0; justify-self: end; }
+.project-id {
+  font-size: var(--small);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+/* the folio — the live prototype as its own page, opening over the overview.
+   it covers everything (including the project bar) and carries its own bar so
+   the only ways on are deeper in or back to the overview. */
+.folio-view {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: opacity 0.38s var(--ease), transform 0.38s var(--ease), visibility 0s linear 0.38s;
+}
+body.folio-open { overflow: hidden; }
+body.folio-open .folio-view {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity 0.38s var(--ease), transform 0.38s var(--ease), visibility 0s;
+}
+.folio-bar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.8rem clamp(1.2rem, 4vw, 2rem);
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+}
+.folio-bar .return { margin: 0; }
+/* embedded in the site's preview pane, the host toolbar is the only chrome —
+   the page hands its breadcrumb up (see the page script) and hides its own bar */
+.embedded .folio-bar { display: none; }
+/* the folio header reads as a breadcrumb: the project, then the open book */
+.folio-crumbs { display: flex; align-items: center; gap: 0.55rem; min-width: 0; }
+.folio-crumbs .crumb {
+  font-size: var(--small);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.folio-crumbs .crumb-root { color: var(--faint); transition: color 0.25s var(--ease); }
+.folio-crumbs .crumb-root:hover, .folio-crumbs .crumb-root:focus-visible { color: var(--ink); }
+.folio-crumbs .crumb-sep { color: var(--faint); opacity: 0.55; }
+.folio-crumbs .crumb-here { color: var(--ink); min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.folio-view iframe { flex: 1 1 auto; display: block; width: 100%; border: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .folio-view { transition: opacity 0.2s linear, visibility 0s linear 0.2s; transform: none; }
+  body.folio-open .folio-view { transition: opacity 0.2s linear, visibility 0s; }
+}
+
+@keyframes cue-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(3px); } }
+
+.fs-btn {
+  font-size: var(--small);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: none;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 7px 13px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: var(--serif);
+  transition: border-color 0.25s var(--ease), transform 0.12s var(--ease);
+}
+.fs-btn:hover, .fs-btn:focus-visible { border-color: var(--ink); }
+.fs-btn:active { transform: scale(0.96); }
+
+/* ——— the cover: a project opens as a big title card. it reveals its line,
+   answers the cursor, then carries you deeper into the live experience. ——— */
+.cover {
+  position: relative;
+  min-height: calc(100svh - 3.1rem);
+  display: grid;
+  place-items: center;
+  padding: clamp(2rem, 8vh, 5rem) clamp(1.4rem, 6vw, 3rem);
+  overflow: hidden;
+  text-align: center;
+}
+.cover-text { position: relative; max-width: 40rem; margin: 0 auto; }
+.cover-text .label { margin-bottom: 1rem; }
+.cover-title {
+  font-size: var(--display);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  margin: 0;
+  text-wrap: balance;
+}
+.cover-line {
+  font-size: var(--text);
+  line-height: 1.5;
+  color: var(--muted);
+  margin: 1.1rem auto 0;
+  max-width: 40ch;
+  text-wrap: pretty;
+}
+
+/* the library — each book drawn as a diagram of its conceptual architecture */
+.library {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(1.4rem, 3.5vw, 2.8rem);
+  max-width: 50rem;
+  margin: clamp(2.4rem, 6vh, 3.6rem) auto 0;
+  padding: 0;
+  list-style: none;
+}
+.vol { width: 9rem; }
+.vol-diagram {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  /* a drawn window into the book's architecture — a warm near-black plate,
+     the figure rendered over it in the rubric gold (currentColor) */
+  background:
+    radial-gradient(120% 120% at 50% 40%, #14160f 0%, #0a0c07 68%, #070805 100%);
+  color: rgba(143, 119, 54, 0.82);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow:
+    inset 0 0 0 1px rgba(143, 119, 54, 0.16),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.04),
+    0 6px 20px -10px rgba(0, 0, 0, 0.6);
+  transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease), color 0.3s var(--ease);
+}
+.vol-diagram svg { width: 100%; height: 100%; display: block; padding: 16%; }
+/* the rubric diamond — only on volumes you can enter, lit on hover */
+.vol-live {
+  position: absolute; top: 9px; right: 10px;
+  width: 5px; height: 5px; background: var(--mark);
+  transform: rotate(45deg); opacity: 0; transition: opacity 0.3s var(--ease);
+}
+/* coming volumes read as faint, unlit drawings */
+.vol:not(.is-live) .vol-diagram { color: rgba(255, 255, 255, 0.20); opacity: 0.72; }
+.vol-name {
+  font-size: var(--small);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 0.7rem 0 0;
+}
+.vol-shape {
+  font-size: var(--small);
+  font-style: italic;
+  color: var(--faint);
+  margin: 0.15rem 0 0;
+}
+a.vol { display: block; }
+a.vol:hover .vol-diagram,
+a.vol:focus-visible .vol-diagram {
+  color: rgb(176, 147, 70);
+  transform: translateY(-4px);
+  box-shadow:
+    inset 0 0 0 1px rgba(143, 119, 54, 0.3),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.06),
+    0 12px 26px -10px rgba(0, 0, 0, 0.66);
+}
+a.vol:hover .vol-live,
+a.vol:focus-visible .vol-live { opacity: 0.9; }
+
+/* a worked-example figure set into a movement — the book's diagram, larger */
+.movement-figure { width: clamp(120px, 22vw, 196px); margin: 0 auto 1.5rem; color: rgba(143, 119, 54, 0.82); }
+.movement-figure svg { width: 100%; height: auto; display: block; }
+.cover-enter {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(1.3rem, 5vh, 2.6rem);
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  font-size: var(--small);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--faint);
+  transition: color 0.25s var(--ease);
+}
+.cover-enter:hover { color: var(--ink); }
+.cover-enter .arrow { display: inline-block; animation: cue-bob 2.4s var(--ease) infinite; }
+@media (prefers-reduced-motion: reduce) { .cover-enter .arrow { animation: none; } }
+
+/* ——— the movements: the project told as a sequence of title cards, each a
+   beat that rises as it enters view — the same family as the cover. ——— */
+.movement {
+  min-height: 78vh;
+  display: grid;
+  place-items: center;
+  padding: clamp(3rem, 11vh, 6.5rem) clamp(1.6rem, 6vw, 3rem);
+  border-top: 1px solid var(--rule);
+  text-align: center;
+}
+.movement-inner { max-width: 34rem; }
+.movement-num {
+  font-size: var(--small);
+  letter-spacing: 0.3em;
+  color: var(--mark);
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 1.1rem;
+}
+.movement-title {
+  font-size: var(--display);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  margin: 0;
+  text-wrap: balance;
+}
+.movement-note {
+  font-size: var(--text);
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 1.3rem auto 0;
+  max-width: 38ch;
+  text-wrap: pretty;
+}
+
+.project-colophon {
+  border-top: 1px solid var(--rule);
+  padding: clamp(2rem, 6vh, 3.5rem) clamp(1.6rem, 6vw, 3rem) clamp(3rem, 8vh, 5rem);
+  text-align: center;
+  font-size: var(--small);
+  color: var(--faint);
+}
+/* inside the framed editorial the wrapper supplies the side gutters; align the
+   colophon to the frame and give the page the essay's lower framing */
+.editorial .project-colophon { padding-left: 0; padding-right: 0; padding-bottom: clamp(4rem, 12vh, 8rem); }
+.project-colophon a {
+  color: var(--muted);
+  box-shadow: inset 0 -1px 0 var(--rule);
+  transition: box-shadow 0.25s var(--ease), color 0.25s var(--ease);
+}
+.project-colophon a:hover { color: var(--ink); box-shadow: inset 0 -1px 0 var(--ink); }
+
+/* scroll-revealed beats — rise and sharpen as they enter view */
+.rise {
+  opacity: 0;
+  transform: translateY(16px);
+  filter: blur(6px);
+  transition: opacity 0.8s var(--ease), transform 0.8s var(--ease), filter 0.8s var(--ease);
+}
+.rise.is-in { opacity: 1; transform: none; filter: blur(0); }
+@media (prefers-reduced-motion: reduce) {
+  .rise { opacity: 1; transform: none; filter: none; transition: none; }
+}
+
+/* =========================================================================
+   MARGINALIA — a glossed term tied by a thin leader line to a note out in
+   the right margin, the way a reader's hand once answered a line in the
+   blank edge of the page. Hover or click the term to draw the line; on a
+   narrow screen the note unfolds in place, like a footnote opening beneath
+   the line it annotates.
+   ========================================================================= */
+
+/* the absolutely-placed margin pieces hang off the page, not the column */
+body.essay { position: relative; }
+
+/* the inline marker — a quiet dotted gloss-line in the rubric red */
+.concept {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: inset 0 -0.07em 0 rgba(143, 119, 54, 0.35);
+  transition: box-shadow 0.25s var(--ease), color 0.25s var(--ease);
+}
+.concept:hover,
+.concept[aria-expanded="true"] {
+  color: var(--mark);
+  box-shadow: inset 0 -0.07em 0 var(--mark);
+}
+
+/* the source notes live hidden at the foot of the article */
+.concept-notes { display: none; }
+
+/* the leader line — drawn from the column's right edge out to the note.
+   width + left + top are set inline by the script; it grows from the
+   column outward via scaleX. */
+.gloss-line {
+  position: absolute;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.3);
+  transform-origin: left center;
+  transform: scaleX(0);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 30;
+  /* exit — retract toward the column, quick and decisive */
+  transition:
+    transform 0.26s cubic-bezier(0.4, 0, 0.9, 1),
+    opacity 0.18s linear;
+}
+.gloss-line.is-open {
+  transform: scaleX(1);
+  opacity: 1;
+  /* enter — draw out fast, then settle */
+  transition:
+    transform 0.46s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.2s linear;
+}
+
+/* the margin note — plain marginal text, no card. left/top/width inline. */
+.gloss-note {
+  position: absolute;
+  z-index: 31;
+  font-size: var(--small);
+  line-height: 1.5;
+  color: var(--muted);
+  text-wrap: pretty;
+  opacity: 0;
+  transform: translateY(10px);
+  filter: blur(5px);
+  /* exit — dissolve back into blur, quick, no stagger */
+  transition:
+    opacity 0.2s cubic-bezier(0.4, 0, 0.9, 1),
+    transform 0.2s cubic-bezier(0.4, 0, 0.9, 1),
+    filter 0.2s linear;
+}
+.gloss-note.is-open {
+  opacity: 1;
+  transform: none;
+  filter: blur(0);
+  /* enter — rise and sharpen into focus, just after the line draws */
+  transition:
+    opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.1s,
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.1s,
+    filter 0.5s linear 0.1s;
+}
+
+/* margin-note typography */
+.gloss-note p { margin: 0; }
+.gloss-note p + p { margin-top: 0.6em; }
+.gloss-note em { font-style: italic; }
+.gloss-note a { box-shadow: inset 0 -1px 0 var(--rule); }
+.gloss-note a:hover { box-shadow: inset 0 -1px 0 var(--muted); }
+.gloss-term {
+  display: block;
+  font-size: var(--small);
+  font-weight: 500;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--mark);
+  margin-bottom: 0.45rem;
+}
+
+/* narrow / no-margin fallback — the gloss opens inline, right after the word,
+   in a low-opacity rust. it flows on as part of the sentence and wraps with
+   the paragraph, fading and sharpening out of blur as it appears; it dissolves
+   the same way on the way out. */
+.gloss-flow {
+  display: inline;
+  color: var(--mark);
+  font-size: 0;
+  opacity: 0;
+  filter: blur(6px);
+  /* exit — the note fades out at full size first, then, already invisible, its
+     width collapses to nothing. the layout (font-size) only moves while the
+     text can't be seen, so the sentence eases shut with no visible shrinking
+     and no snap when the node is finally removed. */
+  transition:
+    opacity 0.2s cubic-bezier(0.4, 0, 1, 1),
+    filter 0.22s cubic-bezier(0.4, 0, 1, 1),
+    font-size 0.46s cubic-bezier(0.32, 0.72, 0, 1) 0.18s;
+}
+/* the note rides inline, continuing the line after the trigger word and
+   wrapping with the paragraph; the inner spans stay inline so nothing breaks */
+.gloss-flow > .gloss-flow-inner { display: inline; }
+.gloss-flow-pad { display: inline; }
+.gloss-flow.is-open {
+  font-size: 1em;
+  opacity: 0.5;
+  filter: blur(0);
+  /* enter — the width opens first under cover of zero opacity, so the sentence
+     clears room while nothing shows; the text then resolves into the space it
+     has already made, at full size — never seen growing. */
+  transition:
+    font-size 0.5s cubic-bezier(0.32, 0.72, 0, 1),
+    opacity 0.32s cubic-bezier(0.22, 1, 0.36, 1) 0.22s,
+    filter 0.4s linear 0.18s;
+}
+.gloss-flow em { font-style: italic; }
+
+@media (prefers-reduced-motion: reduce) {
+  .gloss-line,
+  .gloss-line.is-open { transform: scaleX(1); }
+  .gloss-note,
+  .gloss-note.is-open { transform: none; filter: none; }
+  .gloss-flow,
+  .gloss-flow.is-open { filter: none; }
+  .gloss-line,
+  .gloss-line.is-open,
+  .gloss-note,
+  .gloss-note.is-open,
+  .gloss-flow,
+  .gloss-flow.is-open {
+    transition: opacity 0.12s linear;
+  }
+}
+
+/* =========================================================================
+   CASE — the scroll view of a project. A project is assembled from a small,
+   closed set of blocks; every band shares one frame so their column edges
+   line up, and any band can break full-bleed for media. Author once with
+   these classes; the rhythm is the system, the plates are the project.
+   ========================================================================= */
+
+.case { width: 100%; }
+
+/* every band owns its vertical rhythm and a default side gutter; the inner
+   .wrap caps the text column to the shared frame. media bands drop .wrap (or
+   add .bleed) to run edge-to-edge. */
+.case .block { padding-block: clamp(3.2rem, 9vh, 7rem); }
+.case .block:first-child { padding-top: clamp(1.8rem, 6vh, 4rem); }
+.case .wrap { max-width: var(--frame); margin-inline: auto; padding-inline: var(--frame-pad); }
+.case .wrap-narrow { max-width: var(--reading); }
+.case .bleed { width: 100%; padding-inline: 0; }
+
+/* ---- type roles -------------------------------------------------------- */
+.eyebrow {
+  margin: 0 0 1.05rem;
+  font: 500 var(--small)/1 var(--serif);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--mark);
+}
+.case-display {
+  margin: 0;
+  font: 500 var(--display-xl)/1.02 var(--serif);
+  letter-spacing: -0.022em;
+  color: rgba(247, 244, 236, 0.96);
+  text-wrap: balance;
+}
+.case-title {
+  margin: 0;
+  font: 500 var(--case-title)/1.08 var(--serif);
+  letter-spacing: -0.016em;
+  color: rgba(247, 244, 236, 0.92);
+  text-wrap: balance;
+}
+.lede {
+  margin: 0;
+  max-width: 30ch;
+  font: 400 var(--lede)/1.34 var(--serif);
+  letter-spacing: -0.01em;
+  color: rgba(247, 244, 236, 0.9);
+  text-wrap: pretty;
+}
+.case-body { font: 400 var(--text)/1.62 var(--serif); color: var(--muted); text-wrap: pretty; }
+.case-body p { margin: 0; max-width: 42ch; }
+.case-body p + p { margin-top: 1.1em; }
+.case-body a { color: var(--ink); box-shadow: inset 0 -1px 0 var(--rule); transition: box-shadow 0.25s var(--ease); }
+.case-body a:hover { box-shadow: inset 0 -1px 0 var(--ink); }
+
+/* ---- hero — title, a short line, then the metadata strip ---------------- */
+.block-hero .hero-line { margin: 1.2rem 0 0; max-width: 34ch; font: 400 var(--text)/1.5 var(--serif); color: var(--muted); text-wrap: pretty; }
+.case-meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1rem, 3vw, 2.6rem);
+  margin: clamp(2rem, 5vh, 3.4rem) 0 0;
+  padding-top: 1.3rem;
+  border-top: 1px solid var(--rule);
+  list-style: none;
+}
+.case-meta li { display: block; }
+.case-meta .k {
+  display: block;
+  margin: 0 0 0.4rem;
+  font: 500 var(--small)/1.2 var(--serif);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.case-meta .v { display: block; font: 400 var(--text)/1.45 var(--serif); color: var(--muted); text-wrap: pretty; }
+@media (max-width: 40rem) { .case-meta { grid-template-columns: 1fr 1fr; gap: 1.4rem 1rem; } }
+
+/* ---- lede — one big statement alone on the field ------------------------ */
+.block-lede .lede { max-width: 22ch; font-size: clamp(1.5rem, 3.4vw + 0.4rem, 2.5rem); line-height: 1.22; }
+
+/* ---- section — eyebrow + title + body. optional two-column (.cols): the
+   heading holds the left rail, the prose the wider right. ------------------ */
+.block-section .case-title + .case-body { margin-top: clamp(1.1rem, 2.6vh, 1.7rem); }
+.block-section.cols .wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: clamp(1.6rem, 4vw, 4rem);
+  align-items: start;
+}
+.block-section.cols .case-body { margin-top: 0; }
+@media (max-width: 52rem) { .block-section.cols .wrap { grid-template-columns: 1fr; gap: 1.4rem; } }
+
+/* ---- figure — a media plate with a quiet caption ------------------------ */
+.case-fig { margin: 0; }
+.case-fig .frame {
+  position: relative;
+  border-radius: clamp(10px, 1.4vw, 18px);
+  overflow: hidden;
+  outline: 1px solid rgba(255, 255, 255, 0.08);
+  outline-offset: -1px;
+  box-shadow: 0 26px 64px -32px rgba(0, 0, 0, 0.82);
+}
+.case-fig .frame img,
+.case-fig .frame video { display: block; width: 100%; height: auto; }
+.case-fig figcaption,
+.case-cap { margin: 0.95rem 0 0; font: 400 var(--small)/1.55 var(--serif); color: var(--muted); text-wrap: pretty; }
+.case-fig.bleed .frame { border-radius: 0; outline: 0; }
+
+/* ---- plates — a 2–3-up grid of figures ---------------------------------- */
+.block-plates .grid {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+  gap: clamp(0.9rem, 1.9vw, 1.7rem);
+}
+.block-plates .case-fig figcaption { margin-top: 0.7rem; }
+@media (max-width: 52rem) { .block-plates .grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 34rem) { .block-plates .grid { grid-template-columns: 1fr; } }
+
+/* ---- aside — a small offset note set beside its media ------------------- */
+.block-aside .wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
+  gap: clamp(1.6rem, 4vw, 3.6rem);
+  align-items: start;
+}
+.aside-note { font: 400 var(--text)/1.55 var(--serif); color: var(--muted); text-wrap: pretty; }
+.aside-note p { margin: 0; }
+.aside-note p + p { margin-top: 1em; }
+.block-aside .case-fig { min-width: 0; }
+@media (max-width: 52rem) { .block-aside .wrap { grid-template-columns: 1fr; gap: 1.4rem; } }
+
+/* ---- pull — a quotation lifted out of the prose ------------------------- */
+.block-pull .wrap { max-width: 46rem; }
+.case-pull { margin: 0; font: 400 clamp(1.5rem, 3vw + 0.3rem, 2.25rem)/1.26 var(--serif); font-style: italic; color: rgba(247, 244, 236, 0.9); text-wrap: balance; }
+.case-pull cite {
+  display: block;
+  margin-top: 1.2rem;
+  font: 500 var(--small)/1.3 var(--serif);
+  font-style: normal;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+/* ---- close — the colophon band ----------------------------------------- */
+.block-close { border-top: 1px solid var(--rule); }
+.block-close .case-body { color: var(--faint); }
+.block-close .case-body a { color: var(--muted); }
+
+/* demo placeholder plates — a duotone field standing in for real media, so the
+   system can be read before assets exist. drop these once images land. */
+.demo-plate {
+  aspect-ratio: var(--ar, 16 / 10);
+  display: grid;
+  place-items: center;
+  background: radial-gradient(135% 130% at 28% 18%, var(--duo-m, #39434f) 0%, var(--duo-d, #14181c) 78%);
+}
+.demo-plate span { font: 500 var(--small)/1 var(--serif); letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255, 255, 255, 0.36); }
+
+/* embedded in the home detail pane: fold every multi-column band to one column
+   and let the frame match the essay's reading width, the way .project already
+   does for the older editorial bands. */
+.embedded .case .block-section.cols .wrap,
+.embedded .case .block-aside .wrap { grid-template-columns: 1fr; gap: 1.4rem; }
+.embedded .case .block-plates .grid { grid-template-columns: 1fr; }

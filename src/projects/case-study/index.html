@@ -1,0 +1,145 @@
+---
+layout: base.njk
+bodyClass: project
+title: "Vellum — Constantin Chopin"
+description: "Vellum — a reference case study laying down the scroll-view block system: hero, lede, section, figure, plates, aside, pull."
+---
+
+  <header class="project-bar">
+    <span class="project-glyph" aria-hidden="true">
+      <svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true">
+        <g transform="rotate(-16 12 12)">
+          <circle cx="12" cy="12" r="8" />
+          <ellipse cx="12" cy="12" rx="8" ry="3" />
+          <line x1="12" y1="1.5" x2="12" y2="22.5" />
+        </g>
+      </svg>
+    </span>
+    <span class="project-name">Vellum</span>
+    <a class="return" href="../../index.html"><span class="arrow">←</span>&nbsp; Constantin Chopin</a>
+  </header>
+
+  <main class="case">
+
+    <!-- HERO — eyebrow, the big title, a short line, then the metadata strip -->
+    <section class="block block-hero">
+      <div class="wrap">
+        <p class="eyebrow rise" style="--d:40ms">Project</p>
+        <h1 class="case-display rise" style="--d:120ms">Vellum</h1>
+        <p class="hero-line rise" style="--d:220ms">A reading surface for close attention — where a passage is met before it is explained, and the margin answers back.</p>
+        <ul class="case-meta rise" style="--d:320ms">
+          <li><span class="k">Project Type</span><span class="v">Full Build</span></li>
+          <li><span class="k">Role</span><span class="v">Design &amp; Engineering</span></li>
+          <li><span class="k">Deliverables</span><span class="v">Product Strategy, Design, Engineering</span></li>
+        </ul>
+      </div>
+      <figure class="case-fig bleed rise" style="--d:420ms; margin-top: clamp(2.4rem, 6vh, 4.5rem)">
+        <div class="frame demo-plate" style="--ar: 21/9; --duo-d:#0f1a2e; --duo-m:#2f4a6b"><span>Hero plate</span></div>
+      </figure>
+    </section>
+
+    <!-- LEDE — one big statement alone on the field -->
+    <section class="block block-lede">
+      <div class="wrap">
+        <p class="lede rise">For five hundred years the page held a conversation in its margins. Vellum gives that instinct a surface again — somewhere a reader's notice has room to live beside the text, not buried beneath it.</p>
+      </div>
+    </section>
+
+    <!-- SECTION — two-column: a left rail heading, the prose at the right -->
+    <section class="block block-section cols">
+      <div class="wrap">
+        <div>
+          <p class="eyebrow rise">Overview</p>
+          <h2 class="case-title rise" style="--d:80ms">Built around the reader's hand, not the algorithm's.</h2>
+        </div>
+        <div class="case-body rise" style="--d:160ms">
+          <p>Most reading tools optimise for throughput — highlights you never revisit, summaries that read for you. Vellum starts from the opposite premise: that attention is the scarce material, and the interface should protect it rather than spend it.</p>
+          <p>The text stays primary and unmarked. Everything the system offers waits in the margin, drawn only when asked, and returns there when you move on. Nothing is hidden and nothing is locked — what changes is only where you are on the page.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FIGURE — a single media plate, bled wide, with a quiet caption -->
+    <section class="block block-figure">
+      <figure class="case-fig bleed rise">
+        <div class="frame demo-plate" style="--ar: 16/9; --duo-d:#1c142a; --duo-m:#46315a"><span>Reading view</span></div>
+        <figcaption class="wrap">The reading surface at rest — a single column, the margin held empty until a passage is touched.</figcaption>
+      </figure>
+    </section>
+
+    <!-- ASIDE — a small offset note set beside its media -->
+    <section class="block block-aside">
+      <div class="wrap">
+        <div class="aside-note rise">
+          <p>Let's make one thing clear: a margin is not a comment thread. It is the reader's own hand, answering a line in the blank edge of the page.</p>
+        </div>
+        <figure class="case-fig rise" style="--d:120ms">
+          <div class="frame demo-plate" style="--ar: 4/3; --duo-d:#14181c; --duo-m:#39434f"><span>Gloss in margin</span></div>
+        </figure>
+      </div>
+    </section>
+
+    <!-- PLATES — a 3-up grid of figures -->
+    <section class="block block-plates">
+      <div class="wrap">
+        <div class="grid" style="--cols: 3">
+          <figure class="case-fig rise">
+            <div class="frame demo-plate" style="--ar: 3/4; --duo-d:#161e12; --duo-m:#3f5230"><span>Notice</span></div>
+            <figcaption>A blank field meets you first — what did you notice?</figcaption>
+          </figure>
+          <figure class="case-fig rise" style="--d:120ms">
+            <div class="frame demo-plate" style="--ar: 3/4; --duo-d:#221017; --duo-m:#5a2f3f"><span>Reading</span></div>
+            <figcaption>Only once you have written does a reading appear.</figcaption>
+          </figure>
+          <figure class="case-fig rise" style="--d:240ms">
+            <div class="frame demo-plate" style="--ar: 3/4; --duo-d:#2a230f; --duo-m:#6b5a28"><span>Thread</span></div>
+            <figcaption>A thread follows your reading wherever it goes.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- PULL — a quotation lifted out of the prose -->
+    <section class="block block-pull">
+      <div class="wrap">
+        <blockquote class="case-pull rise">
+          “The text stays on the shelf. This sits beside it, holding the shape of how it thinks, and waiting for whatever you notice.”
+          <cite>On the design of Vellum</cite>
+        </blockquote>
+      </div>
+    </section>
+
+    <!-- SECTION — a centered closing statement, the vision -->
+    <section class="block block-section">
+      <div class="wrap" style="text-align: center">
+        <p class="eyebrow rise">The Vision</p>
+        <h2 class="case-title rise" style="--d:80ms; margin-inline: auto; max-width: 22ch">Make a quiet place for close reading in a loud, summarising web.</h2>
+      </div>
+    </section>
+
+    <!-- CLOSE — the colophon band -->
+    <footer class="block block-close">
+      <div class="wrap-narrow wrap">
+        <p class="case-body rise">A reference case study for the scroll-view block system. Hand-built and kept as part of <a href="../../index.html">my commonplace book</a>.</p>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- reveal each block as it enters view; reduced-motion shows everything at rest -->
+  <script>
+    (function () {
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var rises = Array.prototype.slice.call(document.querySelectorAll('.rise'));
+      if (!('IntersectionObserver' in window) || reduce) {
+        rises.forEach(function (el) { el.classList.add('is-in'); });
+        return;
+      }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+        });
+      }, { rootMargin: '0px 0px -12% 0px', threshold: 0.12 });
+      rises.forEach(function (el) { io.observe(el); });
+    })();
+  </script>

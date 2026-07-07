@@ -1,0 +1,211 @@
+---
+layout: base.njk
+bodyClass: home
+title: Constantin Chopin
+description: "Constantin Chopin — design engineer exploring how computation expands creative traditions. Projects, writing, and tools from an ongoing practice."
+ogType: website
+ogTitle: Constantin Chopin
+ogDesc: "Design engineer exploring how computation expands creative traditions."
+ogUrl: "https://constantin.world"
+---
+  <div class="split">
+
+    <div class="pane-index">
+      <main class="page">
+
+        <header>
+          <h1 class="name">Constantin Chopin</h1>
+          <p class="bio-line">Design Engineer exploring how computation expands creative traditions.</p>
+          <p class="bio-line">Founder at <a href="https://constantin.studio">constantin.studio</a>. Professor at <a href="https://www.artcenter.edu">ArtCenter College of Design</a>.</p>
+        </header>
+
+        {% for shelf in library.shelves %}
+        <section class="shelf">
+          <h2 class="label">{{ glyphs[shelf.glyph] | safe }}<span class="label-text">{{ shelf.label }}</span></h2>
+          <ul class="index">
+            {% for e in shelf.entries %}
+            <li>
+              <a class="row{% if e.desc %} row-project{% endif %}" href="{{ e.href }}"{% if e.id %} data-id="{{ e.id }}"{% endif %}{% if e.preview %} data-preview="{{ e.preview }}"{% endif %}>
+                <span class="row-title">{{ e.title }}</span>
+                {% if e.desc %}<span class="row-desc">{{ e.desc }}</span>{% endif %}
+              </a>
+            </li>
+            {% endfor %}
+          </ul>
+        </section>
+        {% endfor %}
+
+      </main>
+    </div>
+
+    <aside class="pane-detail" aria-label="Selected entry">
+      <div class="viewport">
+        <div class="viewport-bar">
+          <span class="viewport-icon" id="detailIcon" aria-hidden="true"></span>
+          <span class="viewport-title" id="detailTitle"></span>
+          <div class="viewport-actions">
+            <button class="viewport-btn viewport-fullscreen" id="detailFullscreen" type="button" aria-label="Fullscreen">
+              <svg class="ico-enter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M8 3 H5 a2 2 0 0 0 -2 2 V8" />
+                <path d="M16 3 H19 a2 2 0 0 1 2 2 V8" />
+                <path d="M21 16 V19 a2 2 0 0 1 -2 2 H16" />
+                <path d="M3 16 V19 a2 2 0 0 0 2 2 H8" />
+              </svg>
+              <svg class="ico-exit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M3 8 H6 a2 2 0 0 0 2 -2 V3" />
+                <path d="M21 8 H18 a2 2 0 0 1 -2 -2 V3" />
+                <path d="M16 21 V18 a2 2 0 0 1 2 -2 H21" />
+                <path d="M8 21 V18 a2 2 0 0 0 -2 -2 H3" />
+              </svg>
+            </button>
+            <button class="viewport-btn viewport-close" id="detailClose" type="button" aria-label="Close">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+                <path d="M6 6 L18 18 M18 6 L6 18" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="viewport-stage">
+          <div class="viewport-window">
+            <iframe id="detailFrame" title="Selected entry" loading="lazy" sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-presentation" allowfullscreen></iframe>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  {% raw %}<script>
+    (function () {
+      var mq = window.matchMedia('(min-width: 64rem)');
+      var frame = document.getElementById('detailFrame');
+      var titleEl = document.getElementById('detailTitle');
+      var iconEl = document.getElementById('detailIcon');
+      var closeEl = document.getElementById('detailClose');
+      var fsEl = document.querySelector('.viewport');
+      var fsBtn = document.getElementById('detailFullscreen');
+      var all = Array.prototype.slice.call(document.querySelectorAll('.index a.row'));
+      var byId = {};
+      all.forEach(function (a) { if (a.dataset.id) byId[a.dataset.id] = a; });
+
+      function setActive(a) { all.forEach(function (l) { l.classList.toggle('is-active', l === a); }); }
+
+      // The toolbar title doubles as a breadcrumb. By default it is just the
+      // entry's own title; an embedded page may post a richer trail up to us
+      // (e.g. Asterlogos / The Odyssey), which we render here. A crumb carrying
+      // a `nav` is a link back into the page — clicking it asks the page to
+      // navigate, and the page reports a fresh breadcrumb in return.
+      function renderCrumbs(crumbs) {
+        if (!titleEl) return;
+        titleEl.textContent = '';
+        crumbs.forEach(function (c, i) {
+          if (i) {
+            var sep = document.createElement('span');
+            sep.className = 'crumb-sep';
+            sep.setAttribute('aria-hidden', 'true');
+            sep.textContent = '/';
+            titleEl.appendChild(sep);
+          }
+          var el;
+          if (c.nav) {
+            el = document.createElement('button');
+            el.type = 'button';
+            el.className = 'crumb crumb-link';
+            (function (to) {
+              el.addEventListener('click', function () {
+                if (frame.contentWindow) frame.contentWindow.postMessage({ source: 'cw-preview', type: 'nav', to: to }, '*');
+              });
+            })(c.nav);
+          } else {
+            el = document.createElement('span');
+            el.className = 'crumb crumb-current';
+            el.setAttribute('aria-current', 'page');
+          }
+          el.textContent = c.label;
+          titleEl.appendChild(el);
+        });
+      }
+
+      // An embedded preview reports its own breadcrumb trail so this single host
+      // toolbar can mirror it (the page hides its internal bar in turn).
+      window.addEventListener('message', function (e) {
+        if (e.source !== frame.contentWindow) return;
+        var d = e.data;
+        if (!d || d.source !== 'cw-preview' || d.type !== 'chrome' || !Array.isArray(d.crumbs) || !d.crumbs.length) return;
+        renderCrumbs(d.crumbs);
+      });
+
+      function open(id) {
+        var a = byId[id];
+        if (!a) return false;
+        // Prefer an explicit preview target when an entry defines one — the
+        // href stays the canonical page (row link, mobile, SEO) while the
+        // preview iframe can point somewhere richer (e.g. a live experience).
+        var src = a.getAttribute('data-preview') || a.getAttribute('href');
+        if (frame.getAttribute('src') !== src) frame.src = src;
+        var t = a.querySelector('.row-title');
+        if (t) renderCrumbs([{ label: t.textContent }]);
+        if (iconEl) {
+          var shelf = a.closest('.shelf');
+          var glyph = shelf && shelf.querySelector('.glyph');
+          iconEl.innerHTML = glyph ? glyph.outerHTML : '';
+        }
+        document.body.classList.add('detail-open');
+        setActive(a);
+        return true;
+      }
+      function clear() {
+        document.body.classList.remove('detail-open');
+        setActive(null);
+        setTimeout(function () {
+          if (!document.body.classList.contains('detail-open')) frame.removeAttribute('src');
+        }, 650);
+      }
+      function closeDetail() {
+        if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+        clear();
+      }
+      if (closeEl) closeEl.addEventListener('click', closeDetail);
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && document.body.classList.contains('detail-open')) closeDetail();
+      });
+
+      // fullscreen the whole preview chrome (toolbar + window)
+      function inFs() { return document.fullscreenElement || document.webkitFullscreenElement; }
+      if (fsBtn && fsEl) {
+        fsBtn.addEventListener('click', function () {
+          if (inFs()) { (document.exitFullscreen || document.webkitExitFullscreen).call(document); }
+          else { (fsEl.requestFullscreen || fsEl.webkitRequestFullscreen).call(fsEl); }
+        });
+        function syncFs() {
+          var on = !!inFs();
+          document.body.classList.toggle('viewport-fs', on);
+          fsBtn.setAttribute('aria-label', on ? 'Exit fullscreen' : 'Fullscreen');
+        }
+        document.addEventListener('fullscreenchange', syncFs);
+        document.addEventListener('webkitfullscreenchange', syncFs);
+      }
+
+      all.forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          if (!mq.matches) return;        // mobile → let the link navigate to its page
+          e.preventDefault();             // desktop → never full-navigate from the index
+          if (a.dataset.id && location.hash.slice(1) !== a.dataset.id) location.hash = a.dataset.id;
+        });
+      });
+
+      window.addEventListener('hashchange', function () {
+        if (!mq.matches) return;
+        var id = decodeURIComponent(location.hash.slice(1));
+        if (byId[id]) open(id);
+      });
+
+      function sync() {
+        if (!mq.matches) { document.body.classList.remove('detail-open'); return; }
+        var id = decodeURIComponent(location.hash.slice(1));
+        if (byId[id]) open(id); else clear();
+      }
+      sync();
+      mq.addEventListener('change', sync);
+    })();
+  </script>{% endraw %}
