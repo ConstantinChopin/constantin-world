@@ -2,3 +2,7 @@ node_modules/
 _site/
 .cache/
 .DS_Store
+
+# Sanctuaire is its own git repo (github.com/ConstantinChopin/search_dialogue),
+# nested here but tracked independently — not part of constantin-world.
+sanctuaire/
