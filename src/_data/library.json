@@ -12,15 +12,11 @@
           "preview": "/prototypes/surface/"
         },
         {
-          "id": "vellum",
-          "title": "Vellum",
-          "desc": "A reading surface for close attention — where a passage is met before it is explained, and the margin answers back.",
-          "href": "/projects/case-study/"
-        },
-        {
-          "title": "Soli",
-          "desc": "An archive of design theses, research, and emerging ideas.",
-          "href": "#soli"
+          "id": "sanctuaire",
+          "title": "Sanctuaire",
+          "desc": "A search surface for the world's museum collections — where one query gathers artefacts across archives and each image opens onto the next.",
+          "href": "https://www.sanctuaire.so",
+          "preview": "https://www.sanctuaire.so"
         }
       ]
     },
