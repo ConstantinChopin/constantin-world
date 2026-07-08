@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Asterlogos — Manifesto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300;1,6..72,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script>
+  /* design system + shared cloud engine — resolved against the /prototypes/
+     segment (the standard resolver). Layout only; no page-local tokens. */
+  (function(){
+    var p=location.pathname, i=p.indexOf('/prototypes/');
+    var base=(i>=0)?p.slice(0,i+12):'../';
+    document.write('<link rel="stylesheet" href="'+base+'_shared/asterlogos.css">');
+    document.write('<script src="'+base+'_shared/cloud-engine.js"><\/script>');
+  })();
+</script>
+<script>
+  // THREE r128 — the same renderer the instruments use, with a fallback CDN.
+  window.addEventListener('error', function(e){ var d=document.getElementById('err'); if(!d) return;
+    d.style.display='block'; d.textContent=(d.textContent?d.textContent+'\n':'')+'['+(e.message||e.type)+']'; });
+  (function(){
+    var srcs=['https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js',
+              'https://unpkg.com/three@0.128.0/build/three.min.js'];
+    function load(i){ if(i>=srcs.length){ return; }
+      var s=document.createElement('script'); s.src=srcs[i];
+      s.onload=function(){ if(!window.THREE) load(i+1); }; s.onerror=function(){ load(i+1); };
+      document.head.appendChild(s); }
+    load(0);
+  })();
+</script>
+<style>
+  /* ================================================================== *
+   *  ASTERLOGOS — the manifesto, opening movement. LAYOUT ONLY: every   *
+   *  token, colour and type role is the system's. One ink field morphs  *
+   *  through the instruments we built — and ends on the turn.           *
+   *  Staging law: text and object never share the same pixels.          *
+   * ================================================================== */
+  *{box-sizing:border-box;}
+  html,body{margin:0;}
+  body{background:var(--paper);color:var(--ink);font-family:var(--serif);
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+  body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.34;
+    background-image:radial-gradient(var(--rule) 0.5px,transparent 0.5px);background-size:3px 3px;}
+
+  #cloud{position:fixed;inset:0;z-index:1;display:block;width:100%;height:100%;pointer-events:none;}
+  /* the plate cluster — instrument engravings as ink-stipple, a staggered
+     collage at different opacities, faded in for its one beat */
+  #plateCluster{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:0;will-change:opacity;}
+  #plateCluster img{position:absolute;height:auto;mix-blend-mode:multiply;opacity:0;
+    transform:translate(-50%,-50%) translateY(16px) rotate(var(--rot)) scale(0.98);
+    transition:opacity .8s var(--ease),transform .9s var(--spring);}
+  #plateCluster.show img{opacity:var(--o);transform:translate(-50%,-50%) rotate(var(--rot)) scale(1);}
+  #vig{position:fixed;inset:0;z-index:3;pointer-events:none;box-shadow:inset 0 0 180px rgba(70,64,54,0.12);}
+  #prog{position:fixed;top:0;right:8px;bottom:0;z-index:6;width:1px;background:var(--rule);opacity:.5;}
+  #prog .fill{position:absolute;top:0;left:-0.5px;width:2px;height:0;background:var(--gild);}
+
+  main{position:relative;z-index:4;}
+  .mv{min-height:100vh;display:grid;place-items:center;padding:14vh 6vw;}
+  .mv.high{align-items:start;padding-top:15vh;}   /* the hero rides above the object */
+  .inner{max-width:720px;text-align:center;opacity:0;transition:opacity .12s linear;
+    background:radial-gradient(ellipse 82% 66% at 50% 50%, rgba(231,228,219,0.9) 0%, rgba(231,228,219,0.74) 44%, transparent 76%);
+    padding:44px 32px;border-radius:50%;}
+  .lead{font-family:var(--display);font-weight:500;font-style:italic;font-size:clamp(30px,5.2vw,56px);line-height:1.07;letter-spacing:.01em;margin:0 0 20px;text-wrap:balance;}
+  .lead:last-child{margin-bottom:0;}
+  .sub{font-family:var(--serif);font-weight:300;font-size:clamp(16px,2vw,20px);line-height:1.62;color:var(--ink-soft);max-width:50ch;margin:0 auto 14px;text-wrap:pretty;}
+  .sub:last-child{margin-bottom:0;}
+  .form{font-family:var(--display);font-weight:500;font-style:italic;font-size:clamp(28px,4.6vw,48px);line-height:1.04;margin:14px 0 0;}
+  .form .yr{display:block;font:var(--text-label);letter-spacing:.24em;text-transform:uppercase;color:var(--ghost);margin-top:14px;}
+
+  @media (max-width:720px){ #prog{right:4px;} .inner{border-radius:26px;padding:34px 22px;} }
+  @media (prefers-reduced-motion:reduce){ .inner{transition:none;} }
+
+  #err{position:fixed;bottom:12px;left:12px;right:12px;font:12px/1.4 ui-monospace,monospace;background:#e7e4db;color:#7a2318;padding:10px 14px;border-radius:2px;border:1px solid #7a2318;z-index:99999;white-space:pre-wrap;display:none;}
+</style>
+</head>
+<body>
+<canvas id="cloud" aria-hidden="true"></canvas>
+<!-- the plate cluster: instrument engravings baked to ink-stipple, shown as a
+     staggered collage for the one beat where the field steps aside (built in JS) -->
+<div id="plateCluster" aria-hidden="true"></div>
+<div id="vig" aria-hidden="true"></div>
+<div id="prog" aria-hidden="true"><div class="fill" id="progfill"></div></div>
+
+<main>
+  <!-- S1 · DUST -->
+  <section class="mv" data-state="0"><div class="inner">
+    <h2 class="lead">Every age builds the instruments it thinks with.</h2>
+  </div></section>
+
+  <!-- S2 · ARMILLARY -->
+  <section class="mv" data-state="1"><div class="inner">
+    <p class="sub">Spheres for the heavens.</p>
+    <p class="form">the armillary sphere<span class="yr">antiquity</span></p>
+  </div></section>
+
+  <!-- S3 · MEMORY THEATRE — Camillo's half-amphitheatre -->
+  <section class="mv" data-state="2"><div class="inner">
+    <p class="sub">Theatres for memory.</p>
+    <p class="form">the memory theatre<span class="yr">1550</span></p>
+  </div></section>
+
+  <!-- S4 · ORRERY — one flat plane, arms and beads -->
+  <section class="mv" data-state="3"><div class="inner">
+    <p class="sub">Machines for the turning of the worlds.</p>
+    <p class="form">the orrery<span class="yr">1713</span></p>
+  </div></section>
+
+  <!-- S5a · THE PLATE — van de Passe's Urania, the engraving itself baked to
+       ink-points: learned from them, taught from them. Copy above, plate below. -->
+  <section class="mv high" data-state="4"><div class="inner">
+    <p class="sub">We learned from them. We taught from them.</p>
+  </div></section>
+
+  <!-- S5b · THE PAGES — the hero above the folio -->
+  <section class="mv high" data-state="5"><div class="inner">
+    <h2 class="lead">For the stories, we only ever made pages.</h2>
+  </div></section>
+
+  <!-- S6 · THE TURN — alone; the cloud disperses to near-nothing. The end. -->
+  <section class="mv" data-state="6"><div class="inner">
+    <h2 class="lead">But every story has a shape.</h2>
+  </div></section>
+</main>
+
+<div id="err"></div>
+
+<script>
+(function(){
+  "use strict";
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function boot(){
+    if(!window.THREE || !window.CloudEngine){
+      boot._w=(boot._w||0)+60; if(boot._w>9000){ var d=document.getElementById('err');
+        if(d){ d.style.display='block'; d.textContent='Could not load the field (THREE / cloud-engine).'; } return; }
+      return setTimeout(boot,60);
+    }
+    try{ init(); }catch(e){ var d=document.getElementById('err'); if(d){ d.style.display='block'; d.textContent='['+e.message+']\n'+(e.stack||''); } }
+  }
+
+  function init(){
+  var THREE=window.THREE, CE=window.CloudEngine;
+  var rng=(function(s){return function(){s=(s*1664525+1013904223)>>>0;return s/4294967296;};})(20260706);
+  function rr(a,b){return a+rng()*(b-a);}
+  function jj(a){return (rng()*2-1)*a;}
+  function pick(arr){ return arr[(rng()*arr.length)|0]; }
+  function clamp01(x){ return x<0?0:(x>1?1:x); }
+
+  // the instrument's builder vocabulary — points ON forms, drawn as dense
+  // point-runs with the mark system and rare full-ink accents
+  var R=CE.R, sdir=CE.sdir, pDisc=CE.pDisc, stroke=CE.stroke, seg=CE.seg, IFK=CE.IFK,
+      INK_SOFT=CE.INK_SOFT, INK_FULL=CE.INK_FULL;
+  function rotX(p,a){var c=Math.cos(a),s=Math.sin(a);return [p[0],p[1]*c-p[2]*s,p[1]*s+p[2]*c];}
+  function rotY(p,a){var c=Math.cos(a),s=Math.sin(a);return [p[0]*c+p[2]*s,p[1],-p[0]*s+p[2]*c];}
+
+  /* ============================================================
+     THE INSTRUMENTS WE BUILT — each authored with the SAME builder
+     vocabulary as the Odyssey knots (stroke/seg/pDisc/sdir + marks +
+     full-ink accents), so the lineage is engraved, not stippled. The
+     one continuous field samples into these, carrying each point's
+     size, mark and ink-weight from the figure it lands on.
+        e(dx,dy,dz, size, mark, colOverride)
+        marks: 0 pinprick · 1 disc · 4 cross · 8 open-square
+     ============================================================ */
+  // the armillary sphere — graduated rings at many tilts (its signature), a
+  // polar axis, the ecliptic band, pole crosses and node squares
+  function buildArmillary(e){
+    var rings=[[0,0],[1.15,0.35],[0.55,1.25],[1.75,0.85],[0.95,2.15],[1.35,0.5]];
+    rings.forEach(function(rot){
+      stroke(e,function(f){ var a=f*6.2831, p=[Math.cos(a),Math.sin(a),0]; p=rotX(p,rot[0]); return rotY(p,rot[1]); },170,0.95,0,null,0.006); });
+    stroke(e,function(f){ var a=f*6.2831; return [Math.cos(a)*1.02,0,Math.sin(a)*1.02]; },160,1.0,0,null,0.006);   // ecliptic
+    seg(e,[0,-1.16,0],[0,1.16,0],48,1.05,0,null,0.005);                                                            // polar axis
+    e(0,1.16,0,2.2,4,IFK); e(0,-1.16,0,2.2,4,IFK);                                                                 // poles
+    for(var i=0;i<8;i++){ var a=i/8*6.2831; e(Math.cos(a)*1.02,0,Math.sin(a)*1.02,1.5,8); }                        // nodes
+  }
+  // Camillo's memory theatre — a half-amphitheatre: rising, widening arcs
+  // (never rings), broken into sector aisles, a stage-disc at the focal point
+  function buildTheatre(e){
+    var TIERS=5, SPAN=3.32, AISLES=5, t, s;
+    for(t=0;t<TIERS;t++){ var r=0.34+t*0.15, y=-0.34+t*0.17;
+      for(s=0;s<AISLES;s++){ var a0=-SPAN/2+s*(SPAN/AISLES)+0.045, a1=-SPAN/2+(s+1)*(SPAN/AISLES)-0.045;
+        stroke(e,function(f){ var a=a0+(a1-a0)*f; return [Math.sin(a)*r,y,-Math.cos(a)*r]; },30,0.95,0,null,0.008); } }
+    for(var i=0;i<64;i++){ var p=pDisc(0.15,0); e(p[0],-0.36,0.44+p[2]*0.7,0.9,0); }                               // the stage
+    e(0,-0.34,0.44,2.0,4,IFK);                                                                                      // the focal point
+  }
+  // the orrery — ONE flat plane: a sun-mass, four orbit rings, a single planet-
+  // bead on each, thin radial arms, a pillar and base. A machine, not a sphere.
+  function buildOrrery(e){
+    var i,d,p;
+    for(i=0;i<80;i++){ d=sdir(); e(d[0]*0.1,d[1]*0.06,d[2]*0.1,1.1,1); }                                           // sun body
+    e(0,0,0,2.6,1,IFK);                                                                                            // sun core
+    var Rr=[0.24,0.44,0.63,0.82], BEAD=[0.9,2.4,4.2,5.7], k;
+    for(k=0;k<Rr.length;k++){ var r=Rr[k];
+      stroke(e,function(f){ var a=f*6.2831; return [Math.cos(a)*r,0,Math.sin(a)*r]; },110+k*26,0.9,0,null,0.006);  // orbit ring
+      var b=BEAD[k], bx=Math.cos(b)*r, bz=Math.sin(b)*r;
+      for(i=0;i<22;i++){ d=sdir(); e(bx+d[0]*0.04,d[1]*0.03,bz+d[2]*0.04,1.1,1); }                                 // planet bead
+      e(bx,0,bz,1.9,1,IFK);
+      seg(e,[0,0,0],[bx,0,bz],32,0.85,0,null,0.006); }                                                            // radial arm
+    seg(e,[0,0,0],[0,-0.46,0],28,1.0,0,null,0.005);                                                               // pillar
+    for(i=0;i<40;i++){ p=pDisc(0.16,0); e(p[0],-0.48,p[2],0.95,0); }                                              // base
+  }
+  // "we learned from them, we taught from them" is not a swarm pose — it is a
+  // FLAT PLATE: Crispijn van de Passe's Urania (Rijksmuseum, public domain),
+  // baked to a Floyd–Steinberg ink-stipple and shown as an image layer while
+  // the 3D field disperses out of the way. (see #plate + the state-4 scatter.)
+  // the pages — a sheaf of three offset folios, particles settled into
+  // horizontal rows of set type: ruled flatness, not flatness
+  function buildPages(e){
+    var F=3, f, rI, w=0.35, h=0.58;
+    for(f=0;f<F;f++){
+      var ox=(f-1)*0.11, oy=(f-1)*0.05, oz=f*-0.08, ry=-0.17+f*0.14, c=Math.cos(ry), sn=Math.sin(ry);
+      var pe=function(x,y,z,size,mark,col){ e(x*c+z*sn+ox, y+oy, -x*sn+z*c+oz, size, mark, col); };
+      for(rI=0;rI<13;rI++){ var y=0.52-rI*(1.04/12), len=0.62*((rI%5===4)?0.55:1)*(0.92+R()*0.08);
+        seg(pe,[-0.31,y,0],[-0.31+len,y,0],Math.max(9,Math.round(len/0.02)),0.8,0,null,0.004); }                  // a line of type
+      seg(pe,[-w,h,0],[w,h,0],22,0.72,0,null,0.004);  seg(pe,[w,h,0],[w,-h,0],30,0.72,0,null,0.004);              // the cut edge
+      seg(pe,[w,-h,0],[-w,-h,0],22,0.72,0,null,0.004); seg(pe,[-w,-h,0],[-w,h,0],30,0.72,0,null,0.004);
+    }
+  }
+
+  // run a builder, collecting [x,y,z, size, mark, ink] records (ink=1 = accent)
+  function collect(builder){ var a=[]; builder(function(x,y,z,size,mark,col){
+    a.push([x,y,z, (size==null?1:size), (mark==null?0:mark), (col===IFK?1:0)]); }); return a; }
+  function normRecs(recs,target){ var cx=0,cy=0,cz=0,i,n=recs.length;
+    for(i=0;i<n;i++){ cx+=recs[i][0]; cy+=recs[i][1]; cz+=recs[i][2]; } cx/=n; cy/=n; cz/=n;
+    var m=0.0001; for(i=0;i<n;i++) m=Math.max(m,Math.abs(recs[i][0]-cx),Math.abs(recs[i][1]-cy),Math.abs(recs[i][2]-cz));
+    var sc=(target||0.95)/m; for(i=0;i<n;i++){ recs[i][0]=(recs[i][0]-cx)*sc; recs[i][1]=(recs[i][1]-cy)*sc; recs[i][2]=(recs[i][2]-cz)*sc; }
+    return recs; }
+  var FORMS=[ null,
+    normRecs(collect(buildArmillary),0.98),
+    normRecs(collect(buildTheatre),0.95),
+    normRecs(collect(buildOrrery),0.95),
+    null,                                  // 4 · the Urania plate is a FLAT image, not a swarm pose — the field scatters here
+    normRecs(collect(buildPages),0.9),
+    null ];
+
+  /* ---- the state table: one continuous field, seven poses. Each point carries a
+     per-state position, size, mark and ink-weight (0 soft · 1 full ink).
+     0 dust · 1 armillary · 2 theatre · 3 orrery · 4 the plate (Urania) · 5 pages · 6 disperse ---- */
+  var N=3000, NS=7, MSCALE=0.34;   // form sizes → this near view
+  var ST=[],STsz=[],STmk=[],STik=[];
+  for(var st=0;st<NS;st++){ ST.push(new Float32Array(N*3)); STsz.push(new Float32Array(N)); STmk.push(new Float32Array(N)); STik.push(new Float32Array(N)); }
+  function set(a,i,x,y,z){ a[i*3]=x; a[i*3+1]=y; a[i*3+2]=z; }
+  function scatter(a,i,rlo,rhi){ var t=rng()*6.2831, ph=Math.acos(rng()*2-1), r=rlo+rng()*(rhi-rlo);
+    set(a,i,Math.sin(ph)*Math.cos(t)*r, Math.cos(ph)*r*0.85, Math.sin(ph)*Math.sin(t)*r); }
+  var i,s;
+  for(i=0;i<N;i++){
+    scatter(ST[0],i,0.62,1.12); STsz[0][i]=0.30+rng()*0.24; STmk[0][i]=0; STik[0][i]=0;          // dust
+    for(s=1;s<=5;s++){ var f=FORMS[s];
+      if(!f){ scatter(ST[s],i,0.95,1.7); STsz[s][i]=0.22+rng()*0.18; STmk[s][i]=0; STik[s][i]=0; continue; }  // the plate beat: field scatters
+      var rec=pick(f); set(ST[s],i,rec[0],rec[1],rec[2]); STsz[s][i]=rec[3]*MSCALE; STmk[s][i]=rec[4]; STik[s][i]=rec[5]; }
+    scatter(ST[6],i,1.15,1.9); STsz[6][i]=0.24+rng()*0.2; STmk[6][i]=0; STik[6][i]=0;             // disperse (the turn)
+  }
+  var phase=new Float32Array(N); for(i=0;i<N;i++) phase[i]=rng()*6.2831;
+  function smooth(t){return t*t*(3-2*t);}
+
+  /* ============================================================ THREE SCENE ============================================================ */
+  var cv=document.getElementById('cloud');
+  var renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,canvas:cv});
+  renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
+  renderer.setClearColor(0x000000,0);
+  var scene=new THREE.Scene();
+  var camera=new THREE.PerspectiveCamera(46,1,0.05,100);
+  var spin=new THREE.Group(); scene.add(spin);
+  var tiltG=new THREE.Group(); spin.add(tiltG);
+
+  // position, ink, size and mark all morph per frame (seeded from the dust state);
+  // aColor lerps between soft ink and full-ink accents by the carried ink-weight
+  var geo=new THREE.BufferGeometry();
+  var posBuf=new Float32Array(N*3), colA=new Float32Array(N*3), sizA=new Float32Array(N), aspA=new Float32Array(N), mrkA=new Float32Array(N);
+  for(i=0;i<N;i++){ posBuf[i*3]=ST[0][i*3]; posBuf[i*3+1]=ST[0][i*3+1]; posBuf[i*3+2]=ST[0][i*3+2];
+    sizA[i]=STsz[0][i]; mrkA[i]=STmk[0][i]; aspA[i]=0;
+    colA[i*3]=INK_SOFT[0]; colA[i*3+1]=INK_SOFT[1]; colA[i*3+2]=INK_SOFT[2]; }
+  geo.setAttribute('position',new THREE.BufferAttribute(posBuf,3).setUsage(THREE.DynamicDrawUsage));
+  geo.setAttribute('aColor',new THREE.BufferAttribute(colA,3).setUsage(THREE.DynamicDrawUsage));
+  geo.setAttribute('aSize',new THREE.BufferAttribute(sizA,1).setUsage(THREE.DynamicDrawUsage));
+  geo.setAttribute('aAspect',new THREE.BufferAttribute(aspA,1));
+  geo.setAttribute('aMark',new THREE.BufferAttribute(mrkA,1).setUsage(THREE.DynamicDrawUsage));
+  var mat=CE.makePointMaterial(THREE); mat.uniforms.uLens.value=-1;
+  tiltG.add(new THREE.Points(geo,mat));
+
+  function resize(){ var w=cv.clientWidth||1,h=cv.clientHeight||1; camera.aspect=w/h; camera.updateProjectionMatrix(); renderer.setSize(w,h,false); }
+  window.addEventListener('resize',resize); resize();
+  if(window.ResizeObserver) new ResizeObserver(resize).observe(cv);
+
+  /* ---- scroll → state; DOM work decoupled from the render loop ---- */
+  var secs=[].slice.call(document.querySelectorAll('.mv'));
+  var inners=[].slice.call(document.querySelectorAll('.inner'));
+  var progfill=document.getElementById('progfill');
+  var plateSec=secs.filter(function(s){return +s.dataset.state===4;})[0];   // the plate beat
+  // the cluster of tools-through-the-ages, authored as a collage: each plate a
+  // position (l,t %), a width (vh), a tilt, its own opacity level, an entrance delay
+  var plateCluster=document.getElementById('plateCluster');
+  var TOOLS=[
+    {n:'celestial', l:49, t:50, w:40, r:-3, o:0.34, d:0},     // the cosmos-map, a soft backdrop
+    {n:'armillary', l:33, t:42, w:30, r:2,  o:0.60, d:120},   // upper-left
+    {n:'orrery',    l:55, t:48, w:30, r:-2, o:0.90, d:230},   // the bright heart
+    {n:'telescope', l:76, t:53, w:26, r:5,  o:0.74, d:340},   // right
+    {n:'press',     l:26, t:57, w:22, r:-4, o:0.76, d:450},   // left
+    {n:'sundial',   l:71, t:71, w:22, r:4,  o:0.52, d:560},   // lower-right
+    {n:'astrolabe', l:33, t:72, w:18, r:-7, o:0.48, d:670}    // lower-left
+  ];
+  TOOLS.forEach(function(tl){ var im=document.createElement('img'); im.alt=''; im.src='assets/tool-'+tl.n+'.png';
+    im.style.cssText='left:'+tl.l+'%;top:'+tl.t+'%;width:'+tl.w+'vh;--rot:'+tl.r+'deg;--o:'+tl.o+';transition-delay:'+tl.d+'ms';
+    plateCluster.appendChild(im); });
+  function curState(){
+    var vc=window.scrollY+window.innerHeight/2;
+    var cen=secs.map(function(s){var r=s.getBoundingClientRect();return window.scrollY+r.top+r.height/2;});
+    var stv=secs.map(function(s){return +s.dataset.state;});
+    if(vc<=cen[0])return stv[0];
+    if(vc>=cen[cen.length-1])return stv[stv.length-1];
+    for(var j=0;j<cen.length-1;j++){ if(vc>=cen[j]&&vc<=cen[j+1]){ var f=smooth((vc-cen[j])/(cen[j+1]-cen[j])); return stv[j]+(stv[j+1]-stv[j])*f; } }
+    return stv[stv.length-1];
+  }
+  function centeredness(el){ var r=el.getBoundingClientRect(), vc=window.innerHeight/2, c=r.top+r.height/2;
+    return clamp01(1-Math.abs(c-vc)/(window.innerHeight*0.6)); }
+  function updateDOM(){
+    for(var j=0;j<inners.length;j++){ var d=1-centeredness(inners[j].closest('.mv')||inners[j]);
+      inners[j].style.opacity=Math.max(0,1-d*d).toFixed(3); }
+    var m=document.documentElement.scrollHeight-window.innerHeight;
+    progfill.style.height=(m>0?Math.min(1,window.scrollY/m)*100:0)+'%';
+    // the cluster rides the paper only while its beat holds the viewport; the
+    // per-plate opacities give the depth, the container fades the whole beat
+    if(plateSec){ var pc=centeredness(plateSec);
+      plateCluster.style.opacity=pc.toFixed(3);
+      plateCluster.classList.toggle('show', pc>0.3); }
+  }
+  window.addEventListener('scroll',updateDOM,{passive:true});
+  window.addEventListener('resize',updateDOM);
+
+  /* ---- per-state staging: pages sit LOW so the hero has clear paper; the
+         turn disperses the ink to near-nothing behind the line ---- */
+  // orrery tilts up so you look ONTO the flat plane; the Urania plate faces
+  // the reader nearly square, set low so the copy rides clear paper above it
+  var STILT =[0.30,0.30,0.36,0.72,0.30,0.08,0.30];
+  var SDIST =[2.9, 2.9, 2.75,2.55,3.0, 2.55,3.0 ];
+  var SYOFF =[0,   0,   0,   0,   0,  -0.34,0   ];
+  var SALPHA=[1,   1,   1,   1,   0.05,1,   0.16];   // state 4: the field all but vanishes; the flat plate carries it
+  function lerpAt(arr,cs){ var si=Math.min(NS-2,Math.floor(cs)), ft=cs-si; return arr[si]+(arr[si+1]-arr[si])*ft; }
+
+  var prevT=null;
+  function frame(t){
+    if(prevT===null)prevT=t; var dt=Math.min(0.05,(t-prevT)/1000); prevT=t; var time=t/1000;
+    mat.uniforms.uTime.value=time;
+    var cs=curState(), si=Math.min(NS-2,Math.floor(cs)), ft=cs-si;
+    // a gentle rock, not a full spin — a flat plane (orrery, pages) would flash
+    // edge-on every quarter turn; oscillating keeps every form facing the reader
+    spin.rotation.y = reduce?0 : Math.sin(time*0.12)*0.32;
+    tiltG.rotation.x=lerpAt(STILT,cs);
+    tiltG.position.y=lerpAt(SYOFF,cs);
+    camera.position.set(0,0,lerpAt(SDIST,cs));
+    camera.lookAt(0,tiltG.position.y*0.5,0);
+    mat.uniforms.uAlpha.value=lerpAt(SALPHA,cs);
+    var drift=reduce?0:1;
+    for(var i=0;i<N;i++){ var o=i*3;
+      var x=ST[si][o]+(ST[si+1][o]-ST[si][o])*ft;
+      var y=ST[si][o+1]+(ST[si+1][o+1]-ST[si][o+1])*ft;
+      var z=ST[si][o+2]+(ST[si+1][o+2]-ST[si][o+2])*ft;
+      x+=Math.sin(time*0.6+phase[i])*0.005*drift; y+=Math.cos(time*0.5+phase[i]*1.3)*0.005*drift;
+      posBuf[o]=x; posBuf[o+1]=y; posBuf[o+2]=z;
+      // carry size and mark from the figure this point is landing on; the mark
+      // snaps to the nearer pose (sprite shapes don't tween), size and ink lerp
+      sizA[i]=STsz[si][i]+(STsz[si+1][i]-STsz[si][i])*ft;
+      mrkA[i]=(ft<0.5?STmk[si][i]:STmk[si+1][i]);
+      var ik=STik[si][i]+(STik[si+1][i]-STik[si][i])*ft;
+      colA[o]  =INK_SOFT[0]+(INK_FULL[0]-INK_SOFT[0])*ik;
+      colA[o+1]=INK_SOFT[1]+(INK_FULL[1]-INK_SOFT[1])*ik;
+      colA[o+2]=INK_SOFT[2]+(INK_FULL[2]-INK_SOFT[2])*ik;
+    }
+    geo.attributes.position.needsUpdate=true;
+    geo.attributes.aSize.needsUpdate=true;
+    geo.attributes.aMark.needsUpdate=true;
+    geo.attributes.aColor.needsUpdate=true;
+    renderer.render(scene,camera);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  updateDOM();
+  }
+
+  boot();
+})();
+</script>
+</body></html>

@@ -5,13 +5,16 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("src/favicon.svg");
   eleventyConfig.addPassthroughCopy("src/assets");
 
-  // Surface the prototypes into the built site so the Asterlogos preview
-  // iframe can load `surface` same-origin. The whole tree is copied because
+  // Surface the Asterlogos prototypes into the built site so its preview can
+  // load `surface` same-origin. The tree lives under `asterlogos/prototypes/`
+  // but is served at `/prototypes/` — the whole thing is copied because
   // `surface` pulls in siblings — `_shared/*` assets, the `field` perception,
-  // and each book's sculptural instrument — via relative `/prototypes/` paths.
-  // Keeping the `/prototypes/` path segment intact lets those links resolve
+  // and each book's sculptural instrument — via runtime `/prototypes/` paths.
+  // Remapping the output to `/prototypes/` keeps those links resolving
   // unchanged. It's ~450K of plain HTML/CSS/JS, so copying all of it is cheap.
-  eleventyConfig.addPassthroughCopy({ "prototypes": "prototypes" });
+  // (Sanctuaire lives at the repo root, outside this tree, so its Next.js app
+  // and node_modules are never swept into the static build.)
+  eleventyConfig.addPassthroughCopy({ "asterlogos/prototypes": "prototypes" });
 
   // Content pages are authored as plain HTML bodies. Disabling the HTML
   // template engine means their markup (inline scripts, `{` in JS, etc.) is
