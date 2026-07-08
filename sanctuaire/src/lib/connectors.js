@@ -2,6 +2,32 @@ import { normalizeClevelandData } from './normalizer';
 import { normalizeArticData } from './artic-normalizer';
 
 /**
+ * Strips a Cleveland-style creator string down to a plain name so it works as a
+ * keyword. "Claude Monet (French, 1840-1926)" -> "Claude Monet".
+ */
+function cleanArtistName(name) {
+  return name ? name.replace(/\s*\(.*$/, '').trim() : '';
+}
+
+/**
+ * Derives the query text for a "related" search from the artwork the user
+ * clicked. Both museum APIs treat `q` as full-text relevance, so we bias the
+ * search toward the strongest available signals (artist, then culture, then
+ * classification) as extra terms rather than as hard filters — hard filters
+ * over-constrain and routinely return nothing. Falls back to the original
+ * query when the source artwork carries no usable metadata.
+ */
+export function buildEffectiveQuery(query, searchContext = {}) {
+  if (!searchContext.isRelatedSearch || !searchContext.sourceArtwork) return query;
+  const { artist, culture, classification } = searchContext.sourceArtwork;
+  // Some source fields (e.g. Cleveland's culture) arrive as arrays — flatten to
+  // space-joined text rather than relying on implicit comma stringification.
+  const toText = (v) => (Array.isArray(v) ? v.join(' ') : v || '');
+  const terms = [cleanArtistName(artist), toText(culture), toText(classification)].filter(Boolean);
+  return terms.length > 0 ? terms.join(' ') : query;
+}
+
+/**
  * Base Connector Interface
  * All museum connectors should implement these methods
  */
@@ -11,7 +37,7 @@ class BaseConnector {
     this.baseUrl = baseUrl;
   }
 
-  async search(query) {
+  async search(query, searchContext = {}) {
     throw new Error('search method must be implemented');
   }
 
@@ -130,9 +156,16 @@ export class ClevelandConnector extends BaseConnector {
     return cached.artwork;
   }
 
-  async search(query) {
+  async search(query, searchContext = {}) {
     try {
-      const apiParams = new URLSearchParams({ q: query, limit: 100, fields: 'id' });
+      // NOTE: capped at 100 ids per query — Cleveland's real total (data.info.total)
+      // is discarded, so results can never exceed this. Fine for now; revisit with
+      // real cursor pagination if deeper result sets are needed.
+      const apiParams = new URLSearchParams({
+        q: buildEffectiveQuery(query, searchContext),
+        limit: '100',
+        fields: 'id'
+      });
       const response = await fetch(`${this.baseUrl}?${apiParams.toString()}`, {
         headers: { 'Accept': 'application/json', ...this.buildAuthHeaders() }
       });
@@ -158,11 +191,11 @@ export class ArticConnector extends BaseConnector {
     super('artic', 'https://api.artic.edu/api/v1/artworks');
   }
 
-  async search(query) {
+  async search(query, searchContext = {}) {
     try {
       // Build the search request body for IDs only
       const searchBody = {
-        q: query,
+        q: buildEffectiveQuery(query, searchContext),
         limit: 100, // Get maximum allowed per request
         fields: ['id'], // Only request IDs
         query: {

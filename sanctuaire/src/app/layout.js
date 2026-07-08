@@ -6,8 +6,10 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
+// Set NEXT_PUBLIC_SITE_URL to the production origin so OG/canonical URLs resolve
+// correctly; falls back to localhost in development.
 export const metadata = {
-  metadataBase: new URL('https://hieros.art'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
   title: "Sanctuaire",
   description: "Search and explore museum artworks from around the world",
   keywords: "Sanctuaire, art gallery, museum artwork, human creativity, art search, paintings, sculptures, Cleveland Museum of Art, Art Institute of Chicago",
@@ -30,7 +32,7 @@ export const metadata = {
     card: 'summary_large_image',
     title: "Sanctuaire",
     description: "Human creativity from museums around the world",
-    images: ["/og-image.jpg"],
+    images: ["/android-chrome-512x512.png"],
   },
 };
 

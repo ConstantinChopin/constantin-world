@@ -14,12 +14,15 @@ export default function Home() {
   const [hasMorePages, setHasMorePages] = useState(false);
   const [currentSearch, setCurrentSearch] = useState('');
   const [breadcrumbItems, setBreadcrumbItems] = useState([]);
+  const [searchError, setSearchError] = useState(null);
 
   const handleCardClick = async (artwork) => {
     if (!artwork) return;
-    
-    // Create a search context based on the artwork's properties
-    const relatedQuery = artwork.title.split(' ').slice(0, 2).join(' '); // Use first two words of title
+
+    // Create a search context based on the artwork's properties. The connectors
+    // derive the actual related query from sourceArtwork; this title-based query
+    // is just a readable fallback/label. Guard against artworks with no title.
+    const relatedQuery = (artwork.title || '').split(' ').slice(0, 2).join(' ') || 'artwork';
     const searchContext = {
       isRelatedSearch: true,
       sourceArtwork: {
@@ -52,6 +55,7 @@ export default function Home() {
     }
 
     setIsLoading(true);
+    setSearchError(null);
     try {
       const searchParams = new URLSearchParams({
         query: query,
@@ -63,8 +67,13 @@ export default function Home() {
       }
 
       const response = await fetch(`/api/search?${searchParams.toString()}`);
-      const data = await response.json();
-      
+      const data = await response.json().catch(() => null);
+
+      // A failed request or a malformed body must not look like "no results".
+      if (!response.ok || !data || !Array.isArray(data.data) || !data.pagination) {
+        throw new Error(data?.message || `Search failed (${response.status})`);
+      }
+
       if (page === 1) {
         setSearchResults(data.data);
         if (!searchContext) {
@@ -73,12 +82,19 @@ export default function Home() {
       } else {
         setSearchResults(prev => [...prev, ...data.data]);
       }
-      
+
       setHasMorePages(data.pagination.hasMore);
       setCurrentPage(page);
       setCurrentSearch(query);
     } catch (error) {
       console.error('Search error:', error);
+      // Only surface the error on a fresh search; a failed "load more" keeps
+      // the results already on screen.
+      if (page === 1) {
+        setSearchResults([]);
+        setCurrentSearch(query);
+        setSearchError('Something went wrong fetching results. Please try again.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -96,6 +112,7 @@ export default function Home() {
     setCurrentPage(1);
     setHasMorePages(false);
     setBreadcrumbItems([]);
+    setSearchError(null);
   };
 
   useEffect(() => {
@@ -138,13 +155,19 @@ export default function Home() {
       
       {currentSearch && (
         <div className={styles.resultsContainer}>
-          <ResultsGrid
-            results={searchResults}
-            onLoadMore={handleLoadMore}
-            isLoading={isLoading}
-            hasMorePages={hasMorePages}
-            onCardClick={handleCardClick}
-          />
+          {searchError ? (
+            <div style={{ textAlign: 'center', padding: '40px 0', color: '#b45309' }}>
+              <p>{searchError}</p>
+            </div>
+          ) : (
+            <ResultsGrid
+              results={searchResults}
+              onLoadMore={handleLoadMore}
+              isLoading={isLoading}
+              hasMorePages={hasMorePages}
+              onCardClick={handleCardClick}
+            />
+          )}
         </div>
       )}
     </main>

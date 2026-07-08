@@ -6,19 +6,27 @@ import { ConnectorFactory } from '@/lib/connectors';
 const DEFAULT_PER_PAGE = 48; // Reduced for faster initial loads
 const MAX_PER_PAGE = 96;
 
+// NOTE: this cache is process-local. On serverless it doesn't survive cold
+// starts or share across instances, and it has no eviction beyond the lazy TTL
+// check below — treat it as a best-effort per-instance speedup, not a store.
 const searchIdCache = new Map();
 const SEARCH_CACHE_TTL = 15 * 60 * 1000; // 15 minutes
 
 async function getAndCacheSearchIds(query, connectors, searchContext = {}) {
+  // Related searches derive a context-specific query inside the connectors, so
+  // they'd pollute the plain-query cache — skip the cache entirely for them.
+  const isRelated = !!searchContext.isRelatedSearch;
   const cacheKey = query.toLowerCase().trim();
-  const cached = searchIdCache.get(cacheKey);
 
-  if (cached && (Date.now() - cached.timestamp < SEARCH_CACHE_TTL) && !searchContext.isRelatedSearch) {
-    return cached.ids;
+  if (!isRelated) {
+    const cached = searchIdCache.get(cacheKey);
+    if (cached && Date.now() - cached.timestamp < SEARCH_CACHE_TTL) {
+      return cached.ids;
+    }
   }
 
   const idPromises = connectors.map(connector =>
-    connector.search(query, 1, DEFAULT_PER_PAGE, searchContext).then(ids => ({
+    connector.search(query, searchContext).then(ids => ({
       source: connector.name,
       ids: ids || []
     }))
@@ -36,7 +44,9 @@ async function getAndCacheSearchIds(query, connectors, searchContext = {}) {
   });
 
   const allIds = Array.from(idMap.entries()).map(([id, source]) => ({ id, source }));
-  searchIdCache.set(cacheKey, { timestamp: Date.now(), ids: allIds });
+  if (!isRelated) {
+    searchIdCache.set(cacheKey, { timestamp: Date.now(), ids: allIds });
+  }
   return allIds;
 }
 

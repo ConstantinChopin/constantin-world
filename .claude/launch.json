@@ -12,6 +12,13 @@
       "autoPort": true,
       "runtimeExecutable": "npx",
       "runtimeArgs": ["-y", "serve", "."]
+    },
+    {
+      "name": "sanctuaire",
+      "cwd": "sanctuaire",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 3000
     }
   ]
 }

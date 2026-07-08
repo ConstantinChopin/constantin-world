@@ -1,6 +1,8 @@
+import { assertArtworkShape } from './schema';
+
 /**
  * Normalizes artwork data from the Cleveland Museum of Art API to match our unified schema.
- * 
+ *
  * @param {Object} item - Raw artwork data from Cleveland API
  * @returns {Object} Normalized artwork data matching the unified schema
  */
@@ -55,7 +57,7 @@ export function normalizeClevelandData(item) {
   } : null;
 
   // Build normalized object following the unified schema
-  return {
+  return assertArtworkShape({
     id: item.id?.toString() || null,
     title: item.title || null,
     alternativeTitles: item.alternate_titles || [],
@@ -96,5 +98,5 @@ export function normalizeClevelandData(item) {
       apiEndpoint: 'https://openaccess-api.clevelandart.org/api/artworks/',
       lastFetched: new Date().toISOString()
     }
-  };
+  }, 'cleveland');
 } 

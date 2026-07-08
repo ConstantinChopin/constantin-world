@@ -26,17 +26,6 @@ export default function ArtworkCard({ artwork, onCardClick, index }) {
     ? `/api/image-proxy?imageUrl=${encodeURIComponent(originalImageUrl)}`
     : originalImageUrl;
 
-  // Debug logging for the first few cards (reduced from 3 to 1)
-  if (index === 0) {
-    console.log(`ArtworkCard ${index}:`, {
-      title,
-      hasImages: !!images,
-      imagesLength: images?.length || 0,
-      originalImageUrl,
-      proxiedImageUrl: imageUrl
-    });
-  }
-
   const handleCardClick = () => {
     if (onCardClick) {
       onCardClick(artwork);

@@ -9,7 +9,6 @@ export default function ResultsGrid({ results, onLoadMore, isLoading, hasMorePag
   const handleIntersection = useCallback((entries) => {
     const target = entries[0];
     if (target.isIntersecting && !isLoading && hasMorePages && onLoadMore) {
-      console.log('Loader element is visible, triggering load more');
       onLoadMore();
     }
   }, [isLoading, hasMorePages, onLoadMore]);

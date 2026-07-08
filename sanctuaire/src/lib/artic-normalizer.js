@@ -1,6 +1,8 @@
+import { assertArtworkShape } from './schema';
+
 /**
  * Normalizes artwork data from the Art Institute of Chicago API to match our unified schema.
- * 
+ *
  * @param {Object} item - Raw artwork data from AIC API
  * @returns {Object} Normalized artwork data matching the unified schema
  */
@@ -50,7 +52,7 @@ export function normalizeArticData(item) {
   } : null;
 
   // Build normalized object following the unified schema
-  return {
+  return assertArtworkShape({
     id: item.id?.toString() || null,
     title: item.title || null,
     alternativeTitles: [], // AIC API doesn't typically provide this
@@ -91,5 +93,5 @@ export function normalizeArticData(item) {
       apiEndpoint: 'https://api.artic.edu/api/v1/artworks/',
       lastFetched: new Date().toISOString()
     }
-  };
+  }, 'artic');
 } 

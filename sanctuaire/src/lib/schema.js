@@ -88,6 +88,39 @@ export const UNIFIED_SCHEMA = {
 };
 
 /**
+ * Development-only tripwire that pins the *structural* contract every normalizer
+ * must satisfy. It checks shape (keys present, arrays are arrays), not values —
+ * a null title or an imageless record is legitimate and passes; a normalizer
+ * that emits the wrong shape (e.g. a flat `imageUrl` string instead of an
+ * `images` array) throws the moment it runs. Call it on the object each
+ * normalizer returns. No-op in production.
+ *
+ * @param {Object} artwork - The normalized artwork object
+ * @param {string} sourceLabel - Which normalizer produced it (for the error)
+ * @returns {Object} The same artwork, so callers can `return assertArtworkShape(obj, 'x')`
+ */
+export function assertArtworkShape(artwork, sourceLabel = 'unknown') {
+  if (process.env.NODE_ENV === 'production') return artwork;
+
+  const problems = [];
+  if (!artwork || typeof artwork !== 'object') {
+    problems.push('normalized artwork is not an object');
+  } else {
+    if (!('id' in artwork)) problems.push('missing "id" key');
+    if (!('title' in artwork)) problems.push('missing "title" key');
+    if (!Array.isArray(artwork.images)) problems.push('"images" must be an array');
+    if (!Array.isArray(artwork.creators)) problems.push('"creators" must be an array');
+  }
+
+  if (problems.length > 0) {
+    throw new Error(
+      `[artwork-shape] ${sourceLabel} normalizer violates the unified shape: ${problems.join('; ')}`
+    );
+  }
+  return artwork;
+}
+
+/**
  * Example of normalized data structure:
  * 
  * {

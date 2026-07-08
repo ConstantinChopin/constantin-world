@@ -23,7 +23,7 @@ export default function Breadcrumb({ breadcrumbItems = [] }) {
         }
       };
       // Use first two words of artwork title as search term
-      searchTerm = item.data.title.split(' ').slice(0, 2).join(' ');
+      searchTerm = (item.data.title || '').split(' ').slice(0, 2).join(' ') || 'artwork';
     }
 
     // When clicking a breadcrumb, only keep items up to that point

@@ -2,10 +2,25 @@ export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
 
-const ALLOWED_DOMAINS = [
+// Exact hostnames (or their subdomains) we're willing to proxy. Matched against
+// the parsed URL host — never a substring of the raw URL, which would let
+// https://attacker.com/?x=artic.edu through and turn this into an open relay.
+const ALLOWED_HOSTS = [
   'artic.edu',
   'openaccess-cdn.clevelandart.org'
 ];
+
+function isAllowedImageUrl(rawUrl) {
+  let url;
+  try {
+    url = new URL(rawUrl);
+  } catch {
+    return false;
+  }
+  if (url.protocol !== 'https:') return false;
+  const host = url.hostname.toLowerCase();
+  return ALLOWED_HOSTS.some(allowed => host === allowed || host.endsWith(`.${allowed}`));
+}
 
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000; // 1 second
@@ -14,14 +29,12 @@ async function fetchWithRetry(url, options, retries = MAX_RETRIES) {
   try {
     const response = await fetch(url, options);
     if (!response.ok && retries > 0) {
-      console.log(`Retrying fetch for ${url}, ${retries} attempts remaining`);
       await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
       return fetchWithRetry(url, options, retries - 1);
     }
     return response;
   } catch (error) {
     if (retries > 0) {
-      console.log(`Retrying fetch after error for ${url}, ${retries} attempts remaining`);
       await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
       return fetchWithRetry(url, options, retries - 1);
     }
@@ -39,9 +52,8 @@ export async function GET(request) {
       return new NextResponse('Missing imageUrl parameter', { status: 400 });
     }
 
-    // Validate the URL is from an allowed domain
-    const isAllowedDomain = ALLOWED_DOMAINS.some(domain => imageUrl.includes(domain));
-    if (!isAllowedDomain) {
+    // Validate the URL resolves to an allowed host (not a substring match)
+    if (!isAllowedImageUrl(imageUrl)) {
       return new NextResponse('Invalid image source', { status: 403 });
     }
 
