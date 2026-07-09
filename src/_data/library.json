@@ -42,9 +42,34 @@
       "label": "Resources",
       "glyph": "resources",
       "entries": [
-        { "title": "Components", "href": "#components" },
-        { "title": "Claude Skills", "href": "#claude-skills" },
-        { "title": "Cursor Rules", "href": "#cursor-rules" }
+        {
+          "id": "skill-pointcloud",
+          "title": "Volumetric Point Clouds",
+          "desc": "A Claude Code skill for building luminous WebGL point-cloud figures — the shader, the sparkle, the performance gating, done.",
+          "href": "/resources/skills/#volumetric-pointcloud-figure",
+          "preview": "/resources/skills/#volumetric-pointcloud-figure"
+        },
+        {
+          "id": "skill-topology",
+          "title": "Text to Topology",
+          "desc": "A Claude Code skill for turning a body of writing into a navigable map of its ideas.",
+          "href": "/resources/skills/#text-to-topology",
+          "preview": "/resources/skills/#text-to-topology"
+        },
+        {
+          "id": "skill-design-system",
+          "title": "Project Page System",
+          "desc": "A Claude Code skill for holding one design language across every page of a project.",
+          "href": "/resources/skills/#project-page-system",
+          "preview": "/resources/skills/#project-page-system"
+        },
+        {
+          "id": "skill-reading",
+          "title": "Prose to Reading Page",
+          "desc": "A Claude Code skill for setting long-form writing to be read on screen.",
+          "href": "/resources/skills/#prose-to-reading-page",
+          "preview": "/resources/skills/#prose-to-reading-page"
+        }
       ]
     }
   ]

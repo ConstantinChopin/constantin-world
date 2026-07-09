@@ -1,0 +1,193 @@
+---
+layout: base.njk
+bodyClass: essay
+title: "Skills — Constantin Chopin"
+description: "Reusable Claude Code skills distilled from building this site — building point-cloud figures, mapping texts into topologies, holding a design language across a project, and setting prose to be read."
+ogType: website
+ogTitle: Skills
+ogDesc: "Reusable Claude Code skills, distilled from building this site."
+ogUrl: "https://constantin.world/resources/skills/"
+headExtra: '<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>'
+---
+
+  <article class="reading">
+
+    <a class="return reveal" href="/" style="--d: 0ms"><span class="arrow">←</span>&nbsp; Constantin Chopin</a>
+
+    <header class="essay-head reveal" style="--d: 100ms">
+      <p class="label">Resources</p>
+      <h1 class="essay-title">Skills</h1>
+      <p class="standfirst">Reusable Claude Code skills, distilled from building this site — each one captures a technique so it need not be rederived.</p>
+      <p class="essay-meta">Four skills · for Claude Code</p>
+    </header>
+
+    <div class="prose reveal" style="--d: 200ms">
+      <p>A <em>skill</em> is a folder holding a single <code>SKILL.md</code> — a short brief that teaches Claude Code how to do one thing well, plus any scripts it should reuse. Drop the folder in and it is found automatically; there is nothing to register.</p>
+
+      <pre class="code"><span class="c"># drop the folder in — Claude Code reads its description and loads it when it fits</span>
+~/.claude/skills/<span class="k">&lt;skill-name&gt;</span>/SKILL.md        <span class="c"># personal — available in every project</span>
+&lt;project&gt;/.claude/skills/<span class="k">&lt;skill-name&gt;</span>/SKILL.md   <span class="c"># or scoped to one repository</span></pre>
+
+      <p>To use one, you never name it — you just describe the task (“build a glowing particle hero”, “turn this essay into a reading page”), and Claude Code matches the request to the skill’s description and pulls it in. What follows is the set that came out of making this site, written to be general enough for anyone’s work, not just mine.</p>
+    </div>
+
+    <!-- 1 ────────────────────────────────────────────────────────────── -->
+    <section id="volumetric-pointcloud-figure" class="skill">
+      <p class="skill-kicker">volumetric-pointcloud-figure</p>
+      <h2 class="skill-name">Volumetric Point Clouds</h2>
+      <p class="skill-line">Luminous WebGL point-cloud figures, built to feel alive.</p>
+
+      <div class="prose">
+        <p>A point cloud reads as volume made of light: thousands of small, soft, glowing points whose density and colour suggest a form. The skill carries the whole recipe — a glow shader, a sparkle-and-saturate pass, viewport-gated animation, reduced-motion — so all you write is the geometry.</p>
+      </div>
+
+      <figure class="skill-fig tall">
+        <canvas id="pc-galaxy" class="skill-canvas" aria-label="A live point-cloud galaxy"></canvas>
+      </figure>
+      <p class="skill-cap">Live: a barred-spiral galaxy — a ~30-line generator written against the skill’s bundled scaffold. The shader, twinkle, hover-spin, and performance gating come for free. Hover to turn it.</p>
+
+      <pre class="code">~/.claude/skills/<span class="k">volumetric-pointcloud-figure</span>/
+├─ SKILL.md
+└─ scripts/pointcloud-scaffold.js   <span class="c"># copy in, replace one generator function</span></pre>
+    </section>
+
+    <!-- 2 ────────────────────────────────────────────────────────────── -->
+    <section id="text-to-topology" class="skill">
+      <p class="skill-kicker">text-to-topology</p>
+      <h2 class="skill-name">Text to Topology</h2>
+      <p class="skill-line">Turn a body of writing into a navigable map of its ideas.</p>
+
+      <div class="prose">
+        <p>A topology turns prose into a place — entities become placed nodes, relations become links, and a sequence becomes a path through the space. The craft is in the data model: a flat, hand-editable node table, a deliberate placement strategy (real coordinates, force-directed, or authored), and one canonical source so no two copies drift.</p>
+      </div>
+
+      <figure class="skill-fig">
+        <svg class="node-fig" viewBox="0 0 340 210" role="img" aria-label="A voyage threaded through placed nodes">
+          <path class="sea" d="M18 150 Q60 120 110 140 T210 120 T320 150" />
+          <path class="route" d="M40 60 C 90 40, 120 96, 150 92 S 210 150, 246 120 S 300 80, 300 96" />
+          <g>
+            <circle class="node" cx="40" cy="60" r="4.5" /><text class="lbl" x="40" y="48" text-anchor="middle">troy</text>
+            <circle class="node" cx="150" cy="92" r="4.5" /><text class="lbl" x="150" y="80" text-anchor="middle">circe</text>
+            <circle class="node" cx="150" cy="150" r="4" /><text class="lbl" x="150" y="170" text-anchor="middle">nekuia</text>
+            <circle class="node" cx="246" cy="120" r="4.5" /><text class="lbl" x="246" y="108" text-anchor="middle">scylla</text>
+            <circle class="node is-home" cx="300" cy="96" r="6" /><text class="lbl" x="300" y="84" text-anchor="middle">ithaca</text>
+            <path class="route" d="M150 92 L150 150" style="opacity:0.5" />
+          </g>
+        </svg>
+      </figure>
+      <p class="skill-cap">A voyage (gold) threaded through landfalls, with a single drop below the surface — the same shape whether it renders as SVG, canvas, or a point cloud.</p>
+
+      <pre class="code"><span class="c">// one row per node — flat, hand-editable, the single source of truth</span>
+<span class="c">// [id, x-signal, y-signal, category, kind]</span>
+[ <span class="k">'troy'</span>,   26.24, 39.96, 7, <span class="k">'port'</span> ],
+[ <span class="k">'circe'</span>,  13.09, 41.24, 2, <span class="k">'isle'</span> ],
+[ <span class="k">'ithaca'</span>, 20.72, 38.36, 3, <span class="k">'home'</span> ]</pre>
+    </section>
+
+    <!-- 3 ────────────────────────────────────────────────────────────── -->
+    <section id="project-page-system" class="skill">
+      <p class="skill-kicker">project-page-system</p>
+      <h2 class="skill-name">Project Page System</h2>
+      <p class="skill-line">One design language, held across every page of a project.</p>
+
+      <div class="prose">
+        <p>When a project grows past one page, the enemy is drift. The fix is a single shared stylesheet that owns every visual atom — a tiny palette, one type scale of named roles, one control height — which every page links, under one rule: pages may lay things out, but never restyle an atom.</p>
+      </div>
+
+      <figure class="skill-fig">
+        <div class="swatches">
+          <span class="swatch"><i style="background:#090d09"></i><span>paper</span></span>
+          <span class="swatch"><i style="background:rgba(255,255,255,0.64)"></i><span>ink</span></span>
+          <span class="swatch"><i style="background:#65625d"></i><span>muted</span></span>
+          <span class="swatch"><i style="background:rgb(143,119,54)"></i><span>mark</span></span>
+          <span class="swatch"><i style="background:rgba(255,255,255,0.10)"></i><span>rule</span></span>
+        </div>
+        <ul class="type-ladder">
+          <li><span class="role">display</span><span class="spec" style="font-size:1.5rem;font-weight:500;letter-spacing:-0.015em">Title in the display role</span></li>
+          <li><span class="role">body</span><span class="spec" style="font-size:1.0625rem">Body copy in the reading role</span></li>
+          <li><span class="role">small</span><span class="spec" style="font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;color:#65625d">Labels &amp; meta</span></li>
+        </ul>
+      </figure>
+      <p class="skill-cap">The whole system in a glance: a rationed palette and a handful of named type roles — the tokens this very page is built from.</p>
+
+      <pre class="code">:root {
+  <span class="k">--paper</span>: #090d09;   <span class="k">--ink</span>: rgba(255,255,255,0.64);
+  <span class="k">--mark</span>: rgb(143,119,54);   <span class="c">/* the one rationed accent */</span>
+  <span class="k">--display</span>: 1.5rem;   <span class="k">--text</span>: 1.0625rem;   <span class="k">--small</span>: 0.8rem;
+  <span class="k">--control-h</span>: 36px;   <span class="c">/* every control shares one height */</span>
+}</pre>
+    </section>
+
+    <!-- 4 ────────────────────────────────────────────────────────────── -->
+    <section id="prose-to-reading-page" class="skill">
+      <p class="skill-kicker">prose-to-reading-page</p>
+      <h2 class="skill-name">Prose to Reading Page</h2>
+      <p class="skill-line">Set long-form writing to be read on screen.</p>
+
+      <div class="prose">
+        <p>The goal is sustained reading — a page you can fall into, where the typography does the work and the effects stay out of the way. A capped measure, one generous reading serif, considered pull quotes, and a scroll-reveal that is subtle, fires early, and fails open when scripts are off.</p>
+      </div>
+
+      <div class="sample-page">
+        <p class="kick">Writing</p>
+        <p>Origin stories operate like early compression algorithms — distilling the complexity of reality into symbolic forms small enough to recall and retell.</p>
+        <p class="pull">“Design is not just problem-solving; it is world-building.”</p>
+      </div>
+      <p class="skill-cap">A whittled page set the way the skill would set it — measure, reading serif, and a pull quote lifted from the flow.</p>
+
+      <pre class="code">.reading { max-width: 39rem; }              <span class="c">/* ~68 characters */</span>
+.prose   { font: 400 1.0625rem/1.72 serif; }
+<span class="c">/* reveal: small move, once only, fails open, honours reduced-motion */</span></pre>
+    </section>
+
+    <footer class="colophon">
+      Designing at <a href="https://constantin.studio">Constantin.studio</a>
+      <span class="sep">·</span>
+      Teaching at <a href="https://www.artcenter.edu">ArtCenter College of Design</a>
+    </footer>
+
+  </article>
+
+  <script type="module">
+    // The point-cloud example runs the skill's own scaffold verbatim — only the
+    // generator below is bespoke. THREE (r128 UMD) is loaded in the head.
+    import { mountPointCloud, cloud, j, rnd, lerp3 } from '/assets/pointcloud-scaffold.js';
+
+    // a barred spiral galaxy: substrate disc · authored gold→blue arms (literal,
+    // so the treatment pass leaves the ramp alone) · dense bulge · dim halo.
+    function genGalaxy() {
+      const cl = cloud();
+      const CORE = [1.0, 0.86, 0.55], MID = [0.78, 0.72, 0.86], ARM = [0.46, 0.66, 0.98];
+      const ARMS = 2, TWIST = 2.4, R = 1.05;
+      for (let i = 0; i < 700; i++) {
+        const r = R * Math.sqrt(Math.random()), th = Math.random() * 6.2831;
+        const d = 1 - r / R;
+        cl.add(Math.cos(th) * r, (rnd() * 2 - 1) * 0.05 * d, Math.sin(th) * r,
+               lerp3(MID, ARM, r / R).map(v => v * (0.5 + 0.5 * d)), 0.85);
+      }
+      for (let a = 0; a < ARMS; a++) {
+        const base = (a / ARMS) * 6.2831;
+        for (let i = 0; i < 380; i++) {
+          const t = i / 380, r = 0.12 + R * t, th = base + t * TWIST * 6.2831 + j(0.16);
+          const spread = 0.05 + 0.08 * t;
+          const x = Math.cos(th) * r + j(spread), z = Math.sin(th) * r + j(spread);
+          cl.add(x, j(0.03), z, lerp3(CORE, ARM, Math.pow(t, 0.7)), 1.1 + Math.random() * 0.8, 1);
+          if (Math.random() < 0.05)
+            for (let k = 0; k < 5; k++)
+              cl.add(x + j(0.03), j(0.03), z + j(0.03), [0.85, 0.92, 1.0], 1.7 + Math.random(), 1);
+        }
+      }
+      for (let i = 0; i < 260; i++) {
+        const r = 0.22 * Math.pow(Math.random(), 1.8), th = Math.random() * 6.2831, ph = Math.acos(2 * Math.random() - 1);
+        cl.add(r * Math.sin(ph) * Math.cos(th), r * Math.cos(ph) * 0.6, r * Math.sin(ph) * Math.sin(th), CORE, 1.5 + Math.random());
+      }
+      for (let i = 0; i < 160; i++) {
+        const r = R * (0.7 + Math.random() * 0.6), th = Math.random() * 6.2831, ph = Math.acos(2 * Math.random() - 1);
+        cl.add(r * Math.sin(ph) * Math.cos(th), r * Math.cos(ph) * 0.5, r * Math.sin(ph) * Math.sin(th), ARM.map(v => v * 0.55), 0.8);
+      }
+      return cl.done();
+    }
+
+    var canvas = document.getElementById('pc-galaxy');
+    if (canvas && window.THREE) mountPointCloud(canvas, genGalaxy, { tilt: -1.05, scale: 1.0, hoverSelector: '.skill-fig' });
+  </script>
