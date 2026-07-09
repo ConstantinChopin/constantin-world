@@ -87,6 +87,10 @@ ogUrl: "https://constantin.world"
       var all = Array.prototype.slice.call(document.querySelectorAll('.index a.row'));
       var byId = {};
       all.forEach(function (a) { if (a.dataset.id) byId[a.dataset.id] = a; });
+      // On desktop the right panel is never empty: with no (or an unknown) hash,
+      // the first project stands in as the default view on landing.
+      var defaultRow = all.filter(function (a) { return a.dataset.id; })[0];
+      var defaultId = defaultRow ? defaultRow.dataset.id : null;
 
       function setActive(a) { all.forEach(function (l) { l.classList.toggle('is-active', l === a); }); }
 
@@ -203,7 +207,7 @@ ogUrl: "https://constantin.world"
       function sync() {
         if (!mq.matches) { document.body.classList.remove('detail-open'); return; }
         var id = decodeURIComponent(location.hash.slice(1));
-        if (byId[id]) open(id); else clear();
+        if (byId[id]) open(id); else if (defaultId) open(defaultId); else clear();
       }
       sync();
       mq.addEventListener('change', sync);

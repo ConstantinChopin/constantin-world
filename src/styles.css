@@ -163,10 +163,9 @@ body.home { padding: 0; }
     height: 100svh;
     min-width: 0;
     overflow: hidden;
-    /* the detail is an inset viewport, not an edge-to-edge pane: pad it off the
-       screen edges (less on the left, where it meets the index) so the framed
-       window floats in the right region */
-    padding: clamp(0.8rem, 2.2vh, 1.5rem) clamp(0.9rem, 2vw, 1.6rem) clamp(0.8rem, 2.2vh, 1.5rem) clamp(0.3rem, 1vw, 0.8rem);
+    /* the detail is an inset viewport, not an edge-to-edge pane: an even inset
+       on every side so the framed window floats in the right region */
+    padding: 12px;
     opacity: 0;
     filter: blur(8px);
     pointer-events: none;
@@ -182,22 +181,19 @@ body.home { padding: 0; }
     flex-direction: column;
     background: #0d100c;
     border: 1px solid rgba(255, 255, 255, 0.07);
-    border-radius: 16px;
+    /* a soft rounding — the window reads as a single floating card
+       rather than a chromed app frame */
+    border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 24px 60px -28px rgba(0, 0, 0, 0.8);
   }
   /* toolbar: traffic-light buttons at the left, the entry title centred, the
      close action at the right — a three-track grid so the title stays centred
      regardless of the side widths */
-  .viewport-bar {
-    flex: 0 0 auto;
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-    gap: 0;
-    height: 46px;
-    padding: 0 0.7rem 0 0.95rem;
-  }
+  /* the app-style toolbar (glyph, title, fullscreen/close) is hidden — the
+     preview reads as a bare floating window with no chrome. Its markup stays
+     in the DOM so the breadcrumb/close JS keeps its element references. */
+  .viewport-bar { display: none; }
   /* the type glyph of the open entry (armillary sphere / codex / dividers),
      cloned from its shelf label and sized to sit in the toolbar — same glyph,
      same gap to its title as the index shelf labels */
@@ -283,10 +279,11 @@ body.home { padding: 0; }
     min-width: 0;
     min-height: 0;
     background: var(--paper);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 0;
+    /* concentric with the viewport (10px outer − 1px frame) so the page clips
+       to the same smooth corner; overflow keeps the iframe rounded */
     border-radius: 9px;
     overflow: hidden;
-    box-shadow: 0 12px 32px -22px rgba(0, 0, 0, 0.8);
   }
   .viewport-window iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
 
@@ -374,7 +371,12 @@ body.home { padding: 0; }
 
 .row-title {
   display: inline-block;
-  box-shadow: inset 0 -1px 0 transparent;
+  /* the canonical link underline: a faint rule at rest that brightens to ink
+     on hover (matching the bio-line links). line-height is collapsed to the
+     text so the underline hugs the glyphs the way an inline link's does,
+     rather than sitting at the bottom of a tall line box. */
+  line-height: 1;
+  box-shadow: inset 0 -1px 0 var(--rule);
   transition: box-shadow 0.25s var(--ease);
 }
 .row-meta {
@@ -388,8 +390,9 @@ body.home { padding: 0; }
 .row:hover .row-meta,
 .row:focus-visible .row-meta { color: var(--muted); }
 
-/* the entry currently open in the detail pane — underscored in the accent */
-.row.is-active .row-title { box-shadow: inset 0 -1px 0 var(--mark); }
+/* the entry currently open in the detail pane — the same link underline, held
+   at full ink so the current row reads as engaged */
+.row.is-active .row-title { box-shadow: inset 0 -1px 0 var(--ink); }
 
 /* when a page is shown inside the detail viewport, drop its redundant chrome —
    the back link and its own sticky project bar; the viewport supplies both */
