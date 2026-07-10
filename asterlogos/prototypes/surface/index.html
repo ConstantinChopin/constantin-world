@@ -113,18 +113,20 @@
   #makeWrap{position:fixed;right:var(--edge-x);bottom:var(--edge-bottom);z-index:42;display:flex;flex-direction:row;align-items:flex-end;gap:12px;transition:opacity .3s var(--ease);}
   /* the writing act: one inverted square, one fine glyph — control-sized */
   #newNote{width:var(--control-h);height:var(--control-h);display:grid;place-items:center;cursor:pointer;
-    background:var(--ink);color:var(--paper);border:1px solid var(--ink);border-radius:var(--control-r);box-shadow:var(--shadow-sm);
-    transition:background .18s var(--ease),box-shadow .2s var(--ease),transform .2s var(--ease);}
-  #newNote:hover{background:#000;box-shadow:var(--lift);transform:translateY(-1px);}
+    background:var(--ink-soft);color:var(--paper-hi);border:1px solid var(--ink-soft);border-radius:var(--control-r);box-shadow:var(--shadow-hair);
+    transition:background .18s var(--ease),border-color .18s var(--ease),box-shadow .2s var(--ease),transform .2s var(--ease);}
+  #newNote:hover{background:var(--ink);border-color:var(--ink);box-shadow:var(--shadow-sm);transform:translateY(-1px);}
   #newNote:active{transform:scale(0.95);}
 
   /* the notes column's head is chrome: it rides the masthead line, top-right,
      where the perception was (the column owns the right while it is open) */
   #notesHead{position:fixed;top:var(--edge-top);right:var(--edge-x);z-index:43;
-    width:min(480px,40vw);display:none;}
+    width:min(480px,40vw);display:none;padding:0 14px;border-radius:var(--control-r);
+    background:var(--veil);-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);
+    border:1px solid var(--rule);box-shadow:var(--shadow-hair);}
   body.leavesopen #notesHead{display:flex;}
-  #leavesPanel{position:fixed;top:78px;right:var(--edge-x);bottom:96px;width:min(480px,40vw);z-index:42;
-    overflow-y:auto;scrollbar-width:none;padding:0 6px 20px 0;display:none;flex-direction:column;gap:18px;}
+  #leavesPanel{position:fixed;top:78px;right:var(--edge-x);bottom:0;width:min(480px,40vw);z-index:42;
+    overflow-y:auto;scrollbar-width:none;padding:14px 0 96px;display:none;flex-direction:column;gap:18px;}
   #leavesPanel::-webkit-scrollbar{display:none;}
   body.leavesopen #leavesPanel{display:flex;}
   body.leavesopen #leavesBtn{display:none;}   /* the column IS the stack */
@@ -135,14 +137,16 @@
      full-width chrome bar (title far left, acts far right) with the notes or
      the writing centred on bare paper. Nothing competes for focus. */
   body.notesfull #notesHead{left:var(--edge-x);right:var(--edge-x);width:auto;}
-  body.notesfull #leavesPanel{left:50%;right:auto;transform:translateX(-50%);width:min(680px,92vw);top:96px;bottom:48px;}
+  body.notesfull #leavesPanel{left:50%;right:auto;transform:translateX(-50%);width:min(680px,92vw);top:96px;bottom:48px;
+    border-left:0;background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none;}
+  body.notesfull #notesHead{background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none;padding:0;border:0;box-shadow:none;}
   body.notesfull #frame,body.notesfull #fieldFrame,body.notesfull #shelfLayer{opacity:0 !important;pointer-events:none;}
   body.notesfull #masthead,body.notesfull #bookBar{opacity:0 !important;pointer-events:none;}
   body.notesfull #shelfWrap{padding-right:var(--edge-x);}
 
   /* slide-mode nav (the note-panel text atoms live in asterlogos.css) */
   .lvNav{display:flex;align-items:center;gap:10px;margin-top:28px;}
-  .lvNav button{width:28px;height:28px;display:grid;place-items:center;border:1px solid var(--rule);border-radius:2px;
+  .lvNav button{width:28px;height:28px;display:grid;place-items:center;border:1px solid var(--rule);border-radius:var(--control-r);
     color:var(--ink-soft);font:400 14px var(--mono);background:transparent;
     transition:border-color .16s var(--ease),color .16s var(--ease);}
   .lvNav button:hover{border-color:var(--ink);color:var(--ink);}
@@ -154,7 +158,7 @@
   /* the stack button (closed state) */
   #leavesBtn{position:relative;height:46px;min-width:190px;}
   #leavesBtn .slip{position:absolute;right:0;bottom:0;width:100%;height:var(--control-h);
-    background:var(--paper);border:1px solid var(--ink);border-radius:var(--control-r);box-shadow:var(--shadow-sm);
+    background:var(--paper);border:1px solid var(--rule);border-radius:var(--control-r);box-shadow:var(--shadow-hair);
     transition:transform .32s var(--spring);}
   #leavesBtn .slip.s1{transform:rotate(-3deg) translate(-8px,-7px);}
   #leavesBtn .slip.s2{transform:rotate(2deg) translate(-3px,-3px);}
@@ -162,7 +166,7 @@
   #leavesBtn:hover .slip.s2{transform:rotate(3.5deg) translate(-6px,-4px);}
   #leavesBtn:active .face{transform:scale(0.97);}
   #leavesBtn .face{position:absolute;inset:0;top:10px;display:flex;align-items:center;justify-content:space-between;
-    padding:0 15px;background:var(--paper);border:1px solid var(--ink);border-radius:var(--control-r);box-shadow:var(--shadow-sm);
+    padding:0 15px;background:var(--paper);border:1px solid var(--rule);border-radius:var(--control-r);box-shadow:var(--shadow-hair);
     transition:transform .15s var(--ease);}
   #leavesBtn .face .lbl{font:var(--font-label);letter-spacing:.2em;color:var(--ink-soft);text-transform:uppercase;}
   #leavesBtn .face .n{font:500 16px var(--display);font-style:italic;}
@@ -172,6 +176,8 @@
   /* leaf cards clamp to 3 lines in the docked column; full screen opens them
      (the leaf/lv atoms themselves live in asterlogos.css) */
   #leavesPanel .ltxt{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+  /* card properties (Notion grammar): the slip/prop/lmenu grammar lives in
+     asterlogos.css — this page only assembles it */
   body.notesfull #leavesPanel .ltxt{-webkit-line-clamp:unset;display:block;overflow:visible;}
 
   /* ---------- BL · the trace, folded to one mark ---------- */
@@ -196,8 +202,10 @@
   /* WRITE — a right-panel mode like the notes list: it shares the one
      #notesHead (label · full-screen · Set it down · Cancel), and its body is
      the writing column beneath, which goes full screen the same way. */
-  #writeCol{position:fixed;top:78px;right:var(--edge-x);bottom:96px;z-index:50;width:min(480px,40vw);
-    display:none;flex-direction:column;justify-content:flex-start;overflow-y:auto;scrollbar-width:none;}
+  #writeCol{position:fixed;top:78px;right:var(--edge-x);bottom:0;z-index:50;width:min(480px,40vw);
+    display:none;flex-direction:column;justify-content:flex-start;overflow-y:auto;scrollbar-width:none;
+    padding:16px 14px 40px 18px;background:var(--veil);-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);
+    border-left:1px solid var(--rule);}
   #writeCol::-webkit-scrollbar{display:none;}
   body.writeopen #writeCol{display:flex;}
   body.writeopen #notesHead{display:flex;opacity:1 !important;pointer-events:auto !important;z-index:52;}
@@ -205,10 +213,11 @@
   body.writeopen #trace,body.writeopen #leavesPanel{opacity:0 !important;pointer-events:none !important;}
   body.writeopen:not(.inbook):not(.field) #shelfLayer{opacity:.1;pointer-events:none;}
   body.writeopen.field #fieldFrame{opacity:.12;pointer-events:none;}
-  body.notesfull #writeCol{left:50%;right:auto;transform:translateX(-50%);width:min(680px,92vw);top:96px;bottom:48px;}
+  body.notesfull #writeCol{left:50%;right:auto;transform:translateX(-50%);width:min(680px,92vw);top:96px;bottom:48px;
+    border-left:0;background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none;}
   #lineRow{display:flex;align-items:flex-start;gap:8px;}
   #qMark{flex:0 0 auto;width:32px;height:38px;display:grid;place-items:center;
-    font:500 21px var(--display);color:var(--rule);border-radius:2px;position:relative;
+    font:500 21px var(--display);color:var(--rule);border-radius:var(--control-r);position:relative;
     transition:color .18s var(--ease),transform .12s var(--ease);}
   #qMark::after{content:"";position:absolute;inset:-5px;}
   #qMark:hover{color:var(--ink-soft);}
@@ -231,15 +240,15 @@
   #srcMatch{font:var(--text-meta);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);}
   #lineMeta{display:flex;align-items:center;gap:12px;margin-top:14px;min-height:var(--control-h);position:relative;}
   #ctxChip{display:inline-flex;align-items:center;gap:7px;height:var(--control-h);background:var(--paper);border:1px solid var(--rule);
-    border-radius:2px;padding:0 11px;font:var(--font-label);letter-spacing:.14em;text-transform:uppercase;
+    border-radius:var(--control-r);padding:0 11px;font:var(--font-label);letter-spacing:.14em;text-transform:uppercase;
     color:var(--ink-soft);transition:border-color .16s var(--ease),color .16s var(--ease),transform .12s var(--ease);position:relative;}
   #ctxChip::after{content:"";position:absolute;inset:-5px;}
   #ctxChip:hover{border-color:var(--ink);color:var(--ink);}
   #ctxChip:active{transform:scale(0.96);}
   #ctxMenu{position:absolute;left:0;top:42px;z-index:30;display:none;flex-direction:column;min-width:180px;
-    background:var(--paper);border:1px solid var(--ink);border-radius:var(--control-r);box-shadow:var(--shadow-sm);padding:5px;}
+    background:var(--paper);border:1px solid var(--rule);border-radius:var(--control-r);box-shadow:var(--shadow-sm);padding:5px;}
   #ctxMenu.open{display:flex;}
-  #ctxMenu button{text-align:left;background:transparent;border:0;border-radius:2px;padding:7px 10px;
+  #ctxMenu button{text-align:left;background:transparent;border:0;border-radius:var(--control-r);padding:7px 10px;
     font:var(--text-caption);color:var(--ink-soft);transition:background .15s var(--ease),color .15s var(--ease);}
   #ctxMenu button:hover{background:var(--paper-deep);color:var(--ink);}
   #offerQuote{display:none;}
@@ -277,7 +286,16 @@
 
   @media (max-width:720px){
     :root{--edge-x:20px;--edge-bottom:20px;}
-    #writeCol{width:calc(100vw - 40px);}
+    /* the perception keeps its switch; the label is implied */
+    #libPerc .lbl,#perc .lbl{display:none;}
+    /* the rail becomes a takeover: reading and notes take turns on a phone */
+    #notesHead{left:var(--edge-x);right:var(--edge-x);width:auto;}
+    #leavesPanel,#writeCol{left:0;right:0;width:auto;top:70px;bottom:0;
+      border-left:0;padding:14px 20px 96px;}
+    body.notesfull #leavesPanel,body.notesfull #writeCol{left:0;transform:none;width:auto;top:70px;bottom:0;}
+    /* the panel owns the screen — the masthead and breadcrumb retire under it */
+    body.leavesopen #masthead,body.leavesopen #bookBar,
+    body.writeopen #masthead,body.writeopen #bookBar{opacity:0;pointer-events:none;}
   }
   @media (prefers-reduced-motion:reduce){ *{transition-duration:.01ms !important;} .enter{opacity:1;transform:none;} }
 </style>
@@ -814,38 +832,60 @@ function renderWriteHead(){
   acts.appendChild(lvAct('Cancel',()=>{ if(editingId) cancelLeafEdit(); closeWrite(); }));
   notesHead.appendChild(acts);
 }
-function leafCard(n,loose){
-  const d=document.createElement('div'); d.className='leaf is-note is-'+n.type;
-  const meta=document.createElement('div'); meta.className='lmeta';
-  const st=document.createElement('span'); st.textContent=G[stateOf(n)]; st.style.color='var(--ink-soft)';
-  const mt=document.createElement('span');
-  mt.textContent=n.type+(n.node?(' · '+knName(n.node)):(n.book?(' · '+bookTitle(n.book)):''))+' · '+fmtD(n.ts);
-  meta.appendChild(st); meta.appendChild(mt);
-  const p=document.createElement('p'); p.className='ltxt'; p.textContent=n.text;
-  const row=document.createElement('div'); row.className='lrow';
-  if(loose){
-    const sug=suggest(n.text);
-    const lbl=document.createElement('span'); lbl.className='sug';
-    lbl.innerHTML=sug?('suggested · <b>'+sug.n+'</b> · the wandering'):'no clear match';
-    row.appendChild(lbl);
-    const go=document.createElement('button'); go.className='mono-btn'; go.textContent='Place';
-    go.addEventListener('click',e=>{ e.stopPropagation(); beginSow(n.id); });
-    row.appendChild(go);
-  } else {
-    const open=document.createElement('button'); open.className='act'; open.textContent='plate ›';
-    open.addEventListener('click',e=>{ e.stopPropagation(); setLeavesOpen(false);
-      const sw=!inBook||currentBook!==n.book; if(sw){ flash(); enterBook(n.book); }
-      setTimeout(()=>tellFrame({type:'ast:focus',id:n.node}), sw?160:0); });
-    row.appendChild(open);
-    const un=document.createElement('button'); un.className='act'; un.textContent='unpin';
-    un.addEventListener('click',e=>{ e.stopPropagation(); n.node=null; persist(); rebuildMirror(); renderLeaves(); tellField({type:'ast:notes'}); });
-    row.appendChild(un);
+/* a property pill (Notion grammar): the pill shows the value; clicking it
+   opens its single-select menu — or fires its one act when given a function.
+   A ghost pill is an unset property inviting its value. */
+function propPill(label,items,ghost){
+  const wrap=document.createElement('span'); wrap.className='propWrap';
+  const b=document.createElement('button'); b.type='button'; b.className='prop'+(ghost?' prop--ghost':'');
+  b.textContent=label;
+  wrap.appendChild(b);
+  if(typeof items==='function'){
+    b.addEventListener('click',e=>{ e.stopPropagation(); items(); });
+    return wrap;
   }
-  const del=document.createElement('button'); del.className='act right'; del.textContent='discard';
-  del.addEventListener('click',e=>{ e.stopPropagation();
-    NOTES=NOTES.filter(m=>m.id!==n.id); persist(); rebuildMirror(); renderLeaves(); renderShelf(); tellField({type:'ast:notes'}); });
-  row.appendChild(del);
-  d.appendChild(meta); d.appendChild(p); d.appendChild(row);
+  const m=document.createElement('div'); m.className='lmenu'; m.setAttribute('role','menu');
+  items.forEach(([lb,fn])=>{
+    const x=document.createElement('button'); x.type='button'; x.setAttribute('role','menuitem'); x.textContent=lb;
+    x.addEventListener('click',e=>{ e.stopPropagation(); m.classList.remove('open'); fn(); });
+    m.appendChild(x);
+  });
+  wrap.appendChild(m);
+  b.setAttribute('aria-haspopup','menu');
+  b.addEventListener('click',e=>{ e.stopPropagation();
+    document.querySelectorAll('.lmenu.open').forEach(o=>{ if(o!==m) o.classList.remove('open'); });
+    m.classList.toggle('open');
+  });
+  return wrap;
+}
+document.addEventListener('click',()=>document.querySelectorAll('.lmenu.open').forEach(m=>m.classList.remove('open')));
+const NOTE_TYPES=['thought','quote','essay','annotation'];
+function leafCard(n,loose){
+  const d=document.createElement('div'); d.className='leaf leaf--slip is-note is-'+n.type;
+  const p=document.createElement('p'); p.className='ltxt'; p.textContent=n.text;
+  const props=document.createElement('div'); props.className='lprops';
+  /* type — what kind of writing this is */
+  props.appendChild(propPill(n.type,
+    NOTE_TYPES.map(t=>[t,()=>{ n.type=t; persist(); renderLeaves(); notifyFrame(); }])));
+  /* book — the attribution; changing it releases the node (it belonged to the old book) */
+  const setBook=(id)=>{ if(n.book===id) return; n.book=id; if(n.node) n.node=null;
+    persist(); rebuildMirror(); renderLeaves(); renderShelf(); notifyFrame(); tellField({type:'ast:notes'}); };
+  props.appendChild(propPill(n.book?bookTitle(n.book):'loose',
+    [['Loose',()=>setBook(null)]].concat(BOOKS.map(b=>[b.title,()=>setBook(b.id)]))));
+  /* node — where it lives in the book; unset is a ghost pill inviting the place */
+  if(n.node){
+    props.appendChild(propPill(knName(n.node),[
+      ['Open plate ›',()=>{ setLeavesOpen(false);
+        const sw=!inBook||currentBook!==n.book; if(sw){ flash(); enterBook(n.book); }
+        setTimeout(()=>tellFrame({type:'ast:focus',id:n.node}), sw?160:0); }],
+      ['Unpin',()=>{ n.node=null; persist(); rebuildMirror(); renderLeaves(); tellField({type:'ast:notes'}); }]
+    ]));
+  } else {
+    const sug=suggest(n.text);
+    props.appendChild(propPill(sug?('place · '+sug.n):'place…',()=>beginSow(n.id),true));
+  }
+  const when=document.createElement('span'); when.className='when'; when.textContent=fmtD(n.ts);
+  d.appendChild(when); d.appendChild(p); d.appendChild(props);
   d.addEventListener('click',()=>{ panelEdit={id:n.id}; renderLeaves(); });
   return d;
 }
@@ -910,6 +950,9 @@ function renderPanelEdit(){
   sv.textContent=n?'Update it':'Set it down'; sv.addEventListener('click',save);
   acts.appendChild(sv);
   acts.appendChild(lvAct('Cancel',cancel));
+  if(n) acts.appendChild(lvAct('Discard',()=>{ NOTES=NOTES.filter(m=>m.id!==n.id);
+    persist(); rebuildMirror(); panelEdit=null;
+    notifyFrame(); tellField({type:'ast:notes'}); renderLeaves(); renderShelf(); }));
   notesHead.appendChild(acts);
   const wrap=document.createElement('div'); wrap.className='lvWrap';
   ta.addEventListener('input',grow);
@@ -979,18 +1022,9 @@ function renderLeaves(){
   renderNotesHead(total);
   leavesPanel.innerHTML='';
   if(leavesMode==='slide' && !notesFull){ renderPanelSlide(loose,placed); return; }
-  if(loose.length){
-    const h=document.createElement('div'); h.className='leafGroup';
-    h.innerHTML='<span>Loose</span><span class="num">'+loose.length+'</span>';
-    leavesPanel.appendChild(h);
-    loose.forEach(n=>leavesPanel.appendChild(leafCard(n,true)));
-  }
-  if(placed.length){
-    const h=document.createElement('div'); h.className='leafGroup';
-    h.innerHTML='<span>'+(inBook?'Placed':'Placed in books')+'</span><span class="num">'+placed.length+'</span>';
-    leavesPanel.appendChild(h);
-    placed.forEach(n=>leavesPanel.appendChild(leafCard(n,false)));
-  }
+  /* no grouping headers — each card's pills carry its placement state */
+  loose.forEach(n=>leavesPanel.appendChild(leafCard(n,true)));
+  placed.forEach(n=>leavesPanel.appendChild(leafCard(n,false)));
 }
 
 /* =================== BL · the trace, folded to one mark =================== */
@@ -1115,6 +1149,8 @@ window.addEventListener('message',ev=>{
 /* =================== keys + boot =================== */
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){
+    const om=document.querySelector('.lmenu.open');
+    if(om){ om.classList.remove('open'); return; }
     if(writeOpen){ if(editingId) cancelLeafEdit(); closeWrite(); }
     else if(panelEdit){ panelEdit=null; renderLeaves(); }
     else if(sow) cancelSow();

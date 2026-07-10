@@ -52,15 +52,15 @@
   #legOrient{font:300 14px/1.66 'Newsreader',Georgia,serif;color:var(--ink-soft);margin-bottom:18px;}
   .reflHead2{margin-top:0;}
   #compareBtn,#backBtn{pointer-events:auto;cursor:pointer;background:transparent;
-    border:1px solid var(--ink);color:var(--ink);border-radius:2px;padding:8px 14px;
+    border:1px solid var(--rule);color:var(--ink-soft);border-radius:var(--control-r);padding:8px 14px;
     font:400 9px 'JetBrains Mono',monospace;letter-spacing:.16em;text-transform:uppercase;transition:all .18s;}
   #compareBtn{margin-top:4px;}
-  #compareBtn:hover,#backBtn:hover{background:var(--ink);color:var(--paper);}
-  #backBtn{margin-top:18px;border-color:var(--rule);color:var(--ink-soft);}
-  #backBtn:hover{background:var(--ink-soft);color:var(--paper);border-color:var(--ink-soft);}
+  #compareBtn:hover,#backBtn:hover{background:var(--paper-hi);color:var(--ink);border-color:var(--ink);}
+  #backBtn{margin-top:18px;border-color:var(--rule);color:var(--ink-mid);}
+  #backBtn:hover{background:var(--paper-hi);color:var(--ink-soft);border-color:var(--ink-soft);}
   #readingWrap{display:none;margin-top:16px;border-top:1px solid var(--rule);padding-top:15px;}
   #noteBox{pointer-events:auto;width:100%;min-height:74px;resize:vertical;box-sizing:border-box;
-    background:var(--paper-deep);border:1px solid var(--rule);border-radius:2px;padding:9px 11px;
+    background:var(--paper-deep);border:1px solid var(--rule);border-radius:var(--control-r);padding:9px 11px;
     font:300 13.5px/1.55 'Newsreader',Georgia,serif;color:var(--ink);outline:none;transition:border-color .18s;}
   #noteBox:focus{border-color:var(--ink);}
   #noteBox::placeholder{color:var(--ghost);font-style:italic;}
@@ -98,7 +98,6 @@
   #plateBack{pointer-events:auto;flex:0 0 auto;}
   #plateHead{text-align:left;}
   #plateTitle{font:italic 500 21px/1.1 'Cormorant Garamond',Georgia,serif;color:var(--ink);letter-spacing:.02em;}
-  #platePlace{font:400 8px 'JetBrains Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);margin-top:4px;}
 
   /* ---------- the reading page — letterpress facing the engraving.
      No card, no border: floating text on the paper. The sculpture is
@@ -107,7 +106,11 @@
     display:flex;flex-direction:column;padding:0 24px 0 8px;pointer-events:none;}
   /* the column header rides the masthead line — the canonical .panel-head
      molecule (asterlogos.css); only pointer opt-ins live here */
-  #pgEyebrow{flex:0 0 auto;}
+  #pgEyebrow{flex:0 0 auto;padding:0 14px;margin-bottom:16px;background:var(--veil);
+    -webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);
+    border:1px solid var(--rule);border-radius:var(--control-r);box-shadow:var(--shadow-hair);}
+  #plate.pgfull #pgEyebrow{background:transparent;border:0;box-shadow:none;padding:0;
+    -webkit-backdrop-filter:none;backdrop-filter:none;}
   #pgEyebrow .ph-acts,#pgEyebrow .icon-act,#pgClose{pointer-events:auto;}
   #pgWrap{flex:1;display:flex;flex-direction:column;justify-content:center;min-height:0;}
   #pgWrap.stack{justify-content:flex-start;}
@@ -122,7 +125,7 @@
   /* slide-mode stepping: bare glyphs and hairline dots — no carousel furniture */
   #pgNav{display:none;align-items:center;gap:10px;margin-top:26px;max-width:50ch;min-height:28px;}
   #pgNav button{pointer-events:auto;cursor:pointer;width:28px;height:28px;display:grid;place-items:center;
-    background:transparent;border:1px solid var(--rule);border-radius:2px;color:var(--ink-soft);
+    background:transparent;border:1px solid var(--rule);border-radius:var(--control-r);color:var(--ink-soft);
     font:400 14px 'JetBrains Mono',monospace;transition:border-color .16s,color .16s,background .16s;}
   #pgNav button:hover{border-color:var(--ink);color:var(--ink);}
   #pgNav button:disabled{opacity:.25;cursor:default;border-color:var(--rule);color:var(--ink-soft);}
@@ -137,10 +140,10 @@
   /* the writing act: one inverted square, one fine glyph (the canonical corner) */
   #plateNote{position:absolute;right:var(--edge-x);bottom:var(--edge-bottom);z-index:6;
     width:var(--control-h);height:var(--control-h);
-    display:grid;place-items:center;cursor:pointer;background:var(--ink);color:var(--paper);
-    border:1px solid var(--ink);border-radius:var(--control-r);box-shadow:var(--shadow-sm);
-    transition:background .18s,box-shadow .2s,transform .2s;}
-  #plateNote:hover{background:#000;box-shadow:var(--lift);transform:translateY(-1px);}
+    display:grid;place-items:center;cursor:pointer;background:var(--ink-soft);color:var(--paper-hi);
+    border:1px solid var(--ink-soft);border-radius:var(--control-r);box-shadow:var(--shadow-hair);
+    transition:background .18s,border-color .18s,box-shadow .2s,transform .2s;}
+  #plateNote:hover{background:var(--ink);border-color:var(--ink);box-shadow:var(--shadow-sm);transform:translateY(-1px);}
   #plateNote:active{transform:scale(0.95);}
 
   /* the shell is writing on this knot: the reading column yields the recto */
@@ -206,7 +209,6 @@
     </button>
     <div id="plateHead">
       <div id="plateTitle"></div>
-      <div id="platePlace"></div>
     </div>
   </div>
 
@@ -884,7 +886,7 @@ window.addEventListener('error', function(e){
     function createPlate(){
       const root=document.getElementById('plate');
       const pMount=document.getElementById('plateMount');
-      const pTitle=document.getElementById('plateTitle'), pPlace=document.getElementById('platePlace'),
+      const pTitle=document.getElementById('plateTitle'),
             pBack=document.getElementById('plateBack'), pHint=document.getElementById('plateHint'),
             pgEyebrow=document.getElementById('pgEyebrow'),
             pgLabel=document.getElementById('pgLabel'), pgCount=document.getElementById('pgCount'),
@@ -1007,26 +1009,45 @@ window.addEventListener('error', function(e){
         pgLabel.innerHTML='Notes · <span class="num">'+total+'</span>';
         pgCount.textContent=''; pgHeadActs.innerHTML=''; modeBtns(); showClose(true);
       }
-      function leafCard(n,loose){
-        const d=document.createElement('div'); d.className='leaf is-note is-'+n.type;
-        const meta=document.createElement('div'); meta.className='lmeta';
-        const st=document.createElement('span'); st.textContent=loose?'○':'●'; st.style.color='var(--ink-soft)';
-        const mt=document.createElement('span'); mt.textContent=n.type+' · '+fmtD(n.ts);
-        meta.appendChild(st); meta.appendChild(mt);
-        const p=document.createElement('p'); p.className='ltxt'; p.textContent=n.text;
-        const row=document.createElement('div'); row.className='lrow';
-        if(loose){
-          const lbl=document.createElement('span'); lbl.className='sug'; lbl.textContent='suggested here';
-          row.appendChild(lbl);
-          const pin=document.createElement('button'); pin.className='mono-btn'; pin.textContent='Pin here';
-          pin.addEventListener('click',e=>{ e.stopPropagation(); pinHere(n); });
-          row.appendChild(pin);
-        } else {
-          row.appendChild(actBtn('Unpin',()=>unpin(n)));
+      /* a property pill (the topology's card grammar): the pill shows the
+         value; clicking opens its single-select menu — or fires its one act
+         when given a function. Ghost = an unset property inviting a value. */
+      const NOTE_TYPES=['thought','quote','essay','annotation'];
+      function propPill(label,items,ghost){
+        const wrap=document.createElement('span'); wrap.className='propWrap';
+        const b=document.createElement('button'); b.type='button'; b.className='prop'+(ghost?' prop--ghost':'');
+        b.textContent=label;
+        wrap.appendChild(b);
+        if(typeof items==='function'){
+          b.addEventListener('click',e=>{ e.stopPropagation(); items(); });
+          return wrap;
         }
-        const del=actBtn('Discard',()=>discardNote(n)); del.classList.add('right');
-        row.appendChild(del);
-        d.appendChild(meta); d.appendChild(p); d.appendChild(row);
+        const m=document.createElement('div'); m.className='lmenu'; m.setAttribute('role','menu');
+        items.forEach(([lb,fn])=>{
+          const x=document.createElement('button'); x.type='button'; x.setAttribute('role','menuitem'); x.textContent=lb;
+          x.addEventListener('click',e=>{ e.stopPropagation(); m.classList.remove('open'); fn(); });
+          m.appendChild(x);
+        });
+        wrap.appendChild(m);
+        b.setAttribute('aria-haspopup','menu');
+        b.addEventListener('click',e=>{ e.stopPropagation();
+          document.querySelectorAll('.lmenu.open').forEach(o=>{ if(o!==m) o.classList.remove('open'); });
+          m.classList.toggle('open');
+        });
+        return wrap;
+      }
+      document.addEventListener('click',()=>document.querySelectorAll('.lmenu.open').forEach(m=>m.classList.remove('open')));
+      function leafCard(n,loose){
+        const d=document.createElement('div'); d.className='leaf leaf--slip is-note is-'+n.type;
+        const when=document.createElement('span'); when.className='when'; when.textContent=fmtD(n.ts);
+        const p=document.createElement('p'); p.className='ltxt'; p.textContent=n.text;
+        const props=document.createElement('div'); props.className='lprops';
+        props.appendChild(propPill(n.type,
+          NOTE_TYPES.map(t=>[t,()=>{ mutate(all=>{ const x=all.find(y=>y.id===n.id); if(x) x.type=t; });
+            syncDerived(); notifyShell(); renderPanel(); }])));
+        if(loose) props.appendChild(propPill('pin here',()=>pinHere(n),true));
+        else props.appendChild(propPill(curK.name,[['Unpin',()=>unpin(n)]]));
+        d.appendChild(when); d.appendChild(p); d.appendChild(props);
         d.addEventListener('click',()=>{ panelEdit={id:n.id}; renderPanel(); });
         return d;
       }
@@ -1077,6 +1098,7 @@ window.addEventListener('error', function(e){
         const sv=document.createElement('button'); sv.type='button'; sv.className='btn-ink';
         sv.textContent=n?'Update it':'Set it down'; sv.addEventListener('click',doSave);
         pgHeadActs.appendChild(sv); pgHeadActs.appendChild(actBtn('Cancel',cancel));
+        if(n) pgHeadActs.appendChild(actBtn('Discard',()=>discardNote(n)));
         ta.addEventListener('input',grow);
         ta.addEventListener('keydown',e=>{ e.stopPropagation();
           if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){ e.preventDefault(); doSave(); }
@@ -1100,8 +1122,9 @@ window.addEventListener('error', function(e){
           pgBody.appendChild(e); return; }
         if(plateMode==='slide'){ renderPanelSlide(loose,placed); return; }
         pgWrap.classList.add('stack'); pgNavEl.style.display='none';
-        if(loose.length){ group('Loose',loose.length); loose.forEach(n=>pgBody.appendChild(leafCard(n,true))); }
-        if(placed.length){ group('Placed',placed.length); placed.forEach(n=>pgBody.appendChild(leafCard(n,false))); }
+        /* no grouping headers — each card's pills carry its placement state */
+        loose.forEach(n=>pgBody.appendChild(leafCard(n,true)));
+        placed.forEach(n=>pgBody.appendChild(leafCard(n,false)));
         pgBody.scrollTop=0;
       }
       function step(d){
@@ -1113,7 +1136,6 @@ window.addEventListener('error', function(e){
       function refresh(){ if(curK && root.classList.contains('open') && !panelEdit) renderPanel(); }
       function setText(k){
         pTitle.textContent=k.name;
-        pPlace.textContent=k.stratLabel+' · '+k.place;
         slideIdx=0; panelEdit=null; renderPanel();
         // locator — the rung-scale: where this figure stands in the order
         cart.style.display='block'; drawRungs(cartCv,k);

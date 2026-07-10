@@ -22,6 +22,9 @@
   --ink-mid:#5c564c;      /* mid ink */
   --ghost:#9a958a;        /* e-ink ghosting gray */
   --rule:#c2bcae;         /* hairline rules */
+  --veil:rgba(231,228,219,0.94);  /* near-opaque paper — a panel laid over a live stage.
+     Kept high so a veiled surface reads the SAME brightness whatever sits
+     behind it (an empty sky vs. a busy topology); the stage only ghosts. */
   /* the one admitted colour — gilding. USE ONLY FOR: the voyage/route line
      and "live" catalogue marks. Never for text, controls, or decoration. */
   --gild:#9a8038;
@@ -29,6 +32,7 @@
   /* ---- elevation: hard letterpress offsets, never blur ---- */
   --shadow:5px 6px 0 rgba(27,25,22,0.13);
   --shadow-sm:3px 4px 0 rgba(27,25,22,0.12);
+  --shadow-hair:2px 2px 0 rgba(27,25,22,0.07);  /* the quiet rest lift — a whisper */
   --lift:6px 8px 0 rgba(27,25,22,0.16);
 
   /* ---- type: three families, seven roles ----
@@ -61,16 +65,16 @@
 
   /* ---- controls: ONE height (the Perception control is canon) ---- */
   --control-h:36px;
-  --control-r:3px;
+  --control-r:5px;
 }
 
 /* ==================================================================== *
  *  ATOMS
  * ==================================================================== */
 
-/* ---- paper surfaces ---- */
-.sheet{background:var(--paper);border:1px solid var(--ink);border-radius:var(--control-r);box-shadow:var(--shadow);}
-.sheet-sm{background:var(--paper);border:1px solid var(--ink);border-radius:var(--control-r);box-shadow:var(--shadow-sm);}
+/* ---- paper surfaces ---- (hairline rule, to match the softer buttons) */
+.sheet{background:var(--paper);border:1px solid var(--rule);border-radius:var(--control-r);box-shadow:var(--shadow);}
+.sheet-sm{background:var(--paper);border:1px solid var(--rule);border-radius:var(--control-r);box-shadow:var(--shadow-hair);}
 
 /* ---- text atoms ---- */
 .eyebrow{font:var(--text-label);letter-spacing:.3em;color:var(--ink-mid);text-transform:uppercase;}
@@ -85,45 +89,49 @@
      .btn--square control-sized square (icon-only chrome acts)        */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
   height:var(--control-h);padding:0 14px;border-radius:var(--control-r);
-  font:var(--font-label);letter-spacing:.16em;text-transform:uppercase;
+  font:var(--font-label);letter-spacing:.16em;text-transform:uppercase;white-space:nowrap;
   background:transparent;border:0;color:var(--ink);cursor:pointer;
   transition:background .18s var(--ease),color .18s var(--ease),
              border-color .18s var(--ease),transform .12s var(--ease),
              box-shadow .2s var(--ease);}
 .btn:active{transform:scale(0.96);}
 .btn .arr{font:400 13px var(--mono);line-height:1;}
-.btn--sheet{background:var(--paper);border:1px solid var(--ink);box-shadow:var(--shadow-sm);}
-.btn--sheet:hover{background:var(--ink);color:var(--paper);}
-.btn--ink{background:var(--ink);color:var(--paper);border:1px solid var(--ink);}
-.btn--ink:hover{background:#000;}
-.btn--line{border:1px solid var(--ink);}
-.btn--line:hover{background:var(--ink);color:var(--paper);}
-.btn--soft{border:1px solid var(--rule);color:var(--ink-soft);}
-.btn--soft:hover{background:var(--ink-soft);color:var(--paper);border-color:var(--ink-soft);}
+/* Softer ink: quiet buttons carry a hairline rule + a whisper of a shadow and
+   ink their edge (then lift) on hover, rather than flipping to solid black. The
+   committing button is --ink-soft at rest and deepens to full ink on hover. */
+.btn--sheet{background:var(--paper);border:1px solid var(--rule);box-shadow:var(--shadow-hair);color:var(--ink-soft);}
+.btn--sheet:hover{background:var(--paper-hi);color:var(--ink);border-color:var(--ink);box-shadow:var(--shadow-sm);}
+.btn--ink{background:var(--ink-soft);color:var(--paper-hi);border:1px solid var(--ink-soft);box-shadow:var(--shadow-hair);}
+.btn--ink:hover{background:var(--ink);border-color:var(--ink);box-shadow:var(--shadow-sm);}
+.btn--line{border:1px solid var(--rule);color:var(--ink-soft);}
+.btn--line:hover{background:var(--paper-hi);color:var(--ink);border-color:var(--ink);}
+.btn--soft{border:1px solid var(--rule);color:var(--ink-mid);}
+.btn--soft:hover{background:var(--paper-hi);color:var(--ink-soft);border-color:var(--ink-soft);}
 .btn--square{width:var(--control-h);padding:0;flex:0 0 auto;}
-.btn--sheet.btn--square{box-shadow:var(--shadow-sm);}
+.btn--sheet.btn--square{box-shadow:var(--shadow-hair);}
+.btn--sheet.btn--square:hover{box-shadow:var(--shadow-sm);}
 
 /* legacy aliases — same atom, older markup */
 .mono-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  height:var(--control-h);padding:0 14px;border-radius:2px;
-  font:var(--font-label);letter-spacing:.16em;text-transform:uppercase;
-  background:transparent;border:1px solid var(--ink);color:var(--ink);cursor:pointer;
-  transition:background .18s var(--ease),color .18s var(--ease),transform .12s var(--ease);}
-.mono-btn:hover{background:var(--ink);color:var(--paper);}
+  height:var(--control-h);padding:0 14px;border-radius:var(--control-r);
+  font:var(--font-label);letter-spacing:.16em;text-transform:uppercase;white-space:nowrap;
+  background:var(--paper);border:1px solid var(--rule);color:var(--ink-soft);cursor:pointer;box-shadow:var(--shadow-hair);
+  transition:background .18s var(--ease),color .18s var(--ease),border-color .18s var(--ease),box-shadow .2s var(--ease),transform .12s var(--ease);}
+.mono-btn:hover{background:var(--paper-hi);color:var(--ink);border-color:var(--ink);box-shadow:var(--shadow-sm);}
 .mono-btn:active{transform:scale(0.96);}
-.mono-btn.soft{border-color:var(--rule);color:var(--ink-soft);}
-.mono-btn.soft:hover{background:var(--ink-soft);color:var(--paper);border-color:var(--ink-soft);}
+.mono-btn.soft{border-color:var(--rule);color:var(--ink-mid);box-shadow:none;}
+.mono-btn.soft:hover{background:var(--paper-hi);color:var(--ink-soft);border-color:var(--ink-soft);box-shadow:var(--shadow-hair);}
 .btn-ink{display:inline-flex;align-items:center;justify-content:center;
-  height:var(--control-h);padding:0 16px;border-radius:2px;
-  font:var(--font-label);letter-spacing:.16em;text-transform:uppercase;
-  background:var(--ink);color:var(--paper);border:1px solid var(--ink);cursor:pointer;
-  transition:background .18s var(--ease),transform .12s var(--ease);}
-.btn-ink:hover{background:#000;}
+  height:var(--control-h);padding:0 16px;border-radius:var(--control-r);
+  font:var(--font-label);letter-spacing:.16em;text-transform:uppercase;white-space:nowrap;
+  background:var(--ink-soft);color:var(--paper-hi);border:1px solid var(--ink-soft);cursor:pointer;box-shadow:var(--shadow-hair);
+  transition:background .18s var(--ease),box-shadow .2s var(--ease),transform .12s var(--ease);}
+.btn-ink:hover{background:var(--ink);box-shadow:var(--shadow-sm);}
 .btn-ink:active{transform:scale(0.96);}
 
 /* ---- icon act: a quiet in-panel glyph (mode toggles, close ✕) ----
    Not a control — it lives inside panel heads and cards.             */
-.icon-act{width:30px;height:30px;display:grid;place-items:center;border-radius:2px;
+.icon-act{width:30px;height:30px;display:grid;place-items:center;border-radius:var(--control-r);
   color:var(--ghost);background:none;border:0;padding:0;cursor:pointer;position:relative;
   transition:color .18s var(--ease),transform .12s var(--ease);}
 .icon-act::after{content:"";position:absolute;inset:-6px;}
@@ -140,12 +148,12 @@
 
 /* ---- segmented control: the Perception switch, control-height ---- */
 .seg{display:inline-flex;align-items:stretch;gap:2px;padding:3px;height:var(--control-h);}
-.seg button{border-radius:2px;padding:0 13px;font:var(--font-label);letter-spacing:.16em;
+.seg button{border-radius:var(--control-r);padding:0 13px;font:var(--font-label);letter-spacing:.16em;
   text-transform:uppercase;color:var(--ink-mid);background:none;border:0;cursor:pointer;
   transition:background .2s var(--ease),color .2s var(--ease);position:relative;}
 .seg button::after{content:"";position:absolute;inset:-4px 0;}
 .seg button:hover{color:var(--ink);}
-.seg button.on{background:var(--ink);color:var(--paper);}
+.seg button.on{background:var(--ink-soft);color:var(--paper-hi);}
 
 /* ---- chip: a small named thing you can follow (trace, kindred) ---- */
 .chip{display:inline-flex;align-items:center;gap:8px;height:var(--control-h);padding:0 12px;
@@ -156,6 +164,16 @@
 .chip:active{transform:scale(0.97);}
 .chip .nm{font:var(--text-caption);font-style:italic;color:var(--ink);}
 .chip .ctx{font:var(--text-meta);letter-spacing:.14em;color:var(--ink-mid);text-transform:uppercase;}
+
+/* ---- prop: a small single-select property pill on a card (type · book ·
+   node). A dashed pill is an UNSET property inviting its value. ---- */
+.prop{display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px;
+  background:var(--paper);border:1px solid var(--rule);border-radius:var(--control-r);
+  font:var(--text-meta);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-mid);
+  cursor:pointer;white-space:nowrap;
+  transition:border-color .16s var(--ease),color .16s var(--ease);}
+.prop:hover{border-color:var(--ink);color:var(--ink);}
+.prop--ghost{border-style:dashed;background:transparent;}
 
 /* ---- corner marks: four 8×8 ink squares framing a borderless card ---- */
 .corners{position:relative;
@@ -194,6 +212,29 @@
 .leaf.is-note{cursor:pointer;}
 .leaf.is-note:hover{border-left-color:var(--ink);}
 .leaf--point{border-left-color:var(--ink);}
+/* a leaf as its own slip of paper — the stack, opened. Wears exactly the
+   panel-head's dress: veiled paper, one hairline all round, control radius,
+   a whisper of a shadow. Hover inks the edge and lifts, like every control. */
+.leaf--slip{position:relative;background:var(--veil);-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);
+  border:1px solid var(--rule);
+  border-radius:var(--control-r);box-shadow:var(--shadow-hair);padding:12px 14px 10px;
+  transition:border-color .2s var(--ease),box-shadow .2s var(--ease);}
+.leaf--slip.is-note:hover{border-color:var(--ink);box-shadow:var(--shadow-sm);}
+/* the slip's grammar: date as a corner mark, text first (reserving the
+   date's strip), then one pill per property in a .lprops row */
+.leaf--slip .when{position:absolute;top:12px;right:12px;font:var(--text-meta);letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink-mid);}
+.leaf--slip .ltxt{padding-right:48px;}
+.lprops{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:2px;}
+.propWrap{position:relative;display:inline-flex;}
+/* the pill's single-select menu */
+.lmenu{position:absolute;left:0;top:28px;z-index:5;display:none;flex-direction:column;min-width:130px;
+  background:var(--paper);border:1px solid var(--rule);border-radius:var(--control-r);box-shadow:var(--shadow-sm);padding:5px;}
+.lmenu.open{display:flex;}
+.lmenu button{text-align:left;background:transparent;border:0;border-radius:var(--control-r);padding:7px 10px;
+  font:var(--text-caption);color:var(--ink-soft);white-space:nowrap;
+  transition:background .15s var(--ease),color .15s var(--ease);}
+.lmenu button:hover{background:var(--paper-deep);color:var(--ink);}
 .leaf .lmeta{display:flex;align-items:center;gap:8px;font:var(--text-meta);letter-spacing:.16em;
   text-transform:uppercase;color:var(--ink-mid);margin-bottom:7px;}
 .leaf .ltxt{font:var(--text-body);color:var(--ink);margin:0 0 9px;text-wrap:pretty;}
