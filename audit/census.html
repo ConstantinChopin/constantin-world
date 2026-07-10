@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Asterlogos — component census (audit)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ===== tokens copied verbatim from _shared/asterlogos.css:15–65 ===== */
+:root{
+  --paper:#e7e4db; --paper-deep:#ded9cd; --paper-hi:#efece4;
+  --ink:#1b1916; --ink-soft:#39352e; --ink-mid:#5c564c; --ghost:#9a958a; --rule:#c2bcae; --gild:#9a8038;
+  --shadow:5px 6px 0 rgba(27,25,22,0.13); --shadow-sm:3px 4px 0 rgba(27,25,22,0.12); --lift:6px 8px 0 rgba(27,25,22,0.16);
+  --display:'Cormorant Garamond',Georgia,serif; --serif:'Newsreader',Georgia,serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+  --text-title:500 21px/1.1 var(--display); --text-body:300 16px/1.6 var(--serif); --text-caption:300 13px/1.5 var(--serif);
+  --text-label:400 10px var(--mono); --text-meta:400 9px var(--mono);
+  --ease:cubic-bezier(0.2,0,0,1); --spring:cubic-bezier(0.34,1.3,0.5,1);
+  --control-h:36px; --control-r:3px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;}
+body{background:var(--paper);color:var(--ink);font-family:var(--serif);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+/* the project's paper tooth, so components read in context (surface:40) */
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.34;
+  background-image:radial-gradient(var(--rule) 0.5px,transparent 0.5px);background-size:3px 3px;}
+button,textarea,input{font-family:inherit;cursor:pointer;color:inherit;}
+
+#page{position:relative;z-index:1;max-width:1120px;margin:0 auto;padding:64px 40px 160px;}
+.mast .word{font:500 30px var(--display);font-style:italic;}
+.mast .sub{font:300 14px/1.6 var(--serif);font-style:italic;color:var(--ink-soft);margin:8px 0 0;max-width:70ch;}
+.mast .warn{display:inline-block;margin-top:14px;font:var(--text-meta);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-mid);border:1px dashed var(--rule);border-radius:3px;padding:6px 10px;}
+
+h2{font:500 22px var(--display);font-style:italic;margin:64px 0 6px;padding-bottom:8px;border-bottom:1px solid var(--ink);}
+.note{font:300 13px/1.6 var(--serif);color:var(--ink-soft);max-width:74ch;margin:10px 0 26px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:22px;}
+.card{display:flex;flex-direction:column;gap:12px;padding:22px 20px;background:var(--paper-hi);
+  border:1px solid var(--rule);border-radius:6px;}
+.card.bad{border-color:#b98a86;}
+.card .demo{min-height:60px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.card .lbl{font:var(--text-meta);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-mid);}
+.card .src{font:400 10px var(--mono);color:var(--ink-soft);}
+.card .flag{font:var(--text-meta);letter-spacing:.12em;text-transform:uppercase;}
+.flag.ok{color:#4a6a45;} .flag.legacy{color:#8a6d2f;} .flag.orphan{color:#a6473c;} .flag.novel{color:var(--ink-mid);}
+.rr{display:inline-block;width:64px;height:36px;border:1px solid var(--ink);background:var(--paper);}
+.callout{font:300 12.5px/1.6 var(--serif);color:var(--ink-soft);}
+.callout b{color:var(--ink);font-weight:500;}
+
+/* ============================================================= *
+ *  CANONICAL ATOMS — copied from _shared/asterlogos.css
+ * ============================================================= */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:var(--control-h);padding:0 14px;
+  border-radius:var(--control-r);font:var(--text-label);letter-spacing:.16em;text-transform:uppercase;
+  background:transparent;border:0;color:var(--ink);cursor:pointer;
+  transition:background .18s var(--ease),color .18s var(--ease),border-color .18s var(--ease),transform .12s var(--ease),box-shadow .2s var(--ease);}
+.btn:active{transform:scale(0.96);}
+.btn .arr{font:400 13px var(--mono);line-height:1;}
+.btn--sheet{background:var(--paper);border:1px solid var(--ink);box-shadow:var(--shadow-sm);}
+.btn--sheet:hover{background:var(--ink);color:var(--paper);}
+.btn--ink{background:var(--ink);color:var(--paper);border:1px solid var(--ink);}
+.btn--ink:hover{background:#000;}
+.btn--line{border:1px solid var(--ink);}
+.btn--line:hover{background:var(--ink);color:var(--paper);}
+.btn--soft{border:1px solid var(--rule);color:var(--ink-soft);}
+.btn--soft:hover{background:var(--ink-soft);color:var(--paper);border-color:var(--ink-soft);}
+.btn--square{width:var(--control-h);padding:0;flex:0 0 auto;}
+.btn--sheet.btn--square{box-shadow:var(--shadow-sm);}
+.mono-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:var(--control-h);padding:0 14px;
+  border-radius:2px;font:var(--text-label);letter-spacing:.16em;text-transform:uppercase;background:transparent;
+  border:1px solid var(--ink);color:var(--ink);cursor:pointer;transition:background .18s var(--ease),color .18s var(--ease);}
+.mono-btn:hover{background:var(--ink);color:var(--paper);}
+.mono-btn.soft{border-color:var(--rule);color:var(--ink-soft);}
+.btn-ink{display:inline-flex;align-items:center;justify-content:center;height:var(--control-h);padding:0 16px;border-radius:2px;
+  font:var(--text-label);letter-spacing:.16em;text-transform:uppercase;background:var(--ink);color:var(--paper);border:1px solid var(--ink);cursor:pointer;}
+.icon-act{width:30px;height:30px;display:grid;place-items:center;border-radius:2px;color:var(--ghost);background:none;border:0;padding:0;cursor:pointer;transition:color .18s var(--ease),transform .12s var(--ease);}
+.icon-act:hover{color:var(--ink);} .icon-act.on{color:var(--ink);}
+.act{font:var(--text-meta);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mid);background:none;border:0;padding:3px 0;cursor:pointer;transition:color .16s var(--ease);}
+.act:hover{color:var(--ink);}
+.seg{display:inline-flex;align-items:stretch;gap:2px;padding:3px;height:var(--control-h);background:var(--paper);border:1px solid var(--ink);border-radius:var(--control-r);box-shadow:var(--shadow-sm);}
+.seg button{border-radius:2px;padding:0 13px;font:var(--text-label);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-mid);background:none;border:0;cursor:pointer;}
+.seg button:hover{color:var(--ink);} .seg button.on{background:var(--ink);color:var(--paper);}
+.chip{display:inline-flex;align-items:center;gap:8px;height:var(--control-h);padding:0 12px;background:var(--paper);border:1px solid var(--rule);border-radius:var(--control-r);box-shadow:var(--shadow-sm);cursor:pointer;transition:border-color .18s var(--ease),box-shadow .2s var(--ease);}
+.chip:hover{border-color:var(--ink);box-shadow:var(--lift);}
+.chip .nm{font:var(--text-caption);font-style:italic;color:var(--ink);} .chip .ctx{font:var(--text-meta);letter-spacing:.14em;color:var(--ink-mid);text-transform:uppercase;}
+.sheet{background:var(--paper);border:1px solid var(--ink);border-radius:var(--control-r);box-shadow:var(--shadow);}
+.panel-head{display:flex;align-items:center;gap:14px;min-height:var(--control-h);font:var(--text-label);letter-spacing:.3em;text-transform:uppercase;color:var(--ink-mid);}
+.panel-head .ph-acts{display:flex;align-items:center;gap:14px;margin-left:auto;}
+.leaf{padding:2px 0 2px 14px;border-left:2px solid var(--rule);transition:border-left-color .2s var(--ease);cursor:pointer;}
+.leaf:hover{border-left-color:var(--ink);}
+.leaf .lmeta{display:flex;gap:8px;font:var(--text-meta);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-mid);margin-bottom:7px;}
+.leaf .ltxt{font:var(--text-body);color:var(--ink);margin:0 0 9px;}
+
+/* ============================================================= *
+ *  ORPHANS — copied faithfully from the pages, so drift shows
+ * ============================================================= */
+/* surface #newNote:115 — hand-built .btn--ink.btn--square */
+.o-newNote{width:var(--control-h);height:var(--control-h);display:grid;place-items:center;cursor:pointer;
+  background:var(--ink);color:var(--paper);border:1px solid var(--ink);border-radius:var(--control-r);box-shadow:var(--shadow-sm);}
+.o-newNote:hover{background:#000;box-shadow:var(--lift);}
+/* surface #ctxChip:233 — hand-built .chip, radius 2px */
+.o-ctxChip{display:inline-flex;align-items:center;gap:7px;height:var(--control-h);background:var(--paper);border:1px solid var(--rule);
+  border-radius:2px;padding:0 11px;font:var(--text-label);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);}
+.o-ctxChip:hover{border-color:var(--ink);color:var(--ink);}
+/* surface .lvNav button:145 / odyssey #pgNav:134 — 28px stepper, radius 2px */
+.o-nav{width:28px;height:28px;display:grid;place-items:center;border:1px solid var(--rule);border-radius:2px;
+  color:var(--ink-soft);font:400 14px var(--mono);background:transparent;cursor:pointer;}
+.o-nav:hover{border-color:var(--ink);color:var(--ink);}
+.o-nav:disabled{opacity:.25;cursor:default;}
+/* surface #qMark:210 — bespoke toggle, radius 2px */
+.o-qmark{width:32px;height:38px;display:grid;place-items:center;font:500 21px var(--display);color:var(--rule);border-radius:2px;cursor:pointer;}
+.o-qmark:hover{color:var(--ink-soft);}
+/* odyssey/iliad #compareBtn/#backBtn:54 — hand-built .btn--line / .btn--soft, radius 2px, padding 8px 14px */
+.o-compare{pointer-events:auto;cursor:pointer;background:transparent;border:1px solid var(--ink);border-radius:2px;
+  padding:8px 14px;font:400 9px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--ink);}
+.o-compare:hover{background:var(--ink);color:var(--paper);}
+.o-back{pointer-events:auto;cursor:pointer;background:transparent;border:1px solid var(--rule);border-radius:2px;
+  padding:8px 14px;font:400 9px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);}
+.o-back:hover{background:var(--ink-soft);color:var(--paper);border-color:var(--ink-soft);}
+/* field #ideaClose:55 — bespoke close, should be .icon-act */
+.o-ideaClose{width:28px;height:28px;background:none;border:0;color:var(--ghost);cursor:pointer;font:400 15px var(--mono);}
+.o-ideaClose:hover{color:var(--ink);}
+/* pitch .btn:49 — locally redefined, collides with the atom name, radius 2px */
+.o-pitchBtn{display:inline-flex;align-items:center;gap:8px;font:400 9px var(--mono);letter-spacing:.16em;text-transform:uppercase;
+  padding:10px 16px;border-radius:2px;border:1px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer;}
+/* odyssey/iliad #legend:39 — bespoke card w/ 4th shadow value 0.14 */
+.o-legend{width:210px;padding:16px 18px;background:var(--paper);border:1px solid var(--ink);border-radius:3px;box-shadow:5px 6px 0 rgba(27,25,22,0.14);}
+.o-legend .n{font:400 9px var(--mono);letter-spacing:.32em;text-transform:uppercase;color:var(--ink-mid);border-bottom:1px solid var(--rule);padding-bottom:9px;margin-bottom:9px;}
+.o-legend .t{font:500 30px var(--display);}
+/* the #err toast — off-palette crimson, 4 copies */
+.o-err{background:#e7e4db;color:#7a2318;padding:10px 14px;border:1px solid #7a2318;border-radius:2px;font:12px/1.4 var(--mono);}
+
+.cmp{display:flex;gap:26px;flex-wrap:wrap;align-items:flex-start;}
+.cmp .col{display:flex;flex-direction:column;gap:10px;align-items:flex-start;}
+.cmp .h{font:var(--text-meta);letter-spacing:.2em;text-transform:uppercase;}
+.cmp .h.good{color:#4a6a45;} .cmp .h.drift{color:#a6473c;}
+.svgi{width:17px;height:17px;}
+</style>
+</head>
+<body>
+<div id="page">
+
+<header class="mast">
+  <div class="word">Asterlogos — component census</div>
+  <p class="sub">Every interactive/structural variant found in the reading prototype, rendered side by side on the project's own paper.
+  Canonical atoms (from <span style="font-family:var(--mono);font-size:12px">_shared/asterlogos.css</span>) sit beside the page-level orphans that reimplement them, so the drift reads at a glance. Labels cite file + line.</p>
+  <span class="warn">Audit artifact · read-only · no source files modified</span>
+</header>
+
+<!-- ============ BUTTONS: canonical ============ -->
+<h2>Buttons — the canonical control (.btn)</h2>
+<p class="note">One height (36px), one radius (3px = <code>--control-r</code>), skin-only variants, uniform <code>:active</code> press. Source: <code>asterlogos.css:86–104</code>, demoed at <code>styleguide:180–200</code>.</p>
+<div class="grid">
+  <div class="card"><div class="demo"><button class="btn btn--sheet"><span class="arr">‹</span>The shelf</button></div><span class="lbl">.btn--sheet · quiet chrome</span><span class="src">asterlogos.css:95</span><span class="flag ok">✔ canonical</span></div>
+  <div class="card"><div class="demo"><button class="btn btn--ink">Set it down</button></div><span class="lbl">.btn--ink · the commit</span><span class="src">asterlogos.css:97</span><span class="flag ok">✔ canonical</span></div>
+  <div class="card"><div class="demo"><button class="btn btn--line">Place</button><button class="btn btn--soft">Cancel</button></div><span class="lbl">.btn--line / .btn--soft</span><span class="src">asterlogos.css:99–102</span><span class="flag ok">✔ canonical</span></div>
+  <div class="card"><div class="demo">
+    <button class="btn btn--ink btn--square" aria-label="Write"><svg class="svgi" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"><path d="M8 2.5v11M2.5 8h11"/></svg></button>
+    <button class="btn btn--sheet btn--square" aria-label="Trace"><svg class="svgi" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M3.5 12.5c3.5 0 2-4.5 5-4.5s1.5-4.5 4-4.5" stroke-dasharray="1.6 2.4"/><circle cx="3.5" cy="12.5" r="1.6" fill="currentColor" stroke="none"/><circle cx="12.5" cy="3.5" r="1.3"/></svg></button>
+  </div><span class="lbl">.btn--square · 36px icon acts</span><span class="src">asterlogos.css:103</span><span class="flag ok">✔ canonical</span></div>
+</div>
+
+<!-- ============ BUTTONS: legacy ============ -->
+<h2>Buttons — legacy aliases still in use (10 call-sites)</h2>
+<p class="note">Old markup pointing at aliases the shared file keeps alive at <code>asterlogos.css:107–122</code>. Note the radius is <b>2px</b>, not 3px. Migrate to <code>.btn--*</code> then delete the aliases. Call-sites: surface:367,376,377,810,831,909 · odyssey:827,883 · iliad:1021,1077.</p>
+<div class="grid">
+  <div class="card bad"><div class="demo"><button class="mono-btn">Place</button><button class="mono-btn soft">Cancel</button></div><span class="lbl">.mono-btn / .mono-btn.soft</span><span class="src">surface:376–377 · odyssey:827</span><span class="flag legacy">↺ legacy → .btn--line/.btn--soft</span></div>
+  <div class="card bad"><div class="demo"><button class="btn-ink">Set it down</button></div><span class="lbl">.btn-ink</span><span class="src">surface:810,909 · iliad:1077</span><span class="flag legacy">↺ legacy → .btn--ink</span></div>
+</div>
+
+<!-- ============ BUTTONS: orphans ============ -->
+<h2>Buttons — orphans (bespoke reimplementations)</h2>
+<p class="note">Each of these rebuilds an atom that already exists — different geometry, same intent. This is what makes the buttons "feel off": the corners (2px), the padding, and three separately-built square buttons.</p>
+
+<div class="cmp" style="margin-bottom:30px">
+  <div class="col"><span class="h good">Canonical .btn--ink.btn--square (3px)</span>
+    <button class="btn btn--ink btn--square" aria-label="Write"><svg class="svgi" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"><path d="M8 2.5v11M2.5 8h11"/></svg></button></div>
+  <div class="col"><span class="h drift">Orphan #newNote / #plateNote (hand-built ×3)</span>
+    <button class="o-newNote" aria-label="Write"><svg class="svgi" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"><path d="M8 2.5v11M2.5 8h11"/></svg></button></div>
+  <div class="col"><span class="callout"><b>D1.</b> surface:115 · odyssey:148 · iliad:143 — three copies of the inverted square. Identical look, three sources.</span></div>
+</div>
+
+<div class="cmp" style="margin-bottom:30px">
+  <div class="col"><span class="h good">Canonical .chip (3px)</span>
+    <button class="chip"><span class="nm">The Odyssey</span><span class="ctx">◐ book</span></button></div>
+  <div class="col"><span class="h drift">Orphan #ctxChip (2px)</span>
+    <button class="o-ctxChip">◐ The Odyssey</button></div>
+  <div class="col"><span class="callout"><b>D3.</b> surface:233 (+ styleguide .ctxDemo:97). Sharper corner, own hover. Should be <code>.chip</code>.</span></div>
+</div>
+
+<div class="cmp" style="margin-bottom:30px">
+  <div class="col"><span class="h good">Should be .btn--line / .btn--soft</span>
+    <button class="btn btn--line">Compare</button> <button class="btn btn--soft">Back</button></div>
+  <div class="col"><span class="h drift">Orphan #compareBtn / #backBtn (2px, 9px, padding 8px 14px)</span>
+    <button class="o-compare">Compare</button> <button class="o-back">Back</button></div>
+  <div class="col"><span class="callout"><b>#compareBtn/#backBtn.</b> odyssey:54–60 · iliad:54–60 (byte-identical twins). No <code>--control-h</code>; re-authored geometry.</span></div>
+</div>
+
+<div class="grid">
+  <div class="card bad"><div class="demo"><button class="o-nav">‹</button><button class="o-nav">›</button><button class="o-nav" disabled>‹</button></div><span class="lbl">28px stepper (2px)</span><span class="src">surface .lvNav:145 · odyssey/iliad #pgNav:134/126</span><span class="flag orphan">✖ orphan ×3 → one atom (D2)</span></div>
+  <div class="card bad"><div class="demo"><button class="o-qmark">❝</button></div><span class="lbl">#qMark quote toggle (2px)</span><span class="src">surface:210</span><span class="flag orphan">✖ orphan</span></div>
+  <div class="card bad"><div class="demo"><button class="o-ideaClose">✕</button> <span class="callout">vs</span> <button class="icon-act" aria-label="close"><svg viewBox="0 0 14 14" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M3 3l8 8M11 3l-8 8"/></svg></button></div><span class="lbl">#ideaClose vs .icon-act</span><span class="src">field:55</span><span class="flag orphan">✖ orphan → .icon-act</span></div>
+  <div class="card bad"><div class="demo"><button class="o-pitchBtn">Read the case</button></div><span class="lbl">.btn redefined locally (name-collision, 2px)</span><span class="src">pitch:49</span><span class="flag orphan">✖ orphan (unsystemed page)</span></div>
+</div>
+
+<!-- ============ RADIUS ============ -->
+<h2>The radius fault line — 2px vs 3px</h2>
+<p class="note">The single most pervasive drift. <code>.btn</code> renders at 3px; <code>.icon-act</code>, <code>.seg</code>, <code>.mono-btn</code>, <code>.btn-ink</code> in the <i>same shared file</i> render at 2px (<code>asterlogos.css:108,117,126,143</code>), and pages hardcode 2px for chips/menus/nav. On one screen, corners disagree.</p>
+<div class="cmp">
+  <div class="col"><span class="h good">--control-r · 3px (canonical)</span><span class="rr" style="border-radius:3px"></span></div>
+  <div class="col"><span class="h drift">2px (12 sites in the reading prototype)</span><span class="rr" style="border-radius:2px"></span></div>
+  <div class="col"><span class="callout">Side by side the difference is small but real — 2px reads a hair sharper/cheaper against a paper aesthetic built on soft letterpress. Route <b>every</b> radius through <code>var(--control-r)</code>.</span></div>
+</div>
+
+<!-- ============ NON-BUTTON ATOMS ============ -->
+<h2>Icon acts · segmented · text acts</h2>
+<div class="grid">
+  <div class="card"><div class="demo">
+    <button class="icon-act on"><svg class="svgi" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M2 3.5h10M2 7h10M2 10.5h10"/></svg></button>
+    <button class="icon-act"><svg class="svgi" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><rect x="2.5" y="3" width="9" height="8" rx="1"/></svg></button>
+    <button class="icon-act"><svg viewBox="0 0 14 14" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M3 3l8 8M11 3l-8 8"/></svg></button>
+  </div><span class="lbl">.icon-act (in-panel glyphs)</span><span class="src">asterlogos.css:126</span><span class="flag ok">✔ used well</span></div>
+  <div class="card"><div class="demo"><div class="seg"><button class="on">The Shelf</button><button>The Field</button></div></div><span class="lbl">.seg (Perception switch)</span><span class="src">asterlogos.css:142 · surface:307</span><span class="flag ok">✔ used well</span></div>
+  <div class="card"><div class="demo"><button class="act">Edit</button><button class="act">plate ›</button><button class="act">discard</button></div><span class="lbl">.act (text verbs)</span><span class="src">asterlogos.css:135</span><span class="flag ok">✔ most consistent atom</span></div>
+</div>
+
+<!-- ============ PANELS / SURFACES ============ -->
+<h2>Panels, heads & surfaces</h2>
+<div class="grid">
+  <div class="card"><div class="demo" style="width:100%"><div class="panel-head" style="width:100%"><span>Notes · 4</span><div class="ph-acts"><button class="icon-act on"><svg class="svgi" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M2 3.5h10M2 7h10M2 10.5h10"/></svg></button><button class="icon-act"><svg viewBox="0 0 14 14" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M3 3l8 8M11 3l-8 8"/></svg></button></div></div></div><span class="lbl">.panel-head (label · acts · ✕)</span><span class="src">asterlogos.css:180</span><span class="flag ok">✔ strongest molecule</span></div>
+  <div class="card"><div class="demo" style="width:100%"><div class="leaf"><div class="lmeta"><span>◐</span><span>thought · The Cyclops · Jul 4</span></div><p class="ltxt">He only survives the cave by refusing to say his name.</p></div></div><span class="lbl">.leaf (note as card)</span><span class="src">asterlogos.css:192</span><span class="flag ok">✔ atom</span></div>
+  <div class="card"><div class="demo"><div class="sheet" style="width:150px;height:70px"></div></div><span class="lbl">.sheet (canonical card)</span><span class="src">asterlogos.css:72</span><span class="flag ok">✔ atom</span></div>
+  <div class="card bad"><div class="demo"><div class="o-legend"><div class="n">The Wandering</div><div class="t">Lotus</div></div></div><span class="lbl">#legend — bespoke card, 4th shadow (0.14)</span><span class="src">odyssey/iliad:39</span><span class="flag orphan">✖ orphan → .sheet (D6)</span></div>
+</div>
+
+<!-- ============ ERROR TOAST ============ -->
+<h2>The off-palette outlier — #err crimson (4 copies)</h2>
+<p class="note">The only hue outside the eight-grey palette + gild. <code>#7a2318</code> appears in four <code>#err</code> panels. Violates P1. Render errors in ink on paper, or promote to a single documented <code>--alert</code> token.</p>
+<div class="cmp">
+  <div class="col"><span class="h drift">Current (off-palette)</span><div class="o-err">Failed to load the instrument.</div></div>
+  <div class="col"><span class="h good">On-palette alternative</span><div class="sheet" style="padding:10px 14px;font:12px/1.4 var(--mono);color:var(--ink)">Failed to load the instrument.</div></div>
+  <div class="col"><span class="callout"><b>D7.</b> odyssey:90 · iliad:80 · field:71 · manifesto:75.</span></div>
+</div>
+
+<footer style="margin-top:80px;padding-top:20px;border-top:1px solid var(--rule);font:400 10px var(--mono);letter-spacing:.1em;color:var(--ink-mid);text-transform:uppercase">
+  Asterlogos design audit · census · see 02-inventory.md for full citations
+</footer>
+</div>
+</body></html>

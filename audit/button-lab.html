@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Asterlogos — button weight lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#e7e4db; --paper-deep:#ded9cd; --paper-hi:#efece4;
+  --ink:#1b1916; --ink-soft:#39352e; --ink-mid:#5c564c; --ghost:#9a958a; --rule:#c2bcae; --gild:#9a8038;
+  --shadow-sm:3px 4px 0 rgba(27,25,22,0.12); --lift:6px 8px 0 rgba(27,25,22,0.16);
+  --shadow-hair:2px 2px 0 rgba(27,25,22,0.07);
+  --display:'Cormorant Garamond',Georgia,serif; --serif:'Newsreader',Georgia,serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+  --text-label:400 10px var(--mono); --text-meta:400 9px var(--mono);
+  --ease:cubic-bezier(0.2,0,0,1);
+  --control-h:36px; --control-r:3px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;}
+body{background:var(--paper);color:var(--ink);font-family:var(--serif);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.34;
+  background-image:radial-gradient(var(--rule) 0.5px,transparent 0.5px);background-size:3px 3px;}
+#page{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:56px 40px 140px;}
+.word{font:500 30px var(--display);font-style:italic;}
+.sub{font:300 14px/1.6 var(--serif);font-style:italic;color:var(--ink-soft);margin:8px 0 0;max-width:74ch;}
+
+.lab{display:grid;grid-template-columns:220px 1fr;gap:0;margin-top:40px;border-top:1px solid var(--rule);}
+.lab>div{padding:26px 24px;border-bottom:1px solid var(--rule);}
+.lab .meta{background:var(--paper-hi);}
+.lab .meta .tag{font:var(--text-label);letter-spacing:.24em;text-transform:uppercase;color:var(--ink-mid);}
+.lab .meta h3{font:500 22px var(--display);font-style:italic;margin:6px 0 8px;}
+.lab .meta.rec h3::after{content:"recommended";display:inline-block;margin-left:8px;font:var(--text-meta);letter-spacing:.14em;
+  text-transform:uppercase;color:var(--gild);vertical-align:middle;border:1px solid var(--gild);border-radius:2px;padding:2px 6px;}
+.lab .meta p{font:300 12.5px/1.6 var(--serif);color:var(--ink-soft);margin:0;}
+.lab .demo{display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+.hoverhint{font:var(--text-meta);letter-spacing:.14em;text-transform:uppercase;color:var(--ghost);margin:0 0 16px;}
+
+/* ---- shared control shell (all options inherit this geometry) ---- */
+.b{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:var(--control-h);padding:0 14px;
+  border-radius:var(--control-r);font:var(--text-label);letter-spacing:.16em;text-transform:uppercase;
+  background:transparent;border:0;color:var(--ink);cursor:pointer;
+  transition:background .18s var(--ease),color .18s var(--ease),border-color .18s var(--ease),transform .12s var(--ease),box-shadow .2s var(--ease);}
+.b:active{transform:scale(0.96);}
+.b.sq{width:var(--control-h);padding:0;}
+.b .arr{font:400 13px var(--mono);line-height:1;}
+.svgi{width:16px;height:16px;}
+
+/* ============ CURRENT (baseline) ============ */
+.cur .sheet{background:var(--paper);border:1px solid var(--ink);box-shadow:var(--shadow-sm);color:var(--ink);}
+.cur .sheet:hover{background:var(--ink);color:var(--paper);}
+.cur .ink{background:var(--ink);color:var(--paper);border:1px solid var(--ink);}
+.cur .ink:hover{background:#000;}
+.cur .sq.ink{box-shadow:var(--shadow-sm);}
+
+/* ============ A · Softer ink (hairline border, gentle hover, softer primary) ============ */
+.optA .sheet{background:var(--paper);border:1px solid var(--rule);box-shadow:var(--shadow-hair);color:var(--ink-soft);}
+.optA .sheet:hover{border-color:var(--ink);color:var(--ink);background:var(--paper-hi);box-shadow:var(--shadow-sm);}
+.optA .ink{background:var(--ink-soft);color:var(--paper-hi);border:1px solid var(--ink-soft);box-shadow:var(--shadow-hair);}
+.optA .ink:hover{background:var(--ink);box-shadow:var(--shadow-sm);}
+.optA .sq.ink{box-shadow:var(--shadow-hair);}
+
+/* ============ B · Flat quiet (no shadow at rest; letterpress appears on hover) ============ */
+.optB .sheet{background:transparent;border:1px solid var(--rule);box-shadow:none;color:var(--ink-soft);}
+.optB .sheet:hover{border-color:var(--ink);color:var(--ink);background:var(--paper);box-shadow:var(--shadow-sm);}
+.optB .ink{background:var(--ink-soft);color:var(--paper);border:1px solid var(--ink-soft);box-shadow:none;}
+.optB .ink:hover{background:var(--ink);box-shadow:var(--shadow-sm);}
+
+/* ============ C · Text-forward (quiet buttons are labels; ink only on the primary) ============ */
+.optC .sheet{background:transparent;border:0;box-shadow:none;color:var(--ink-mid);padding:0 6px;}
+.optC .sheet:hover{color:var(--ink);}
+.optC .sheet:hover .arr{transform:translateX(-2px);}
+.optC .sheet .arr{transition:transform .18s var(--ease);}
+.optC .ink{background:var(--ink);color:var(--paper);border:0;}
+.optC .ink:hover{background:var(--ink-soft);}
+.optC .sq.sheet{border:1px solid var(--rule);}
+.optC .sq.sheet:hover{border-color:var(--ink);}
+</style>
+</head>
+<body>
+<div id="page">
+  <div class="word">Button weight lab</div>
+  <p class="sub">The current buttons, then three progressively lighter treatments — same geometry (36px · 3px radius · mono label),
+  different <i>weight</i>. Hover each to feel its interaction. Pick one (or a blend) and I'll apply it to <span style="font-family:var(--mono);font-size:12px">_shared/asterlogos.css</span>, updating every prototype.</p>
+  <p class="hoverhint" style="margin-top:20px">↓ hover the buttons — the difference is mostly in the border weight, the rest shadow, and the hover</p>
+
+  <div class="lab">
+    <!-- CURRENT -->
+    <div class="meta"><span class="tag">Now</span><h3>Current</h3>
+      <p>Full-ink border, hard letterpress on every button, hover flips the whole thing to near-black. Bold — reads a touch industrial against paper.</p></div>
+    <div class="demo cur">
+      <button class="b sheet"><span class="arr">‹</span>The shelf</button>
+      <button class="b sheet">⟨ The Wandering ⟩</button>
+      <button class="b ink">Set it down</button>
+      <button class="b ink sq" aria-label="Write"><svg class="svgi" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"><path d="M8 2.5v11M2.5 8h11"/></svg></button>
+    </div>
+
+    <!-- A -->
+    <div class="meta rec"><span class="tag">Option A</span><h3>Softer ink</h3>
+      <p>Border drops to the hairline <code>--rule</code>; rest shadow becomes a whisper; hover <i>inks the edge</i> and lifts, instead of inverting to black. Primary uses <code>--ink-soft</code>, not pure black. Keeps the letterpress DNA, loses the heaviness.</p></div>
+    <div class="demo optA">
+      <button class="b sheet"><span class="arr">‹</span>The shelf</button>
+      <button class="b sheet">⟨ The Wandering ⟩</button>
+      <button class="b ink">Set it down</button>
+      <button class="b ink sq" aria-label="Write"><svg class="svgi" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"><path d="M8 2.5v11M2.5 8h11"/></svg></button>
+    </div>
+
+    <!-- B -->
+    <div class="meta"><span class="tag">Option B</span><h3>Flat quiet</h3>
+      <p>Quiet buttons carry <i>no</i> shadow at rest — just a hairline on bare paper; the letterpress lift appears only on hover. Calmest at rest; the press still feels physical.</p></div>
+    <div class="demo optB">
+      <button class="b sheet"><span class="arr">‹</span>The shelf</button>
+      <button class="b sheet">⟨ The Wandering ⟩</button>
+      <button class="b ink">Set it down</button>
+      <button class="b ink sq" aria-label="Write"><svg class="svgi" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"><path d="M8 2.5v11M2.5 8h11"/></svg></button>
+    </div>
+
+    <!-- C -->
+    <div class="meta"><span class="tag">Option C</span><h3>Text-forward</h3>
+      <p>Quiet actions become bare mono <i>labels</i> that ink on hover — only the committing action stays a filled button. Most e-reader-like; risks under-signalling that quiet items are clickable.</p></div>
+    <div class="demo optC">
+      <button class="b sheet"><span class="arr">‹</span>The shelf</button>
+      <button class="b sheet">⟨ The Wandering ⟩</button>
+      <button class="b ink">Set it down</button>
+      <button class="b sheet sq" aria-label="Write"><svg class="svgi" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"><path d="M8 2.5v11M2.5 8h11"/></svg></button>
+    </div>
+  </div>
+
+  <p class="sub" style="margin-top:36px">My pick: <b style="font-style:normal;font-weight:500">A (Softer ink)</b> — it's the smallest departure that removes the heaviness while keeping the letterpress signature the whole aesthetic is built on. B if you want it even quieter at rest.</p>
+</div>
+</body></html>
