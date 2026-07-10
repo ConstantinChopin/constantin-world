@@ -21,12 +21,15 @@ ogUrl: "https://constantin.world"
 
         {% for shelf in library.shelves %}
         <section class="shelf">
-          <h2 class="label">{{ glyphs[shelf.glyph] | safe }}<span class="label-text">{{ shelf.label }}</span></h2>
+          <h2 class="label">{{ glyphs[shelf.glyph] | safe }}<span class="label-text">{{ shelf.label }}</span><span class="label-count">{{ shelf.entries.length }}</span></h2>
           <ul class="index">
             {% for e in shelf.entries %}
             <li>
-              <a class="row{% if e.desc %} row-project{% endif %}" href="{{ e.href }}"{% if e.id %} data-id="{{ e.id }}"{% endif %}{% if e.preview %} data-preview="{{ e.preview }}"{% endif %}>
-                <span class="row-title">{{ e.title }}</span>
+              <a class="row" href="{{ e.href }}"{% if e.id %} data-id="{{ e.id }}"{% endif %}{% if e.preview %} data-preview="{{ e.preview }}"{% endif %}>
+                <span class="row-line">
+                  <span class="row-title">{{ e.title }}</span>
+                  {% if e.meta %}<span class="row-meta">{{ e.meta }}</span>{% endif %}
+                </span>
                 {% if e.desc %}<span class="row-desc">{{ e.desc }}</span>{% endif %}
               </a>
             </li>

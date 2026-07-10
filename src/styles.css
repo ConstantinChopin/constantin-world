@@ -6,6 +6,7 @@
    ========================================================================= */
 
 @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap');
 
 :root {
   --paper:  #090d09;
@@ -16,6 +17,9 @@
   --mark:   rgb(143, 119, 54);
 
   --serif:  "Newsreader", Georgia, "Times New Roman", serif;
+  /* the apparatus voice — catalogue notation (section labels, counts, entry
+     meta) and code, never prose. everything is one voice or the other. */
+  --mono:   "IBM Plex Mono", ui-monospace, "Cascadia Mono", "SF Mono", Menlo, Consolas, monospace;
 
   /* one quiet title size (display), one body size, and one small tier for
      labels, meta, and captions — set by the landing; nothing in between. */
@@ -82,11 +86,14 @@ a { color: inherit; text-decoration: none; }
   border-radius: 1px;
 }
 
-/* the one small utility role — section labels, eyebrows */
+/* the one small utility role — section labels, eyebrows. set in the mono
+   apparatus voice everywhere (index, essays, case pages) so structure reads
+   as catalogue notation, never prose. */
 .label {
-  font-size: var(--small);
-  font-weight: 500;
-  letter-spacing: 0.12em;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--faint);
   margin: 0;
@@ -345,44 +352,62 @@ body.home { padding: 0; }
   margin-top: clamp(1.6rem, 4vh, 2.4rem);
 }
 
-/* a single left gutter runs down the index: the section glyph and the
-   active-row marker share its centre line, and label text + row titles
-   align to its right edge. */
+/* the section header is apparatus: glyph, mono label, and a right-aligned
+   entry count over a hairline rule — a table header for the index below.
+   the mono is deliberately smaller than any serif on the page; it should
+   read as margin notation, never compete with the prose. flex centres the
+   glyph and the uppercase mono on one midline — no optical drop needed
+   (the 1.5px drop was tuned for the old serif label). */
 .shelf .label {
   display: flex;
   align-items: center;
-  text-transform: none;
-  letter-spacing: 0.01em;
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.55rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
-/* the glyph is optically centred; the title text drops 1px so its midline
-   sits dead level with the glyph rather than a hair high */
-.shelf .label .label-text { position: relative; top: var(--glyph-title-drop); }
+.shelf .label .label-count {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+  color: rgba(255, 255, 255, 0.18);
+}
 
 .index { list-style: none; margin: 0; padding: 0; }
 
 .row {
   position: relative;
   display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
+  padding: 0.38rem 0;
+  color: var(--ink);
+}
+
+/* title and meta share a line: serif title at the left, mono notation at the
+   right margin — the catalogue's plate number */
+.row-line {
+  display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 1.5rem;
-  padding: 0.28rem 0;
-  color: var(--ink);
+  gap: 1rem;
+  width: 100%;
 }
 
 .row-title {
   display: inline-block;
-  /* the canonical link underline: a faint rule at rest that brightens to ink
-     on hover (matching the bio-line links). line-height is collapsed to the
-     text so the underline hugs the glyphs the way an inline link's does,
-     rather than sitting at the bottom of a tall line box. */
+  /* clean at rest — hierarchy comes from size and value now, and the
+     canonical hairline-to-ink underline arrives on hover instead */
   line-height: 1;
-  box-shadow: inset 0 -1px 0 var(--rule);
+  color: rgba(255, 255, 255, 0.78);
+  box-shadow: inset 0 -1px 0 transparent;
   transition: box-shadow 0.25s var(--ease);
 }
 .row-meta {
   flex: none;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--faint);
   font-variant-numeric: tabular-nums;
   transition: color 0.25s var(--ease);
@@ -392,21 +417,23 @@ body.home { padding: 0; }
 .row:hover .row-meta,
 .row:focus-visible .row-meta { color: var(--muted); }
 
-/* the entry currently open in the detail pane — the same link underline, held
+/* the entry currently open in the detail pane — the hover underline, held
    at full ink so the current row reads as engaged */
 .row.is-active .row-title { box-shadow: inset 0 -1px 0 var(--ink); }
+.row.is-active .row-meta { color: var(--muted); }
 
 /* when a page is shown inside the detail viewport, drop its redundant chrome —
    the back link and its own sticky project bar; the viewport supplies both */
 .embedded .return { display: none; }
 .embedded .project-bar { display: none; }
 
-/* a project entry carries a one-line gloss beneath its title */
-.row-project { flex-direction: column; align-items: flex-start; gap: 0.1rem; padding: 0.38rem 0; }
-.row-project .row-title { align-self: flex-start; }
+/* the one-line gloss beneath each title — a step below the title in size so
+   the index scans by titles first. capped at the standfirst's measure so the
+   gloss wraps clear of the right margin where the mono notation sits. */
 .row-desc {
-  font-size: var(--text);
-  line-height: 1.45;
+  max-width: 34ch;
+  font-size: 0.9375rem;
+  line-height: 1.4;
   color: var(--muted);
   text-wrap: pretty;
 }
@@ -460,8 +487,13 @@ body.essay {
   text-wrap: pretty;
 }
 
+/* the dateline under the standfirst — the same mono notation as the home
+   index's entry meta */
 .essay-meta {
-  font-size: var(--small);
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--faint);
   margin: 1.2rem 0 0;
   font-variant-numeric: tabular-nums;
@@ -1475,9 +1507,7 @@ body.essay { position: relative; }
    monospaced role — a small code block — the essay never needed.
    ========================================================================= */
 
-:root { --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace; }
-
-/* code — inline and block */
+/* code — inline and block (set in --mono, the shared apparatus voice) */
 .prose :not(pre) > code {
   font-family: var(--mono);
   font-size: 0.85em;
