@@ -1,0 +1,4 @@
+# Asterlogos moved to its own domain (asterlogos.com). Forward the old paths
+# so existing links and search rankings follow rather than 404.
+/projects/asterlogos/*  https://asterlogos.com/:splat            301
+/prototypes/*           https://asterlogos.com/prototypes/:splat  301
