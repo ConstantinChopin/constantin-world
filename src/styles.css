@@ -352,12 +352,11 @@ body.home { padding: 0; }
   margin-top: clamp(1.6rem, 4vh, 2.4rem);
 }
 
-/* the section header is apparatus: glyph, mono label, and a right-aligned
-   entry count over a hairline rule — a table header for the index below.
-   the mono is deliberately smaller than any serif on the page; it should
-   read as margin notation, never compete with the prose. flex centres the
-   glyph and the uppercase mono on one midline — no optical drop needed
-   (the 1.5px drop was tuned for the old serif label). */
+/* the section header is apparatus: glyph and mono label over a hairline rule —
+   a table header for the index below. the mono is deliberately smaller than any
+   serif on the page; it should read as margin notation, never compete with the
+   prose. flex centres the glyph and the uppercase mono on one midline — no
+   optical drop needed (the 1.5px drop was tuned for the old serif label). */
 .shelf .label {
   display: flex;
   align-items: center;
@@ -365,32 +364,28 @@ body.home { padding: 0; }
   padding-bottom: 0.5rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
-.shelf .label .label-count {
-  margin-left: auto;
-  font-variant-numeric: tabular-nums;
-  color: rgba(255, 255, 255, 0.18);
-}
 
 .index { list-style: none; margin: 0; padding: 0; }
 
+/* a ledger row: the date sits in a fixed left gutter as marginal notation,
+   the title and gloss form a block indented beside it. the fixed gutter width
+   (each row is its own grid) keeps every date aligned down a common column. */
 .row {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.1rem;
+  display: grid;
+  grid-template-columns: 2.75rem 1fr;
+  column-gap: 0.75rem;
+  align-items: baseline;
   padding: 0.38rem 0;
   color: var(--ink);
 }
 
-/* title and meta share a line: serif title at the left, mono notation at the
-   right margin — the catalogue's plate number */
-.row-line {
+.row-body {
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 1rem;
-  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
+  min-width: 0;
 }
 
 .row-title {
@@ -403,7 +398,6 @@ body.home { padding: 0; }
   transition: box-shadow 0.25s var(--ease);
 }
 .row-meta {
-  flex: none;
   font-family: var(--mono);
   font-size: 0.65rem;
   letter-spacing: 0.08em;
@@ -428,10 +422,9 @@ body.home { padding: 0; }
 .embedded .project-bar { display: none; }
 
 /* the one-line gloss beneath each title — a step below the title in size so
-   the index scans by titles first. capped at the standfirst's measure so the
-   gloss wraps clear of the right margin where the mono notation sits. */
+   the index scans by titles first. runs the full width of the indented content
+   column now that no mono notation sits at the right margin. */
 .row-desc {
-  max-width: 34ch;
   font-size: 0.9375rem;
   line-height: 1.4;
   color: var(--muted);

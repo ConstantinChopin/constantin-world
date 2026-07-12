@@ -21,16 +21,16 @@ ogUrl: "https://constantin.world"
 
         {% for shelf in library.shelves %}
         <section class="shelf">
-          <h2 class="label">{{ glyphs[shelf.glyph] | safe }}<span class="label-text">{{ shelf.label }}</span><span class="label-count">{{ shelf.entries.length }}</span></h2>
+          <h2 class="label">{{ glyphs[shelf.glyph] | safe }}<span class="label-text">{{ shelf.label }}</span></h2>
           <ul class="index">
             {% for e in shelf.entries %}
             <li>
               <a class="row" href="{{ e.href }}"{% if e.id %} data-id="{{ e.id }}"{% endif %}{% if e.preview %} data-preview="{{ e.preview }}"{% endif %}>
-                <span class="row-line">
+                {% if e.meta %}<span class="row-meta">{{ e.meta }}</span>{% endif %}
+                <span class="row-body">
                   <span class="row-title">{{ e.title }}</span>
-                  {% if e.meta %}<span class="row-meta">{{ e.meta }}</span>{% endif %}
+                  {% if e.desc %}<span class="row-desc">{{ e.desc }}</span>{% endif %}
                 </span>
-                {% if e.desc %}<span class="row-desc">{{ e.desc }}</span>{% endif %}
               </a>
             </li>
             {% endfor %}
@@ -146,8 +146,8 @@ ogUrl: "https://constantin.world"
         var a = byId[id];
         if (!a) return false;
         // Prefer an explicit preview target when an entry defines one — the
-        // href stays the canonical page (row link, mobile, SEO) while the
-        // preview iframe can point somewhere richer (e.g. a live experience).
+        // href stays the canonical page (crawlers, copy-link) while the
+        // preview iframe points at the live destination (e.g. an experience).
         var src = a.getAttribute('data-preview') || a.getAttribute('href');
         if (frame.getAttribute('src') !== src) frame.src = src;
         var t = a.querySelector('.row-title');
@@ -195,7 +195,13 @@ ogUrl: "https://constantin.world"
 
       all.forEach(function (a) {
         a.addEventListener('click', function (e) {
-          if (!mq.matches) return;        // mobile → let the link navigate to its page
+          if (!mq.matches) {
+            // mobile → no split pane, so the row goes straight to the live
+            // destination the desktop viewport would have previewed
+            var to = a.getAttribute('data-preview');
+            if (to && to !== a.getAttribute('href')) { e.preventDefault(); location.href = to; }
+            return;
+          }
           e.preventDefault();             // desktop → never full-navigate from the index
           if (a.dataset.id && location.hash.slice(1) !== a.dataset.id) location.hash = a.dataset.id;
         });
