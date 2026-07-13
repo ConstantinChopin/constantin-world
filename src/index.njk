@@ -2,10 +2,10 @@
 layout: base.njk
 bodyClass: home
 title: Constantin Chopin
-description: "Constantin Chopin — design engineer exploring how computation expands creative traditions. Projects, writing, and tools from an ongoing practice."
+description: "Exploring how computation expands creative traditions. Constantin Chopin — founder of constantin.studio, teacher at ArtCenter College of Design. Projects, writing, and tools from an ongoing practice."
 ogType: website
 ogTitle: Constantin Chopin
-ogDesc: "Design engineer exploring how computation expands creative traditions."
+ogDesc: "Exploring how computation expands creative traditions."
 ogUrl: "https://constantin.world"
 ---
   <div class="split">
@@ -14,9 +14,9 @@ ogUrl: "https://constantin.world"
       <main class="page">
 
         <header>
-          <h1 class="name">Constantin Chopin</h1>
-          <p class="bio-line">Design Engineer exploring how computation expands creative traditions.</p>
-          <p class="bio-line">Founder at <a href="https://constantin.studio">constantin.studio</a>. Professor at <a href="https://www.artcenter.edu">ArtCenter College of Design</a>.</p>
+          {% include "brand-mark.njk" %}
+          <h1 class="name">Exploring how computation expands creative traditions.</h1>
+          <p class="bio-line">constantin.world is led by <a href="https://www.linkedin.com/in/constantinchopin">Constantin Chopin</a>, founder of <a href="https://constantin.studio">constantin.studio</a>, teacher at <a href="https://www.artcenter.edu">ArtCenter College of Design</a>.</p>
         </header>
 
         {% for shelf in library.shelves %}

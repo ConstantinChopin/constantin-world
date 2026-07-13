@@ -10,8 +10,8 @@
 
 :root {
   --paper:  #090d09;
-  --ink:    rgba(255, 255, 255, 0.64);
-  --muted:  #65625d;
+  --ink:    rgba(255, 255, 255, 0.78);
+  --muted:  rgba(255, 255, 255, 0.64);
   --faint:  rgba(255, 255, 255, 0.28);
   --rule:   rgba(255, 255, 255, 0.10);
   --mark:   rgb(143, 119, 54);
@@ -26,6 +26,8 @@
   --text:    1.0625rem;
   --display: 1.5rem;
   --small:   0.8rem;
+  /* the reading tier — essay prose only, a step above UI text */
+  --reading-text: 1.1875rem;
 
   /* case-study scroll system — two tiers above the literary base (a hero and a
      big statement), and one section-title tier between display and title. all
@@ -139,6 +141,11 @@ body.home { padding: 0; }
   max-width: 34rem;
   margin: 0 auto;
   padding: clamp(2.5rem, 9vh, 5rem) clamp(1.6rem, 7vw, 3rem) clamp(3rem, 8vh, 5rem);
+}
+
+/* phones: pull the frame in tight so the column gets the width */
+@media (max-width: 40rem) {
+  .page { padding: 20px 12px clamp(3rem, 8vh, 5rem); }
 }
 
 .pane-detail { display: none; }
@@ -313,8 +320,19 @@ body.home { padding: 0; }
   }
 }
 
+/* the monogram sits above the name like a printer's device on a title page —
+   small, in the ink tone, part of the header rather than a graphic on it */
+.brand-mark {
+  display: block;
+  width: 25px;
+  height: 25px;
+  color: var(--ink);
+  margin-bottom: 0.9rem;
+}
+
 .name {
-  font-size: var(--display);
+  /* sized so the two balanced lines run the full column measure */
+  font-size: clamp(1.35rem, 4.5vw, 1.75rem);
   font-weight: 500;
   line-height: 1.15;
   letter-spacing: -0.015em;
@@ -393,7 +411,7 @@ body.home { padding: 0; }
   /* clean at rest — hierarchy comes from size and value now, and the
      canonical hairline-to-ink underline arrives on hover instead */
   line-height: 1;
-  color: rgba(255, 255, 255, 0.78);
+  color: var(--ink);
   box-shadow: inset 0 -1px 0 transparent;
   transition: box-shadow 0.25s var(--ease);
 }
@@ -437,9 +455,28 @@ body.home { padding: 0; }
    ESSAY — a reading page
    ========================================================================= */
 
+/* the reading room — the catalogue is a dark hall; opening an essay steps
+   into lit paper. same inks, same instruments, inverted ground: the tokens
+   flip once here and every essay component inherits the register. the gold
+   mark stays — rubrication reads on paper as it does in the dark. */
 body.essay {
+  --paper: #f6f2e9;
+  --ink:   rgba(26, 22, 15, 0.92);
+  --muted: rgba(26, 22, 15, 0.66);
+  --faint: rgba(26, 22, 15, 0.40);
+  --rule:  rgba(26, 22, 15, 0.14);
+  color-scheme: light;
+  /* subpixel rendering suits dark-on-light; antialiased would thin the serif */
+  -webkit-font-smoothing: auto;
+  -moz-osx-font-smoothing: auto;
   padding: clamp(2.6rem, 8vh, 5rem) clamp(1.6rem, 7vw, 3rem) clamp(4rem, 12vh, 8rem);
 }
+
+/* traces tuned as literal whites on the dark ground, restated for paper */
+body.essay .prose a { box-shadow: inset 0 -0.06em 0 rgba(26, 22, 15, 0.30); }
+body.essay .prose a:hover { box-shadow: inset 0 -0.06em 0 var(--ink); }
+body.essay .prose figure img { outline-color: rgba(26, 22, 15, 0.12); }
+body.essay .gloss-line { background: rgba(26, 22, 15, 0.30); }
 
 .reading {
   width: 100%;
@@ -458,11 +495,13 @@ body.essay {
 .return .arrow { display: inline-block; transition: transform 0.25s var(--ease); }
 .return:hover .arrow { transform: translateX(-3px); }
 
-.essay-head { margin-bottom: clamp(2rem, 6vh, 3rem); }
+/* the title block is the threshold — a title-page moment, so it gets more
+   presence and more air than the catalogue's display tier */
+.essay-head { margin-bottom: clamp(2.6rem, 8vh, 4.5rem); }
 .essay-head .label { margin-bottom: 0.9rem; }
 
 .essay-title {
-  font-size: var(--display);
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
   font-weight: 500;
   line-height: 1.15;
   letter-spacing: -0.015em;
@@ -472,7 +511,7 @@ body.essay {
 
 .standfirst {
   font-style: italic;
-  font-size: var(--text);
+  font-size: var(--reading-text);
   line-height: 1.45;
   color: var(--muted);
   margin: 0.9rem 0 0;
@@ -492,10 +531,11 @@ body.essay {
   font-variant-numeric: tabular-nums;
 }
 
-/* prose */
+/* prose — set a step above UI text: reading size, looser leading. the
+   39rem measure holds ~66ch at this size. */
 .prose {
-  font-size: var(--text);
-  line-height: 1.62;
+  font-size: var(--reading-text);
+  line-height: 1.7;
   color: var(--ink);
 }
 .prose > * { margin: 0; }

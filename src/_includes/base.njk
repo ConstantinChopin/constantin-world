@@ -6,12 +6,16 @@
 <title>{{ title }}</title>
 {% if description %}<meta name="description" content="{{ description }}" />{% endif %}
 <meta name="author" content="Constantin Chopin" />
-<meta name="color-scheme" content="dark" />
+<meta name="color-scheme" content="{{ colorScheme or 'dark' }}" />
 {% if ogType %}
 <meta property="og:type" content="{{ ogType }}" />
 <meta property="og:title" content="{{ ogTitle or title }}" />
 {% if ogDesc %}<meta property="og:description" content="{{ ogDesc }}" />{% endif %}
 {% if ogUrl %}<meta property="og:url" content="{{ ogUrl }}" />{% endif %}
+<meta property="og:image" content="https://constantin.world/assets/brand/og.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
 {% endif %}
 <link rel="icon" href="/favicon.svg" />
 <link rel="stylesheet" href="/styles.css" />

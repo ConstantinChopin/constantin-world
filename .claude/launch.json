@@ -2,16 +2,10 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "site",
-      "autoPort": true,
-      "runtimeExecutable": "npx",
-      "runtimeArgs": ["-y", "serve", "_site"]
-    },
-    {
-      "name": "surface",
-      "autoPort": true,
-      "runtimeExecutable": "npx",
-      "runtimeArgs": ["-y", "serve", "."]
+      "name": "constantin-world",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 8080
     },
     {
       "name": "sanctuaire",
