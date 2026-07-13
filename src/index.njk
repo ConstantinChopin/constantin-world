@@ -1,7 +1,7 @@
 ---
 layout: base.njk
 bodyClass: home
-title: Constantin Chopin
+title: constantin.world
 description: "Exploring how computation expands creative traditions. Constantin Chopin — founder of constantin.studio, teacher at ArtCenter College of Design. Projects, writing, and tools from an ongoing practice."
 ogType: website
 ogTitle: Constantin Chopin
@@ -26,7 +26,6 @@ ogUrl: "https://constantin.world"
             {% for e in shelf.entries %}
             <li>
               <a class="row" href="{{ e.href }}"{% if e.id %} data-id="{{ e.id }}"{% endif %}{% if e.preview %} data-preview="{{ e.preview }}"{% endif %}>
-                {% if e.meta %}<span class="row-meta">{{ e.meta }}</span>{% endif %}
                 <span class="row-body">
                   <span class="row-title">{{ e.title }}</span>
                   {% if e.desc %}<span class="row-desc">{{ e.desc }}</span>{% endif %}

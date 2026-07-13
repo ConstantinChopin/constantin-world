@@ -385,15 +385,11 @@ body.home { padding: 0; }
 
 .index { list-style: none; margin: 0; padding: 0; }
 
-/* a ledger row: the date sits in a fixed left gutter as marginal notation,
-   the title and gloss form a block indented beside it. the fixed gutter width
-   (each row is its own grid) keeps every date aligned down a common column. */
+/* an index row: title and gloss form a single block flush to the left edge,
+   aligned under the section label's glyph — no date gutter. */
 .row {
   position: relative;
-  display: grid;
-  grid-template-columns: 2.75rem 1fr;
-  column-gap: 0.75rem;
-  align-items: baseline;
+  display: block;
   padding: 0.38rem 0;
   color: var(--ink);
 }
