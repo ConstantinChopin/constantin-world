@@ -333,7 +333,7 @@ body.home { padding: 0; }
 .name {
   /* a display headline — sized so the two balanced lines fill the column
      edge to edge, scaling down to stay two lines on narrow screens */
-  font-size: clamp(1.4rem, 7vw, 2.5rem);
+  font-size: clamp(1.25rem, 5vw, 1.8rem);
   font-weight: 500;
   line-height: 1.15;
   letter-spacing: -0.015em;
@@ -392,9 +392,17 @@ body.home { padding: 0; }
      brighter entries below read as the split */
   color: rgba(255, 255, 255, 0.5);
 }
-/* the instrument in the same muted tone as the title, drawn heavier so it
-   reads as a solid mark rather than a faint hairline */
-.shelf .glyph { color: inherit; stroke-width: 2; }
+/* the instrument at the title's tone, drawn heavier. the strokes are opaque
+   and the whole mark is faded as one group via opacity — so overlapping lines
+   don't compound their alpha into brighter joints */
+.shelf .glyph {
+  color: #fff;
+  opacity: 0.5;
+  stroke-width: 1.7;
+  /* the drawn mark sits ~3px inside its viewBox; pull it out so the instrument
+     aligns optically flush-left with the entry titles below */
+  margin-left: -3px;
+}
 
 /* the serif caps ride high against the glyph's optical centre — nudge the word
    down a touch so the two sit level */
