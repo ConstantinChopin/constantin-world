@@ -47,7 +47,12 @@
               "label": "Shelf",
               "value": "Three folios to come"
             }
-          ]
+          ],
+          "film": {
+            "src": "/assets/media/asterlogos-walkthrough.mp4",
+            "poster": "/assets/media/asterlogos-poster.jpg",
+            "alt": "A walkthrough of Asterlogos: the Shelf of editions, into the Field where ideas stand as wells, then inside The Odyssey — the wandering charted as constellations, orbited slowly."
+          }
         },
         {
           "id": "sanctuaire",

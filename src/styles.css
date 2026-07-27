@@ -351,6 +351,21 @@ body.home { padding: 0; }
   pointer-events: none;
 }
 .viewport-bar > * { pointer-events: auto; }
+/* a page framed in the home panel hands its breadcrumb to the host's bar
+   (the cw-preview bridge) and retires its own — one persistent bar, never
+   two stacked at the top of the frame */
+html.is-framed .viewport-bar { display: none; }
+
+/* leaving a standalone page by its back capsule mirrors the panel's close:
+   the page slides off to the right, then the browser steps back home. the
+   body's paper propagates to the canvas, so the reveal stays dark. */
+body.is-leaving {
+  transform: translateX(100%);
+  transition: transform 0.28s var(--ease);
+}
+@media (prefers-reduced-motion: reduce) {
+  body.is-leaving { transform: none; transition: none; }
+}
 
 /* the glass material — one contract for every capsule */
 .viewport-lead,

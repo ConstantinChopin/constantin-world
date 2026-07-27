@@ -123,4 +123,36 @@ ogUrl: "https://constantin.world/writing/narrative-motifs-in-the-iliad/"
 
   </article>
 
+  <script>
+    // framed in the home panel: hand the breadcrumb to the host's single bar
+    // and retire our own — one persistent bar, never two
+    (function () {
+      if (window.self === window.top) return;
+      document.documentElement.classList.add('is-framed');
+      window.parent.postMessage({ source: 'cw-preview', type: 'chrome', crumbs: [
+        { label: 'Writing', parent: true },
+        { label: 'On Reading the Iliad' }
+      ] }, '*');
+    })();
+    // the back capsule mirrors the panel's close: the page slides away, then
+    // the browser steps back to the index it came from (a cold visit falls
+    // through to the link's own destination)
+    (function () {
+      var back = document.querySelector('.viewport-back');
+      if (!back) return;
+      var cameFromSite = document.referrer.indexOf(location.origin + '/') === 0 && history.length > 1;
+      back.addEventListener('click', function (e) {
+        e.preventDefault();
+        var leave = function () {
+          if (cameFromSite) history.back();
+          else location.href = back.getAttribute('href') || '/';
+        };
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { leave(); return; }
+        document.body.classList.add('is-leaving');
+        window.setTimeout(leave, 260);
+      });
+      // returning via bfcache must not land on a slid-away page
+      window.addEventListener('pageshow', function () { document.body.classList.remove('is-leaving'); });
+    })();
+  </script>
   <script src="/concept.js" defer></script>

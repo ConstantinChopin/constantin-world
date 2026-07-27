@@ -415,15 +415,16 @@ ogUrl: "https://constantin.world"
 
       window.addEventListener('hashchange', function () {
         var id = decodeURIComponent(location.hash.slice(1));
-        // canvas entries open at every width; on mobile anything else closes
-        if (sets[id] && byId[id]) { open(id); return; }
+        // canvas entries open at every width; framed entries (essays, skills)
+        // panel on desktop only — on mobile they navigate to their own pages
+        if (byId[id] && (sets[id] || mq.matches)) { open(id); return; }
         if (mq.matches) { if (defaultId) open(defaultId); else clear(); }
         else clear();
       });
 
       function sync() {
         var id = decodeURIComponent(location.hash.slice(1));
-        if (sets[id] && byId[id]) { open(id); return; }
+        if (byId[id] && (sets[id] || mq.matches)) { open(id); return; }
         // desktop is never empty; mobile lands on the index
         if (mq.matches) { if (defaultId) open(defaultId); else clear(); }
         else clear();
