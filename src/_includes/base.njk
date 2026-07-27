@@ -23,6 +23,8 @@
 {% if headExtra %}{{ headExtra | safe }}{% endif %}
 </head>
 <body class="{{ bodyClass }}">
+{% if bodyClass == 'home' %}<canvas id="pixel-wave" aria-hidden="true"></canvas>{% endif %}
 {{ content | safe }}
+{% if bodyClass == 'home' %}<script src="/assets/pixelwave.js" defer></script>{% endif %}
 </body>
 </html>

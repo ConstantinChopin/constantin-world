@@ -13,39 +13,64 @@ ogUrl: "https://constantin.world"
     <div class="pane-index">
       <main class="page">
 
+        {# the index speaks in prose — navigation is woven into the sentences.
+           links with data-id open the entry in the pane in place; the rest
+           leave for their own pages. every link is underlined at rest and
+           materializes into a pill on hover — held while its entry is open. #}
         <header>
-          {% include "brand-mark.njk" %}
-          <h1 class="name">Exploring how computation expands creative traditions.</h1>
-          <p class="bio-line">constantin.world is an independent research and design practice led by <a href="https://www.linkedin.com/in/constantinchopin">Constantin Chopin</a>, founder of <a href="https://constantin.studio">constantin.studio</a>, teacher at <a href="https://www.artcenter.edu">ArtCenter College of Design</a>.</p>
+          <div class="reveal">{% include "brand-mark.njk" %}</div>
+          <h1 class="name reveal" style="--d: 60ms">Exploring how computation expands creative traditions.</h1>
+          <p class="bio-line reveal" style="--d: 120ms">constantin.world is the independent research practice of <a class="lnk" href="https://www.linkedin.com/in/constantinchopin">Constantin Chopin</a> — founder of <a class="lnk" href="https://constantin.studio">constantin.studio</a>, faculty at <a class="lnk" href="https://www.artcenter.edu">ArtCenter College of Design</a>.</p>
+          <p class="bio-line reveal" style="--d: 180ms">We're currently making the world's museums searchable as one: <a class="lnk" data-id="sanctuaire" data-glyph="artefacts" href="#sanctuaire">Sanctuaire</a>, building interactive editions of canonical books: <a class="lnk" data-id="asterlogos" data-glyph="artefacts" href="#asterlogos">Asterlogos</a>, and writing about the future of interfaces: <a class="lnk" data-id="formscapes" data-glyph="writing" href="/writing/formscapes/">Formscapes</a>.</p>
         </header>
 
-        {% for shelf in library.shelves %}
-        <section class="shelf">
-          <h2 class="label">{{ glyphs[shelf.glyph] | safe }}<span class="label-text">{{ shelf.label }}</span></h2>
-          <ul class="index">
-            {% for e in shelf.entries %}
-            <li>
-              <a class="row" href="{{ e.href }}"{% if e.id %} data-id="{{ e.id }}"{% endif %}{% if e.preview %} data-preview="{{ e.preview }}"{% endif %}>
-                <span class="row-body">
-                  <span class="row-title">{{ e.title }}</span>
-                  {% if e.desc %}<span class="row-desc">{{ e.desc }}</span>{% endif %}
-                </span>
-              </a>
-            </li>
-            {% endfor %}
-          </ul>
-        </section>
-        {% endfor %}
+        {# mobile only — every featured work stands as a title card in a stack
+           beneath the prose: media (a walkthrough or a square still), the
+           name, its one-line description, and a few pills. a card is a
+           threshold, not the presentation — canvas entries open their own
+           slide-in page (plain hash links; the panel script owns the hash),
+           and works without a canvas leave for their own destination. #}
+        {% set cardIds = ['sanctuaire', 'asterlogos', 'formscapes'] %}
+        <nav class="card-stack" aria-label="Featured work">
+          {% for shelf in library.shelves %}{% for e in shelf.entries %}{% if e.id in cardIds %}
+          {% set shot = (e.rail[1] or e.rail[0]) if e.railReady else null %}
+          {% set dest = ('#' + e.id) if e.intro else (e.site or e.href) %}
+          <a class="entry-card" data-card-id="{{ e.id }}" href="{{ dest }}"{% if (not e.intro) and ('http' in dest) %} target="_blank" rel="noopener"{% endif %}>
+            {% if e.film %}
+            <video class="entry-card-film"
+                   src="{{ e.film.src }}"
+                   {% if e.film.poster %}poster="{{ e.film.poster }}"{% endif %}
+                   muted loop autoplay playsinline preload="metadata"
+                   aria-label="{{ e.film.alt }}"></video>
+            {% elif shot %}<img class="entry-card-shot" src="{{ shot.src }}" alt="{{ shot.alt }}" loading="lazy" />{% endif %}
+            <span class="entry-card-text">
+              <span class="entry-card-name">{{ e.title }}</span>
+              <span class="entry-card-desc">{{ e.desc }}</span>
+              <span class="canvas-keywords">{% if e.skills %}{% for s in e.skills %}{% if loop.index <= 2 %}<span class="pill">{{ s }}</span>{% endif %}{% endfor %}{% else %}<span class="pill">Essay</span>{% endif %}{% if e.year or e.meta %}<span class="pill pill-year">{{ e.year or e.meta }}</span>{% endif %}</span>
+            </span>
+          </a>
+          {% endif %}{% endfor %}{% endfor %}
+        </nav>
 
       </main>
     </div>
 
     <aside class="pane-detail" aria-label="Selected entry">
       <div class="viewport">
-        <div class="viewport-bar">
-          <span class="viewport-icon" id="detailIcon" aria-hidden="true"></span>
-          <span class="viewport-title" id="detailTitle"></span>
-          <div class="viewport-actions">
+        <header class="viewport-bar">
+          <button class="viewport-back" type="button" data-vp-back aria-label="Back to index">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
+          </button>
+          <span class="viewport-lead">
+            <span class="viewport-title" id="detailTitle"></span>
+          </span>
+          <nav class="viewport-actions" aria-label="Panel controls">
+            <button class="viewport-btn" type="button" data-vp-prev aria-label="Previous project" hidden>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
+            </button>
+            <button class="viewport-btn" type="button" data-vp-next aria-label="Next project" hidden>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+            </button>
             <button class="viewport-btn viewport-fullscreen" id="detailFullscreen" type="button" aria-label="Fullscreen">
               <svg class="ico-enter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M8 3 H5 a2 2 0 0 0 -2 2 V8" />
@@ -65,8 +90,66 @@ ogUrl: "https://constantin.world"
                 <path d="M6 6 L18 18 M18 6 L6 18" />
               </svg>
             </button>
+          </nav>
+          <a class="viewport-site" data-vp-site target="_blank" rel="noopener" hidden>
+            <span>View site</span>
+          </a>
+        </header>
+
+        {# the canvases — one pre-rendered document per project, hidden until
+           opened. head band (quiet title + capability pills), the gallery of
+           stills (grey placeholders until shots land), marginalia, the story. #}
+        {% for shelf in library.shelves %}{% for e in shelf.entries %}{% if e.intro %}
+        <div class="canvas-set" data-id="{{ e.id }}" data-title="{{ e.title }}" data-category="{{ shelf.label }}" data-site="{{ e.site }}" hidden>
+
+          <div class="canvas-head">
+            <p class="canvas-crumb">{{ shelf.label }} / <strong>{{ e.title }}</strong></p>
+            <h2 class="canvas-headline">{{ e.desc or e.title }}</h2>
+            <p class="canvas-keywords">{% for s in e.skills %}<span class="pill">{{ s }}</span>{% endfor %}{% if e.year %}<span class="pill pill-year">{{ e.year }}</span>{% endif %}</p>
+          </div>
+
+          {% if e.film %}
+          {# a walkthrough stands in the media slot instead of the stills —
+             the full width of the two-column gallery, at the film's own 16:9 #}
+          <figure class="canvas-film">
+            <video class="canvas-film-video"
+                   src="{{ e.film.src }}"
+                   {% if e.film.poster %}poster="{{ e.film.poster }}"{% endif %}
+                   preload="metadata"
+                   muted loop playsinline controls
+                   aria-label="{{ e.film.alt }}"></video>
+          </figure>
+          {% else %}
+          <div class="canvas-gallery" role="list" aria-label="{{ e.title }} — stills">
+            {% if e.railReady %}{% for a in e.rail %}
+            <button class="rail-item" type="button" role="listitem" data-full="{{ a.src }}" data-cap="{{ a.alt }}">
+              <img src="{{ a.src }}" alt="{{ a.alt }}" loading="lazy" />
+            </button>
+            {% endfor %}{% else %}{% for i in range(0, 6) %}
+            <span class="rail-item is-ph" role="listitem" aria-hidden="true"></span>
+            {% endfor %}{% endif %}
+          </div>
+          {% endif %}
+
+          {% if e.margin %}
+          <dl class="canvas-margin">
+            {% for m in e.margin %}
+            <div class="margin-note">
+              <dt class="margin-label">{{ m.label }}</dt>
+              <dd class="margin-value">{{ m.value | safe }}</dd>
+            </div>
+            {% endfor %}
+          </dl>
+          {% endif %}
+
+          <div class="canvas-body">
+            {% if e.intro %}<p class="canvas-intro">{{ e.intro | safe }}</p>{% endif %}
+            {% for p in e.body %}<p class="canvas-para">{{ p | safe }}</p>{% endfor %}
           </div>
         </div>
+        {% endif %}{% endfor %}{% endfor %}
+
+
         <div class="viewport-stage">
           <div class="viewport-window">
             <iframe id="detailFrame" title="Selected entry" loading="lazy" sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-presentation" allowfullscreen></iframe>
@@ -77,30 +160,74 @@ ogUrl: "https://constantin.world"
 
   </div>
 
+  {# the still at full size — one shared dialog, filled from the clicked
+     rail item's data-full / data-cap #}
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Still at full size" hidden>
+    <button class="lightbox-close" type="button" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+    </button>
+    <figure class="lightbox-fig">
+      <img id="lightboxImg" src="" alt="" />
+      <figcaption id="lightboxCap"></figcaption>
+    </figure>
+  </div>
+
   {% raw %}<script>
     (function () {
       var mq = window.matchMedia('(min-width: 64rem)');
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var viewport = document.querySelector('.viewport');
       var frame = document.getElementById('detailFrame');
       var titleEl = document.getElementById('detailTitle');
-      var iconEl = document.getElementById('detailIcon');
+      var leadEl = document.querySelector('.viewport-lead');
       var closeEl = document.getElementById('detailClose');
-      var fsEl = document.querySelector('.viewport');
+      var fsEl = viewport;
       var fsBtn = document.getElementById('detailFullscreen');
-      var all = Array.prototype.slice.call(document.querySelectorAll('.index a.row'));
+      var backBtn = document.querySelector('[data-vp-back]');
+      var prevBtn = document.querySelector('[data-vp-prev]');
+      var nextBtn = document.querySelector('[data-vp-next]');
+      var siteBtn = document.querySelector('[data-vp-site]');
+      var all = Array.prototype.slice.call(document.querySelectorAll('a[data-id]'));
       var byId = {};
       all.forEach(function (a) { if (a.dataset.id) byId[a.dataset.id] = a; });
-      // On desktop the right panel is never empty: with no (or an unknown) hash,
-      // the first project stands in as the default view on landing.
-      var defaultRow = all.filter(function (a) { return a.dataset.id; })[0];
-      var defaultId = defaultRow ? defaultRow.dataset.id : null;
+
+      // the pre-rendered project canvases; `order` drives the pager
+      var sets = {};
+      var order = [];
+      Array.prototype.forEach.call(document.querySelectorAll('.canvas-set'), function (s) {
+        sets[s.dataset.id] = s;
+        order.push(s.dataset.id);
+      });
+      var liveId = null;
+
+      // On desktop the right panel is never empty: the first project stands
+      // in as the default view on landing.
+      var defaultId = order[0] || null;
 
       function setActive(a) { all.forEach(function (l) { l.classList.toggle('is-active', l === a); }); }
 
-      // The toolbar title doubles as a breadcrumb. By default it is just the
-      // entry's own title; an embedded page may post a richer trail up to us
-      // (e.g. Asterlogos / The Odyssey), which we render here. A crumb carrying
-      // a `nav` is a link back into the page — clicking it asks the page to
-      // navigate, and the page reports a fresh breadcrumb in return.
+      // doc mode (project canvas) vs frame mode (live page in the iframe):
+      // the mode decides which chrome shows — pager + View site over a canvas,
+      // fullscreen + close over a frame.
+      function setMode(doc) {
+        if (viewport) viewport.classList.toggle('is-doc', doc);
+        if (prevBtn) prevBtn.hidden = !doc;
+        if (nextBtn) nextBtn.hidden = !doc;
+        if (fsBtn) fsBtn.hidden = doc;
+        if (closeEl) closeEl.hidden = doc;
+        if (!doc && siteBtn) { siteBtn.removeAttribute('href'); siteBtn.hidden = true; }
+      }
+
+      function setSite(id) {
+        if (!siteBtn) return;
+        var url = (sets[id] && sets[id].dataset.site) || '';
+        if (url) { siteBtn.href = url; siteBtn.hidden = false; }
+        else { siteBtn.removeAttribute('href'); siteBtn.hidden = true; }
+      }
+
+      // The toolbar title doubles as a breadcrumb: category / entry on
+      // projects; a single crumb for framed pages, which may post a richer
+      // trail up (e.g. an embedded preview reporting its own navigation).
       function renderCrumbs(crumbs) {
         if (!titleEl) return;
         titleEl.textContent = '';
@@ -122,6 +249,9 @@ ogUrl: "https://constantin.world"
                 if (frame.contentWindow) frame.contentWindow.postMessage({ source: 'cw-preview', type: 'nav', to: to }, '*');
               });
             })(c.nav);
+          } else if (c.parent) {
+            el = document.createElement('span');
+            el.className = 'crumb crumb-parent';
           } else {
             el = document.createElement('span');
             el.className = 'crumb crumb-current';
@@ -132,8 +262,16 @@ ogUrl: "https://constantin.world"
         });
       }
 
-      // An embedded preview reports its own breadcrumb trail so this single host
-      // toolbar can mirror it (the page hides its internal bar in turn).
+      function buildCrumb(id) {
+        var d = sets[id] ? sets[id].dataset : {};
+        var crumbs = [];
+        if (d.category) crumbs.push({ label: d.category, parent: true });
+        crumbs.push({ label: d.title || '' });
+        renderCrumbs(crumbs);
+      }
+
+      // An embedded preview reports its own breadcrumb trail so this single
+      // host toolbar can mirror it (the page hides its internal bar in turn).
       window.addEventListener('message', function (e) {
         if (e.source !== frame.contentWindow) return;
         var d = e.data;
@@ -141,28 +279,81 @@ ogUrl: "https://constantin.world"
         renderCrumbs(d.crumbs);
       });
 
+      // ---- doc mode: show one canvas, hide the rest -----------------------
+      // A walkthrough only runs while its own canvas is the live one — a hidden
+      // panel must never keep decoding, and reduced motion waits to be asked.
+      function filmIn(el) { return el && el.querySelector('.canvas-film-video'); }
+      function stopFilm(el) {
+        var v = filmIn(el);
+        if (!v) return;
+        v.pause();
+        v.currentTime = 0;
+      }
+      function startFilm(el) {
+        var v = filmIn(el);
+        if (!v || reduce) return;
+        var p = v.play();
+        if (p && p.catch) p.catch(function () {});  // autoplay refused — controls remain
+      }
+
+      function showSet(id) {
+        order.forEach(function (k) {
+          var on = k === id;
+          sets[k].hidden = !on;
+          sets[k].classList.toggle('is-live', on);
+          if (on) startFilm(sets[k]); else stopFilm(sets[k]);
+        });
+        if (viewport) viewport.scrollTop = 0;
+        var pane = document.querySelector('.pane-detail');
+        if (pane) pane.scrollTop = 0;
+      }
+
+      function openDoc(id, a) {
+        setMode(true);
+        frame.removeAttribute('src');
+        setSite(id);
+        // switching between projects: soften the outgoing one away, crossfade
+        // the breadcrumb capsule, then swap and let the new one cascade in
+        if (liveId && liveId !== id && sets[liveId] && !reduce) {
+          var out = sets[liveId];
+          out.classList.add('is-exiting');
+          if (leadEl) leadEl.classList.add('is-swapping');
+          window.setTimeout(function () {
+            out.classList.remove('is-exiting');
+            if (leadEl) leadEl.classList.remove('is-swapping');
+            buildCrumb(id);
+            showSet(id);
+          }, 150);
+        } else {
+          buildCrumb(id);
+          showSet(id);
+        }
+      }
+
+      // ---- frame mode: the live page in the inner window ------------------
+      function openFrame(id, a) {
+        setMode(false);
+        order.forEach(function (k) { sets[k].hidden = true; sets[k].classList.remove('is-live'); });
+        var src = a.getAttribute('data-preview') || a.getAttribute('href');
+        if (frame.getAttribute('src') !== src) frame.src = src;
+        renderCrumbs([{ label: a.textContent }]);
+      }
+
       function open(id) {
         var a = byId[id];
         if (!a) return false;
-        // Prefer an explicit preview target when an entry defines one — the
-        // href stays the canonical page (crawlers, copy-link) while the
-        // preview iframe points at the live destination (e.g. an experience).
-        var src = a.getAttribute('data-preview') || a.getAttribute('href');
-        if (frame.getAttribute('src') !== src) frame.src = src;
-        var t = a.querySelector('.row-title');
-        if (t) renderCrumbs([{ label: t.textContent }]);
-        if (iconEl) {
-          var shelf = a.closest('.shelf');
-          var glyph = shelf && shelf.querySelector('.glyph');
-          iconEl.innerHTML = glyph ? glyph.outerHTML : '';
-        }
+        if (sets[id]) openDoc(id, a); else openFrame(id, a);
         document.body.classList.add('detail-open');
         setActive(a);
+        liveId = id;
         return true;
       }
+
       function clear() {
         document.body.classList.remove('detail-open');
         setActive(null);
+        liveId = null;
+        order.forEach(function (k) { stopFilm(sets[k]); });
         setTimeout(function () {
           if (!document.body.classList.contains('detail-open')) frame.removeAttribute('src');
         }, 650);
@@ -172,11 +363,23 @@ ogUrl: "https://constantin.world"
         clear();
       }
       if (closeEl) closeEl.addEventListener('click', closeDetail);
+      if (backBtn) backBtn.addEventListener('click', closeDetail);
       document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' && document.body.classList.contains('detail-open')) closeDetail();
       });
 
-      // fullscreen the whole preview chrome (toolbar + window)
+      // the pager — cycles the projects, wrapping at the ends
+      function go(delta) {
+        var cur = decodeURIComponent(location.hash.slice(1));
+        var i = order.indexOf(cur);
+        if (i < 0) i = order.indexOf(defaultId);
+        if (i < 0) i = 0;
+        location.hash = order[(i + delta + order.length) % order.length];
+      }
+      if (prevBtn) prevBtn.addEventListener('click', function () { go(-1); });
+      if (nextBtn) nextBtn.addEventListener('click', function () { go(1); });
+
+      // fullscreen the whole preview chrome (frame mode only)
       function inFs() { return document.fullscreenElement || document.webkitFullscreenElement; }
       if (fsBtn && fsEl) {
         fsBtn.addEventListener('click', function () {
@@ -194,30 +397,85 @@ ogUrl: "https://constantin.world"
 
       all.forEach(function (a) {
         a.addEventListener('click', function (e) {
-          if (!mq.matches) {
-            // mobile → no split pane, so the row goes straight to the live
-            // destination the desktop viewport would have previewed
+          var id = a.dataset.id;
+          var isDoc = !!sets[id];
+          if (!mq.matches && !isDoc) {
+            // mobile: entries without a canvas leave for their own destination
             var to = a.getAttribute('data-preview');
             if (to && to !== a.getAttribute('href')) { e.preventDefault(); location.href = to; }
             return;
           }
-          e.preventDefault();             // desktop → never full-navigate from the index
-          if (a.dataset.id && location.hash.slice(1) !== a.dataset.id) location.hash = a.dataset.id;
+          // a canvas entry opens the panel at every width — on desktop it
+          // fills the pane, on mobile it slides in as a full page
+          e.preventDefault();
+          if (id && location.hash.slice(1) !== id) location.hash = id;
+          else if (isDoc) open(id);       // same hash, panel closed → reopen
         });
       });
 
       window.addEventListener('hashchange', function () {
-        if (!mq.matches) return;
         var id = decodeURIComponent(location.hash.slice(1));
-        if (byId[id]) open(id);
+        // canvas entries open at every width; on mobile anything else closes
+        if (sets[id] && byId[id]) { open(id); return; }
+        if (mq.matches) { if (defaultId) open(defaultId); else clear(); }
+        else clear();
       });
 
       function sync() {
-        if (!mq.matches) { document.body.classList.remove('detail-open'); return; }
         var id = decodeURIComponent(location.hash.slice(1));
-        if (byId[id]) open(id); else if (defaultId) open(defaultId); else clear();
+        if (sets[id] && byId[id]) { open(id); return; }
+        // desktop is never empty; mobile lands on the index
+        if (mq.matches) { if (defaultId) open(defaultId); else clear(); }
+        else clear();
       }
       sync();
       mq.addEventListener('change', sync);
+
+      // ---- stills: decode fade + the lightbox -----------------------------
+      Array.prototype.forEach.call(document.querySelectorAll('.rail-item img'), function (img) {
+        function done() { img.classList.add('is-decoded'); }
+        if (img.complete) done();
+        else { img.addEventListener('load', done); img.addEventListener('error', done); }
+      });
+
+      // the card films autoplay as living stills — but never against a
+      // reduced-motion preference: those readers get the poster frame
+      if (reduce) Array.prototype.forEach.call(document.querySelectorAll('.entry-card-film[autoplay]'), function (v) {
+        v.removeAttribute('autoplay');
+        try { v.pause(); } catch (err) {}
+      });
+
+      var lb = document.getElementById('lightbox');
+      var lbImg = document.getElementById('lightboxImg');
+      var lbCap = document.getElementById('lightboxCap');
+      var lbClose = lb ? lb.querySelector('.lightbox-close') : null;
+      var lbReturn = null;
+      function openLightbox(btn) {
+        if (!lb || !btn.dataset.full) return;
+        lbImg.src = btn.dataset.full;
+        lbImg.alt = btn.dataset.cap || '';
+        lbCap.textContent = btn.dataset.cap || '';
+        lb.hidden = false;
+        document.body.classList.add('lightbox-open');
+        lbReturn = btn;                       // focus returns to the still
+        if (lbClose) lbClose.focus();
+      }
+      function closeLightbox() {
+        if (!lb || lb.hidden) return;
+        lb.hidden = true;
+        document.body.classList.remove('lightbox-open');
+        lbImg.removeAttribute('src');
+        if (lbReturn) { lbReturn.focus(); lbReturn = null; }
+      }
+      document.addEventListener('click', function (e) {
+        var item = e.target.closest && e.target.closest('.rail-item');
+        if (item && !item.classList.contains('is-ph')) { openLightbox(item); return; }
+        if (!lb || lb.hidden) return;
+        if (e.target === lb || (lbClose && lbClose.contains(e.target))) closeLightbox();
+      });
+      // capture phase, so closing the lightbox never also closes the panel
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && lb && !lb.hidden) { e.stopPropagation(); closeLightbox(); }
+      }, true);
     })();
   </script>{% endraw %}

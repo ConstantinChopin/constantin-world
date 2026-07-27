@@ -8,17 +8,91 @@
           "id": "asterlogos",
           "title": "Asterlogos",
           "meta": "2026",
+          "year": "2026",
           "desc": "Interactive editions of canonical books.",
           "href": "https://asterlogos.com/",
-          "preview": "https://asterlogos.com/"
+          "site": "https://asterlogos.com/",
+          "skills": [
+            "Interactive editions",
+            "Reading instruments",
+            "WebGL point clouds",
+            "Text topology"
+          ],
+          "railReady": true,
+          "rail": [
+            {
+              "src": "/assets/media/asterlogos-odyssey-topology.png",
+              "alt": "The Odyssey mapped in the Field — the wandering charted as constellations of thought: Troy and Ismarus, the Lotus-Eaters, Circe and the Sirens, the House of the Dead, and the way home to Ithaca."
+            }
+          ],
+          "intro": "Asterlogos builds <strong>interactive editions of canonical books</strong> — instruments of attention where each book is entered as the cosmos its own form implies. Not slides about the poem: <strong>the poem, made to teach from</strong>.",
+          "body": [
+            "Each edition turns a book's own structure into a place you can walk into. <strong>The Odyssey</strong> opens as a logbook — fifteen knots from Troy to Ithaca, drawn as a navigable point-cloud; <strong>The Iliad</strong> holds the standing order; Hamlet's Mill, Liturgies of the Wild, and Always with Honour wait on the shelf. Around the instruments sits a commonplace-book frame: a shelf-to-field perception toggle, a trace of where you've been, and marginalia you write — loose, on a book, or placed on a knot.",
+            "Built as a static <code>Eleventy</code> site with <code>THREE.js</code> point-cloud instruments, and spun out of this practice to its own domain."
+          ],
+          "margin": [
+            {
+              "label": "Status",
+              "value": "Two editions live"
+            },
+            {
+              "label": "Editions",
+              "value": "The Odyssey · The Iliad"
+            },
+            {
+              "label": "Stack",
+              "value": "Eleventy · THREE.js"
+            },
+            {
+              "label": "Shelf",
+              "value": "Three folios to come"
+            }
+          ]
         },
         {
           "id": "sanctuaire",
           "title": "Sanctuaire",
           "meta": "2026",
+          "year": "2026",
           "desc": "One query across the world's museum collections.",
           "href": "https://www.sanctuaire.so",
-          "preview": "https://www.sanctuaire.so"
+          "site": "https://www.sanctuaire.so",
+          "skills": [
+            "Federated search",
+            "Museum open access",
+            "Provenance",
+            "Wander navigation"
+          ],
+          "railReady": false,
+          "rail": [],
+          "film": {
+            "src": "/assets/media/sanctuaire-walkthrough.mp4",
+            "poster": "/assets/media/sanctuaire-poster.jpg",
+            "alt": "A walkthrough of Sanctuaire: one search federated across museum collections, then Wander following an artwork's threads."
+          },
+          "intro": "Sanctuaire is <strong>one query across the world's museum collections</strong> — human creativity from museums around the world, distilled into context for creative work.",
+          "body": [
+            "A single search federates the open-access collections of the <strong>Cleveland Museum of Art, the Art Institute of Chicago, and The Met</strong> — Rijksmuseum, Smithsonian, and Harvard built and awaiting keys — deduplicated, licence-filtered, every card carrying its attribution back to the source. <strong>Wander</strong> follows an artwork's threads — same artist, same culture, same classification — into a related constellation behind a breadcrumb trail. No accounts, no likes, no feed: <strong>only open access</strong>.",
+            "Built on <code>Next.js 14</code> with no database of its own — relevance stays delegated to each museum's index. Live at sanctuaire.so."
+          ],
+          "margin": [
+            {
+              "label": "Status",
+              "value": "Live at sanctuaire.so"
+            },
+            {
+              "label": "Collections",
+              "value": "Cleveland · AIC · The Met"
+            },
+            {
+              "label": "Stack",
+              "value": "Next.js 14 · React 18"
+            },
+            {
+              "label": "Principle",
+              "value": "Only open access"
+            }
+          ]
         }
       ]
     },
