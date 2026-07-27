@@ -65,14 +65,11 @@ ogUrl: "https://constantin.world"
             <span class="viewport-title" id="detailTitle"></span>
           </span>
           <nav class="viewport-actions" aria-label="Panel controls">
-            <button class="viewport-btn" type="button" data-vp-prev aria-label="Previous project" hidden>
+            <button class="viewport-btn" type="button" data-vp-prev aria-label="Previous entry">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
             </button>
-            <button class="viewport-btn" type="button" data-vp-next aria-label="Next project" hidden>
+            <button class="viewport-btn" type="button" data-vp-next aria-label="Next entry">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
-            </button>
-            <button class="viewport-btn viewport-return" type="button" data-vp-return aria-label="Back to the index" hidden>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
             </button>
           </nav>
           <a class="viewport-site" data-vp-site target="_blank" rel="noopener" hidden>
@@ -166,7 +163,6 @@ ogUrl: "https://constantin.world"
       var leadEl = document.querySelector('.viewport-lead');
       var closeEl = document.getElementById('detailClose');
       var backBtn = document.querySelector('[data-vp-back]');
-      var returnBtn = document.querySelector('[data-vp-return]');
       var prevBtn = document.querySelector('[data-vp-prev]');
       var nextBtn = document.querySelector('[data-vp-next]');
       var siteBtn = document.querySelector('[data-vp-site]');
@@ -194,9 +190,6 @@ ogUrl: "https://constantin.world"
       // fullscreen + close over a frame.
       function setMode(doc) {
         if (viewport) viewport.classList.toggle('is-doc', doc);
-        if (prevBtn) prevBtn.hidden = !doc;
-        if (nextBtn) nextBtn.hidden = !doc;
-        if (returnBtn) returnBtn.hidden = doc;   // frame mode's way back
         if (closeEl) closeEl.hidden = doc;
         if (!doc && siteBtn) { siteBtn.removeAttribute('href'); siteBtn.hidden = true; }
       }
@@ -347,18 +340,23 @@ ogUrl: "https://constantin.world"
       }
       if (closeEl) closeEl.addEventListener('click', closeDetail);
       if (backBtn) backBtn.addEventListener('click', closeDetail);
-      if (returnBtn) returnBtn.addEventListener('click', closeDetail);
       document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' && document.body.classList.contains('detail-open')) closeDetail();
       });
 
-      // the pager — cycles the projects, wrapping at the ends
+      // the pager — persistent in both modes, it walks every panel-able
+      // entry, wrapping at the ends: the canvases first, then the framed
+      // pages (the essay), so the cycle covers everything the prose names
+      var cycle = order.slice();
+      all.forEach(function (a) {
+        if (a.dataset.id && !sets[a.dataset.id] && cycle.indexOf(a.dataset.id) < 0) cycle.push(a.dataset.id);
+      });
       function go(delta) {
         var cur = decodeURIComponent(location.hash.slice(1));
-        var i = order.indexOf(cur);
-        if (i < 0) i = order.indexOf(defaultId);
+        var i = cycle.indexOf(cur);
+        if (i < 0) i = cycle.indexOf(liveId);
         if (i < 0) i = 0;
-        location.hash = order[(i + delta + order.length) % order.length];
+        location.hash = cycle[(i + delta + cycle.length) % cycle.length];
       }
       if (prevBtn) prevBtn.addEventListener('click', function () { go(-1); });
       if (nextBtn) nextBtn.addEventListener('click', function () { go(1); });

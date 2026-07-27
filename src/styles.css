@@ -264,9 +264,6 @@ body.home { padding: 0; }
   /* the iframe stage is dead weight under a canvas — remove it, or its
      opaque paper window floats over the scrolling document */
   .viewport.is-doc .viewport-stage { display: none; }
-  /* in fullscreen the chrome fills the screen — drop its floating rounding */
-  .viewport:fullscreen { border-radius: 0; border: 0; }
-  .viewport:-webkit-full-screen { border-radius: 0; border: 0; }
   /* the inner window — the page fills the glass shell edge to edge; the
      shell's 46px squircle clips it, and the floating capsules ride above */
   .viewport-stage {
@@ -483,10 +480,6 @@ body.is-leaving {
 @media (prefers-reduced-motion: reduce) { .viewport-btn:active { transform: none; } }
 .viewport-btn svg { width: 15px; height: 15px; display: block; stroke-width: 1.8; }
 .viewport-btn[hidden] { display: none; }
-/* the fullscreen control swaps between an expand and a contract glyph */
-.viewport-btn .ico-exit { display: none; }
-body.viewport-fs .viewport-fullscreen .ico-enter { display: none; }
-body.viewport-fs .viewport-fullscreen .ico-exit { display: block; }
 
 /* the "View site" capsule — a glass twin to the breadcrumb; label only,
    hidden until the open project carries a site URL. its type is set exactly
