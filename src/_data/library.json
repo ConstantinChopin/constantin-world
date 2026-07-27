@@ -5,6 +5,51 @@
       "glyph": "artefacts",
       "entries": [
         {
+          "id": "sanctuaire",
+          "title": "Sanctuaire",
+          "meta": "2026",
+          "year": "2026",
+          "desc": "One query across the world's museum collections.",
+          "href": "https://www.sanctuaire.so",
+          "site": "https://www.sanctuaire.so",
+          "skills": [
+            "Federated search",
+            "Museum open access",
+            "Provenance",
+            "Wander navigation"
+          ],
+          "railReady": false,
+          "rail": [],
+          "film": {
+            "src": "/assets/media/sanctuaire-walkthrough.mp4",
+            "poster": "/assets/media/sanctuaire-poster.jpg",
+            "alt": "A walkthrough of Sanctuaire: one search federated across museum collections, then Wander following an artwork's threads."
+          },
+          "intro": "Sanctuaire is <strong>one query across the world's museum collections</strong> — human creativity from museums around the world, distilled into context for creative work.",
+          "body": [
+            "A single search federates the open-access collections of the <strong>Cleveland Museum of Art, the Art Institute of Chicago, and The Met</strong> — Rijksmuseum, Smithsonian, and Harvard built and awaiting keys — deduplicated, licence-filtered, every card carrying its attribution back to the source. <strong>Wander</strong> follows an artwork's threads — same artist, same culture, same classification — into a related constellation behind a breadcrumb trail. No accounts, no likes, no feed: <strong>only open access</strong>.",
+            "Built on <code>Next.js 14</code> with no database of its own — relevance stays delegated to each museum's index. Live at sanctuaire.so."
+          ],
+          "margin": [
+            {
+              "label": "Status",
+              "value": "Live at sanctuaire.so"
+            },
+            {
+              "label": "Collections",
+              "value": "Cleveland · AIC · The Met"
+            },
+            {
+              "label": "Stack",
+              "value": "Next.js 14 · React 18"
+            },
+            {
+              "label": "Principle",
+              "value": "Only open access"
+            }
+          ]
+        },
+        {
           "id": "asterlogos",
           "title": "Asterlogos",
           "meta": "2026",
@@ -53,51 +98,6 @@
             "poster": "/assets/media/asterlogos-poster.jpg",
             "alt": "A walkthrough of Asterlogos: the Shelf of editions, into the Field where ideas stand as wells, then inside The Odyssey — the wandering charted as constellations, orbited slowly."
           }
-        },
-        {
-          "id": "sanctuaire",
-          "title": "Sanctuaire",
-          "meta": "2026",
-          "year": "2026",
-          "desc": "One query across the world's museum collections.",
-          "href": "https://www.sanctuaire.so",
-          "site": "https://www.sanctuaire.so",
-          "skills": [
-            "Federated search",
-            "Museum open access",
-            "Provenance",
-            "Wander navigation"
-          ],
-          "railReady": false,
-          "rail": [],
-          "film": {
-            "src": "/assets/media/sanctuaire-walkthrough.mp4",
-            "poster": "/assets/media/sanctuaire-poster.jpg",
-            "alt": "A walkthrough of Sanctuaire: one search federated across museum collections, then Wander following an artwork's threads."
-          },
-          "intro": "Sanctuaire is <strong>one query across the world's museum collections</strong> — human creativity from museums around the world, distilled into context for creative work.",
-          "body": [
-            "A single search federates the open-access collections of the <strong>Cleveland Museum of Art, the Art Institute of Chicago, and The Met</strong> — Rijksmuseum, Smithsonian, and Harvard built and awaiting keys — deduplicated, licence-filtered, every card carrying its attribution back to the source. <strong>Wander</strong> follows an artwork's threads — same artist, same culture, same classification — into a related constellation behind a breadcrumb trail. No accounts, no likes, no feed: <strong>only open access</strong>.",
-            "Built on <code>Next.js 14</code> with no database of its own — relevance stays delegated to each museum's index. Live at sanctuaire.so."
-          ],
-          "margin": [
-            {
-              "label": "Status",
-              "value": "Live at sanctuaire.so"
-            },
-            {
-              "label": "Collections",
-              "value": "Cleveland · AIC · The Met"
-            },
-            {
-              "label": "Stack",
-              "value": "Next.js 14 · React 18"
-            },
-            {
-              "label": "Principle",
-              "value": "Only open access"
-            }
-          ]
         }
       ]
     },

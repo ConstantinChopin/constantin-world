@@ -355,6 +355,9 @@ body.home { padding: 0; }
    (the cw-preview bridge) and retires its own — one persistent bar, never
    two stacked at the top of the frame */
 html.is-framed .viewport-bar { display: none; }
+/* with its own bar retired, the framed page opens under the host's floating
+   capsules — restore the air the bar used to hold so the head clears them */
+html.is-framed body.essay { padding-top: clamp(4rem, 10vh, 5.5rem); }
 
 /* leaving a standalone page by its back capsule mirrors the panel's close:
    the page slides off to the right, then the browser steps back home. the
@@ -987,12 +990,17 @@ body.lightbox-open { overflow: hidden; }
   background: var(--surface);
   box-shadow: inset 0 0 0 transparent;
 }
-/* the held state — the quiet pill stays while the entry is open in the pane */
+/* the held state — the quiet pill stays, and the name takes its project's
+   own colour, lifted for the dark ground: Sanctuaire's museum slate-silver
+   (from its own UI slate), Asterlogos' rubric gold (the gilt of its
+   editions). the studio site does the same on paper. */
 .lnk.is-active {
   background: var(--surface);
   color: var(--ink);
   box-shadow: inset 0 0 0 transparent;
 }
+.lnk[data-id="sanctuaire"].is-active { color: #b7bec9; }
+.lnk[data-id="asterlogos"].is-active { color: #c2a35f; }
 /* every paragraph in the index keeps the same breath — the header stack's
    0.55rem is the reference */
 .prose-block { margin-top: 0.55rem; }
