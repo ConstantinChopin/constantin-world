@@ -71,24 +71,8 @@ ogUrl: "https://constantin.world"
             <button class="viewport-btn" type="button" data-vp-next aria-label="Next project" hidden>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
             </button>
-            <button class="viewport-btn viewport-fullscreen" id="detailFullscreen" type="button" aria-label="Fullscreen">
-              <svg class="ico-enter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M8 3 H5 a2 2 0 0 0 -2 2 V8" />
-                <path d="M16 3 H19 a2 2 0 0 1 2 2 V8" />
-                <path d="M21 16 V19 a2 2 0 0 1 -2 2 H16" />
-                <path d="M3 16 V19 a2 2 0 0 0 2 2 H8" />
-              </svg>
-              <svg class="ico-exit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M3 8 H6 a2 2 0 0 0 2 -2 V3" />
-                <path d="M21 8 H18 a2 2 0 0 1 -2 -2 V3" />
-                <path d="M16 21 V18 a2 2 0 0 1 2 -2 H21" />
-                <path d="M8 21 V18 a2 2 0 0 0 -2 -2 H3" />
-              </svg>
-            </button>
-            <button class="viewport-btn viewport-close" id="detailClose" type="button" aria-label="Close">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
-                <path d="M6 6 L18 18 M18 6 L6 18" />
-              </svg>
+            <button class="viewport-btn viewport-return" type="button" data-vp-return aria-label="Back to the index" hidden>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
             </button>
           </nav>
           <a class="viewport-site" data-vp-site target="_blank" rel="noopener" hidden>
@@ -181,9 +165,8 @@ ogUrl: "https://constantin.world"
       var titleEl = document.getElementById('detailTitle');
       var leadEl = document.querySelector('.viewport-lead');
       var closeEl = document.getElementById('detailClose');
-      var fsEl = viewport;
-      var fsBtn = document.getElementById('detailFullscreen');
       var backBtn = document.querySelector('[data-vp-back]');
+      var returnBtn = document.querySelector('[data-vp-return]');
       var prevBtn = document.querySelector('[data-vp-prev]');
       var nextBtn = document.querySelector('[data-vp-next]');
       var siteBtn = document.querySelector('[data-vp-site]');
@@ -213,7 +196,7 @@ ogUrl: "https://constantin.world"
         if (viewport) viewport.classList.toggle('is-doc', doc);
         if (prevBtn) prevBtn.hidden = !doc;
         if (nextBtn) nextBtn.hidden = !doc;
-        if (fsBtn) fsBtn.hidden = doc;
+        if (returnBtn) returnBtn.hidden = doc;   // frame mode's way back
         if (closeEl) closeEl.hidden = doc;
         if (!doc && siteBtn) { siteBtn.removeAttribute('href'); siteBtn.hidden = true; }
       }
@@ -364,6 +347,7 @@ ogUrl: "https://constantin.world"
       }
       if (closeEl) closeEl.addEventListener('click', closeDetail);
       if (backBtn) backBtn.addEventListener('click', closeDetail);
+      if (returnBtn) returnBtn.addEventListener('click', closeDetail);
       document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' && document.body.classList.contains('detail-open')) closeDetail();
       });
@@ -378,22 +362,6 @@ ogUrl: "https://constantin.world"
       }
       if (prevBtn) prevBtn.addEventListener('click', function () { go(-1); });
       if (nextBtn) nextBtn.addEventListener('click', function () { go(1); });
-
-      // fullscreen the whole preview chrome (frame mode only)
-      function inFs() { return document.fullscreenElement || document.webkitFullscreenElement; }
-      if (fsBtn && fsEl) {
-        fsBtn.addEventListener('click', function () {
-          if (inFs()) { (document.exitFullscreen || document.webkitExitFullscreen).call(document); }
-          else { (fsEl.requestFullscreen || fsEl.webkitRequestFullscreen).call(fsEl); }
-        });
-        function syncFs() {
-          var on = !!inFs();
-          document.body.classList.toggle('viewport-fs', on);
-          fsBtn.setAttribute('aria-label', on ? 'Exit fullscreen' : 'Fullscreen');
-        }
-        document.addEventListener('fullscreenchange', syncFs);
-        document.addEventListener('webkitfullscreenchange', syncFs);
-      }
 
       all.forEach(function (a) {
         a.addEventListener('click', function (e) {
