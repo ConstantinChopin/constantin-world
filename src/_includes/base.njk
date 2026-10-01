@@ -19,7 +19,21 @@
 {% endif %}
 <link rel="icon" href="/favicon.svg" />
 <link rel="stylesheet" href="/styles.css" />
-<script>if (window.self !== window.top) document.documentElement.classList.add('embedded');</script>
+<script>
+if (window.self !== window.top) {
+  document.documentElement.classList.add('embedded');
+  // framed in the home panel, the page sizes its rem by the host window, not
+  // the frame: the host's root scales with the screen, so both read at one size
+  (function () {
+    var root = document.documentElement;
+    function sync() {
+      try { root.style.fontSize = getComputedStyle(window.parent.document.documentElement).fontSize; } catch (e) {}
+    }
+    sync();
+    window.addEventListener('resize', sync);
+  })();
+}
+</script>
 {% if headExtra %}{{ headExtra | safe }}{% endif %}
 </head>
 <body class="{{ bodyClass }}">

@@ -76,12 +76,22 @@
   --glyph-gap: 0.3rem;
   --glyph-title-drop: 1.5px;
   --ease: cubic-bezier(0.2, 0, 0, 1);
+  /* the capsule height — the breadcrumb, pager and View site pills. in rem
+     (34px at the 16px root) so the chrome scales with the type past 1440 */
+  --capsule: 2.125rem;
 }
 
 /* ---- Base --------------------------------------------------------------- */
 
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
+/* past the 1440 composition the site scales with the window instead of padding
+   out: the root size holds at the browser default up to 1440px wide
+   (100vw / 90 = 16px there), then grows with it until 1920px wide (21.33px), so
+   every rem — the type, the index column, the panel measure and its inset —
+   keeps its 1440 proportions. a page framed in the panel takes the host's size
+   instead (see base.njk), since its own 100vw is only the frame. */
+html { font-size: clamp(100%, 100vw / 90, 133.33%); }
 @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
 
 /* scroll, but without the scrollbar chrome */
@@ -343,7 +353,7 @@ body.home { padding: 0; }
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 14px;
+  padding: 0.875rem;
   /* the empty middle of the bar lets clicks through to the page */
   pointer-events: none;
 }
@@ -393,8 +403,8 @@ body.is-leaving {
 .viewport-back {
   display: none;
   flex: 0 0 auto;
-  width: 34px;
-  height: 34px;
+  width: var(--capsule);
+  height: var(--capsule);
   place-items: center;
   color: var(--muted);
   cursor: pointer;
@@ -402,7 +412,7 @@ body.is-leaving {
 }
 .viewport-back:hover,
 .viewport-back:focus-visible { color: var(--bright); }
-.viewport-back svg { width: 15px; height: 15px; display: block; stroke-width: 1.8; }
+.viewport-back svg { width: 0.9375rem; height: 0.9375rem; display: block; stroke-width: 1.8; }
 
 /* the left capsule — the breadcrumb in its glass pill; its auto margin
    pushes the action cluster (pager · View site) to the right edge, so the
@@ -411,7 +421,7 @@ body.is-leaving {
   display: inline-flex;
   align-items: center;
   min-width: 0;
-  height: 34px;
+  height: var(--capsule);
   padding: 0 1.15em;
   margin-right: auto;
   /* the breadcrumb crossfade on project switch */
@@ -422,7 +432,7 @@ body.is-leaving {
   position: relative;
   /* the serif crumbs centre high on the capsule's line box — settle the
      text (only the text, never the pill) onto its true optical centre */
-  top: 0.5px;
+  top: 0.03125rem;
   min-width: 0;
   font-family: var(--serif);
   font-size: 0.72rem;
@@ -457,12 +467,12 @@ body.is-leaving {
   flex: 0 0 auto;
   display: inline-flex;
   align-items: stretch;
-  height: 34px;
+  height: var(--capsule);
   overflow: hidden;
 }
 .viewport-btn {
   flex: 0 0 auto;
-  width: 34px;
+  width: var(--capsule);
   /* fill the capsule's height so the glyph centres on its true middle */
   height: 100%;
   display: grid;
@@ -478,7 +488,7 @@ body.is-leaving {
 /* a small tactile press */
 .viewport-btn:active { transform: scale(0.96); }
 @media (prefers-reduced-motion: reduce) { .viewport-btn:active { transform: none; } }
-.viewport-btn svg { width: 15px; height: 15px; display: block; stroke-width: 1.8; }
+.viewport-btn svg { width: 0.9375rem; height: 0.9375rem; display: block; stroke-width: 1.8; }
 .viewport-btn[hidden] { display: none; }
 
 /* the "View site" capsule — a glass twin to the breadcrumb; label only,
@@ -488,7 +498,7 @@ body.is-leaving {
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
-  height: 34px;
+  height: var(--capsule);
   padding: 0 1.05em;
   font-family: var(--serif);
   font-size: 0.72rem;
@@ -499,7 +509,7 @@ body.is-leaving {
   cursor: pointer;
   transition: color 0.2s var(--ease);
 }
-.viewport-site span { position: relative; top: 0.5px; }
+.viewport-site span { position: relative; top: 0.03125rem; }
 /* the layout rule sets display, so the hidden attribute needs restating */
 .viewport-site[hidden] { display: none; }
 
